@@ -63,10 +63,10 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
-            <a href="#" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></a>
+            <a href="#" className="text-muted-foreground hover:text-primary" aria-label="Facebook"><Facebook className="h-5 w-5" /></a>
+            <a href="#" className="text-muted-foreground hover:text-primary" aria-label="Twitter"><Twitter className="h-5 w-5" /></a>
+            <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Instagram"><Instagram className="h-5 w-5" /></a>
+            <a href="#" className="text-muted-foreground hover:text-primary" aria-label="LinkedIn"><Linkedin className="h-5 w-5" /></a>
           </div>
 
           <p className="text-sm text-muted-foreground">{t('footer.copyright')}</p>
