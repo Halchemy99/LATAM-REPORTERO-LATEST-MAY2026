@@ -1,0 +1,68 @@
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+
+export async function POST(request) {
+  try {
+    const body = await request.json();
+    const { userId, newPassword } = body;
+    
+    if (!userId || !newPassword) {
+      return NextResponse.json(
+        { error: 'User ID and new password are required' },
+        { status: 400 }
+      );
+    }
+    
+    if (newPassword.length < 6) {
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if service role key is configured
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    
+    if (!serviceRoleKey) {
+      return NextResponse.json(
+        { error: 'Admin password change not configured. Please add SUPABASE_SERVICE_ROLE_KEY to environment.' },
+        { status: 500 }
+      );
+    }
+    
+    // Create admin client with service role key
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+    
+    // Update user password using admin API
+    const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { password: newPassword }
+    );
+    
+    if (error) {
+      console.error('Error changing password:', error);
+      return NextResponse.json(
+        { error: 'Failed to change password: ' + error.message },
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Password changed successfully' 
+    });
+    
+  } catch (error) {
+    console.error('API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
