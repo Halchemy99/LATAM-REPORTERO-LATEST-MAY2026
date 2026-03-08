@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
-import { mockArticles } from '@/lib/mock-data';
 import { createClient } from '@/lib/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -60,6 +59,7 @@ export default function AdminDashboardPage() {
   const [usersLoading, setUsersLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [articlesCount, setArticlesCount] = useState(0);
 
   // Fetch real users from Supabase directly
   const fetchUsers = useCallback(async () => {
@@ -90,6 +90,15 @@ export default function AdminDashboardPage() {
         }));
         setUsers(transformedUsers);
         console.log('Fetched users:', transformedUsers.length);
+      }
+
+      // Fetch articles count
+      const { count: articlesTotal, error: articlesError } = await supabase
+        .from('articles')
+        .select('*', { count: 'exact', head: true });
+      
+      if (!articlesError) {
+        setArticlesCount(articlesTotal || 0);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -139,13 +148,15 @@ export default function AdminDashboardPage() {
     );
   }
 
-  // Calculate real stats from users
+  // Calculate real stats from users - all from Supabase
+  const paidRoles = ['paid', 'contributor', 'editor', 'admin'];
   const stats = {
     totalUsers: users.length,
-    activeSubscribers: users.filter(u => u.subscription === 'active' || ['paid', 'contributor', 'editor', 'admin'].includes(u.role)).length,
-    totalArticles: mockArticles.length * 10,
-    monthlyRevenue: 2340,
-    growthRate: 12.5
+    activeSubscribers: users.filter(u => u.subscription === 'active' || paidRoles.includes(u.role)).length,
+    totalArticles: articlesCount,
+    // Revenue and growth would come from Stripe integration - showing 0 until Stripe is integrated
+    monthlyRevenue: 0,
+    growthRate: 0
   };
 
   // Calculate role stats from real users
@@ -279,7 +290,8 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">{t('admin.revenue')}</p>
-                    <p className="text-3xl font-bold">£{stats.monthlyRevenue}</p>
+                    <p className="text-3xl font-bold text-muted-foreground">$0</p>
+                    <p className="text-xs text-muted-foreground">Stripe pending</p>
                   </div>
                   <DollarSign className="h-8 w-8 text-green-500/20" />
                 </div>
@@ -290,7 +302,8 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Growth</p>
-                    <p className="text-3xl font-bold text-green-600">+{stats.growthRate}%</p>
+                    <p className="text-3xl font-bold text-muted-foreground">--</p>
+                    <p className="text-xs text-muted-foreground">No data yet</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-green-500/20" />
                 </div>
@@ -449,46 +462,47 @@ export default function AdminDashboardPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Content Statistics</CardTitle>
+                    <CardDescription>Real data from database</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
-                      <span>Human-Written Articles</span>
-                      <span className="font-semibold">342</span>
+                      <span>Total Articles</span>
+                      <span className="font-semibold">{articlesCount}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>AI-Verified Articles</span>
-                      <span className="font-semibold">128</span>
+                      <span>Total Users</span>
+                      <span className="font-semibold">{users.length}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Pending Review</span>
-                      <span className="font-semibold">23</span>
+                      <span>Admin Users</span>
+                      <span className="font-semibold">{roleStats.admin || 0}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total Comments</span>
-                      <span className="font-semibold">4,567</span>
+                      <span>Contributors</span>
+                      <span className="font-semibold">{roleStats.contributor || 0}</span>
                     </div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader>
                     <CardTitle>Revenue Breakdown</CardTitle>
+                    <CardDescription>Stripe integration pending</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
                       <span>Monthly Subscriptions</span>
-                      <span className="font-semibold">£1,234</span>
+                      <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Annual Subscriptions</span>
-                      <span className="font-semibold">£890</span>
+                      <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Lifetime Purchases</span>
-                      <span className="font-semibold">£216</span>
+                      <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Micropayments (Platform Fee)</span>
-                      <span className="font-semibold">£45</span>
+                    <div className="flex justify-between text-sm text-muted-foreground italic">
+                      <span colSpan="2">Connect Stripe to see real revenue data</span>
                     </div>
                   </CardContent>
                 </Card>
