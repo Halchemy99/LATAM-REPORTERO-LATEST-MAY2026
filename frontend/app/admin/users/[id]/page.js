@@ -151,13 +151,13 @@ export default function AdminUserEditPage() {
       
       const data = await response.json();
       
-      if (response.ok) {
+      if (response.ok && data.success) {
         toast.success('Password changed successfully!');
         setPasswordDialogOpen(false);
         setNewPassword('');
         setConfirmPassword('');
       } else {
-        toast.error(data.error || 'Failed to change password');
+        toast.error(data.detail || data.error || 'Failed to change password');
       }
     } catch (error) {
       toast.error('Error changing password');

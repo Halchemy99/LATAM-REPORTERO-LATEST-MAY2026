@@ -137,6 +137,11 @@ function handleChat(request) {
 export async function GET(request, { params }) {
   const path = params?.path?.join('/') || '';
 
+  // Skip catch-all for specific API routes (let their own handlers process)
+  if (path.startsWith('admin/') || path.startsWith('voicebot')) {
+    return NextResponse.json({ error: 'Route not found in catch-all' }, { status: 404 });
+  }
+
   // Route handling
   switch (path) {
     case '':
@@ -152,6 +157,11 @@ export async function GET(request, { params }) {
 
 export async function POST(request, { params }) {
   const path = params?.path?.join('/') || '';
+
+  // Skip catch-all for specific API routes (let their own handlers process)
+  if (path.startsWith('admin/') || path.startsWith('voicebot')) {
+    return NextResponse.json({ error: 'Route not found in catch-all' }, { status: 404 });
+  }
 
   switch (path) {
     case 'auth/logout':

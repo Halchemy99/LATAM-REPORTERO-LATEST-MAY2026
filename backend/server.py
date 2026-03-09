@@ -10,6 +10,7 @@ from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from supabase import create_client, Client
 
 
 ROOT_DIR = Path(__file__).parent
@@ -17,6 +18,10 @@ load_dotenv(ROOT_DIR / '.env')
 
 # LLM API key
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+
+# Supabase configuration
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -59,6 +64,11 @@ class VoiceBotChatRequest(BaseModel):
     message: str
     article: Optional[ArticleContext] = None
     history: Optional[List[Dict[str, Any]]] = None
+
+# Admin Password Change Model
+class AdminPasswordChangeRequest(BaseModel):
+    userId: str
+    newPassword: str
 
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
@@ -161,6 +171,39 @@ Keep responses concise (2-3 paragraphs max) and engaging. Use a friendly, journa
     except Exception as e:
         logger.error(f"VoiceBot chat error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Admin Password Change Endpoint
+@api_router.post("/admin/users/password")
+async def admin_change_password(request: AdminPasswordChangeRequest):
+    """Admin endpoint to change a user's password using Supabase Admin API"""
+    try:
+        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
+            logger.error("Supabase credentials not configured")
+            raise HTTPException(status_code=500, detail="Supabase admin not configured")
+        
+        if len(request.newPassword) < 6:
+            raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+        
+        # Create Supabase admin client
+        supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        
+        # Update user password using admin API
+        response = supabase.auth.admin.update_user_by_id(
+            request.userId,
+            {"password": request.newPassword}
+        )
+        
+        if response.user:
+            logger.info(f"Password changed successfully for user: {request.userId}")
+            return {"success": True, "message": "Password changed successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to change password")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error changing password: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to change password: {str(e)}")
 
 # Include the router in the main app
 app.include_router(api_router)

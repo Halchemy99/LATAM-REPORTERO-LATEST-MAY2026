@@ -24,9 +24,14 @@ export async function POST(request) {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     
-    if (!serviceRoleKey) {
+    console.log('Password change request for userId:', userId);
+    console.log('Supabase URL configured:', !!supabaseUrl);
+    console.log('Service Role Key configured:', !!serviceRoleKey);
+    
+    if (!serviceRoleKey || !supabaseUrl) {
+      console.error('Missing env vars - URL:', supabaseUrl, 'Key exists:', !!serviceRoleKey);
       return NextResponse.json(
-        { error: 'Admin password change not configured. Please add SUPABASE_SERVICE_ROLE_KEY to environment.' },
+        { error: 'Admin password change not configured. Missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_URL.' },
         { status: 500 }
       );
     }
@@ -46,13 +51,14 @@ export async function POST(request) {
     );
     
     if (error) {
-      console.error('Error changing password:', error);
+      console.error('Supabase error changing password:', error);
       return NextResponse.json(
         { error: 'Failed to change password: ' + error.message },
         { status: 500 }
       );
     }
     
+    console.log('Password changed successfully for user:', userId);
     return NextResponse.json({ 
       success: true, 
       message: 'Password changed successfully' 
@@ -61,7 +67,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error: ' + error.message },
       { status: 500 }
     );
   }
