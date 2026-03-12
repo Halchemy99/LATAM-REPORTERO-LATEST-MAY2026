@@ -1,77 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* Editorial Design System - Light */
     --background: 0 0% 100%;
-    --foreground: 260 10% 10%;
+    --foreground: 240 10% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 260 10% 10%;
+    --card-foreground: 240 10% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 260 10% 10%;
-    --primary: 260 70% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 260 20% 96%;
-    --secondary-foreground: 260 70% 35%;
-    --muted: 260 10% 96%;
-    --muted-foreground: 260 10% 45%;
-    --accent: 260 30% 94%;
-    --accent-foreground: 260 70% 40%;
+    --popover-foreground: 240 10% 4%;
+    --primary: 240 10% 4%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 260 20% 90%;
-    --input: 260 20% 90%;
-    --ring: 260 70% 65%;
-    --chart-1: 260 70% 60%;
-    --chart-2: 200 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 240 10% 4%;
+    --radius: 0rem;
+    
+    /* Brand Colors */
+    --journalism-red: 0 84% 45%;
+    --trust-blue: 221 83% 33%;
+    --paper-white: 0 0% 98%;
+    
+    /* Chart colors */
+    --chart-1: 0 84% 45%;
+    --chart-2: 221 83% 53%;
     --chart-3: 150 60% 45%;
     --chart-4: 30 80% 55%;
     --chart-5: 340 75% 55%;
-    --radius: 0.5rem;
-    --sidebar-background: 260 10% 98%;
-    --sidebar-foreground: 260 10% 30%;
-    --sidebar-primary: 260 70% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 20% 95%;
-    --sidebar-accent-foreground: 260 70% 40%;
-    --sidebar-border: 260 15% 90%;
-    --sidebar-ring: 260 70% 65%;
   }
 
   .dark {
-    --background: 260 20% 8%;
-    --foreground: 260 10% 95%;
-    --card: 260 20% 12%;
-    --card-foreground: 260 10% 95%;
-    --popover: 260 20% 12%;
-    --popover-foreground: 260 10% 95%;
-    --primary: 260 70% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 260 20% 18%;
-    --secondary-foreground: 260 10% 90%;
-    --muted: 260 15% 18%;
-    --muted-foreground: 260 10% 60%;
-    --accent: 260 25% 20%;
-    --accent-foreground: 260 70% 75%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 260 15% 20%;
-    --input: 260 15% 20%;
-    --ring: 260 70% 65%;
-    --chart-1: 260 70% 70%;
-    --chart-2: 200 60% 55%;
-    --chart-3: 150 50% 50%;
-    --chart-4: 30 70% 60%;
-    --chart-5: 340 65% 60%;
-    --sidebar-background: 260 20% 10%;
-    --sidebar-foreground: 260 10% 90%;
-    --sidebar-primary: 260 70% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 20% 15%;
-    --sidebar-accent-foreground: 260 70% 75%;
-    --sidebar-border: 260 15% 18%;
-    --sidebar-ring: 260 70% 65%;
+    --background: 222 47% 4%;
+    --foreground: 0 0% 98%;
+    --card: 222 47% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 222 47% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 6% 10%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 240 5% 84%;
   }
 }
 
@@ -79,63 +68,135 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+  
+  html {
+    scroll-behavior: smooth;
   }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Merriweather', Georgia, serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply font-bold tracking-tight;
+  }
+  
+  /* UI elements use Inter */
+  button, input, select, textarea, label, nav, .ui-text {
+    font-family: 'Inter', -apple-system, sans-serif;
+  }
+}
+
+/* Editorial Typography Scale */
+.headline-hero {
+  @apply text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.headline-section {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.headline-card {
+  @apply text-xl md:text-2xl font-medium leading-tight;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.body-article {
+  @apply text-lg leading-relaxed;
+  font-family: 'Merriweather', Georgia, serif;
+}
+
+.caption-meta {
+  @apply text-xs uppercase tracking-widest text-muted-foreground;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Editorial Components */
+.editorial-card {
+  @apply relative overflow-hidden bg-background border border-border/40 hover:border-primary/20 transition-colors duration-300;
+}
+
+.editorial-button {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 uppercase tracking-wider text-sm transition-all;
+  font-family: 'Inter', sans-serif;
+}
+
+.editorial-input {
+  @apply flex h-12 w-full border-b-2 border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary transition-colors;
+}
+
+/* Motion */
+.hover-lift {
+  @apply hover:-translate-y-1 transition-transform duration-300;
+}
+
+.image-zoom {
+  @apply group-hover:scale-105 transition-transform duration-700 ease-out;
+}
+
+.link-underline {
+  @apply relative;
+}
+
+.link-underline::after {
+  content: '';
+  @apply absolute bottom-0 left-0 h-[1px] w-0 bg-primary transition-all;
+}
+
+.link-underline:hover::after {
+  @apply w-full;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary) / 0.3);
-  border-radius: 4px;
+  @apply bg-border rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.5);
+  @apply bg-muted-foreground/50;
 }
 
-/* Article sections styling */
+/* Article Content Sections */
 .problem-section {
-  @apply bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg;
+  @apply border-l-4 border-red-600 pl-6 py-4 my-6;
 }
 
 .solutions-section {
-  @apply bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg;
+  @apply border-l-4 border-blue-600 pl-6 py-4 my-6;
 }
 
 .impact-section {
-  @apply bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg;
+  @apply border-l-4 border-green-600 pl-6 py-4 my-6;
 }
 
-.dark .problem-section {
-  @apply bg-red-950/30 border-red-600;
+/* Article Prose */
+.article-content {
+  @apply max-w-[65ch] mx-auto;
 }
 
-.dark .solutions-section {
-  @apply bg-blue-950/30 border-blue-600;
-}
-
-.dark .impact-section {
-  @apply bg-green-950/30 border-green-600;
-}
-
-/* Prose styling for article content */
 .article-content p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-6 leading-relaxed text-lg;
 }
 
 .article-content ul {
-  @apply list-disc list-inside mb-4 space-y-2;
+  @apply list-disc pl-6 mb-6 space-y-2;
+}
+
+.article-content ol {
+  @apply list-decimal pl-6 mb-6 space-y-2;
 }
 
 .article-content li {
@@ -143,5 +204,87 @@
 }
 
 .article-content strong {
-  @apply font-semibold text-foreground;
+  @apply font-semibold;
+}
+
+.article-content blockquote {
+  @apply border-l-4 border-primary pl-6 py-2 my-8 italic text-xl;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.article-content h2 {
+  @apply text-2xl md:text-3xl font-bold mt-12 mb-6;
+}
+
+.article-content h3 {
+  @apply text-xl md:text-2xl font-semibold mt-8 mb-4;
+}
+
+/* Contributor Badge Styles */
+.contributor-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full;
+  font-family: 'Inter', sans-serif;
+}
+
+.badge-verified {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.badge-editor {
+  @apply bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300;
+}
+
+.badge-longtime {
+  @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300;
+}
+
+.badge-reviewed {
+  @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+}
+
+/* Editorial Grid */
+.editorial-grid {
+  @apply grid grid-cols-1 md:grid-cols-12 gap-6;
+}
+
+.editorial-grid-hero {
+  @apply col-span-1 md:col-span-8 row-span-2;
+}
+
+.editorial-grid-side {
+  @apply col-span-1 md:col-span-4;
+}
+
+/* Newsletter Section */
+.newsletter-section {
+  @apply bg-foreground text-background py-16;
+}
+
+/* Breaking News Banner */
+.breaking-news {
+  @apply bg-red-600 text-white py-2 text-center text-sm font-medium tracking-wide;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Dividers */
+.editorial-divider {
+  @apply h-px bg-border my-8;
+}
+
+.editorial-divider-thick {
+  @apply h-1 bg-foreground my-8;
+}
+
+/* Focus states for accessibility */
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

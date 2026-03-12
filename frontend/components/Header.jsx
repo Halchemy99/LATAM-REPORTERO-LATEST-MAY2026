@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
+import LanguageSelector from '@/components/LanguageSelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,24 +12,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, LogOut, LayoutDashboard, Bookmark, FileText, Settings, Shield, Edit } from 'lucide-react';
+import { Menu, User, LogOut, LayoutDashboard, Bookmark, FileText, Settings, Shield, Edit, Users } from 'lucide-react';
 
 export default function Header() {
-  const { t, locale, setLocale } = useTranslation();
+  const { t } = useTranslation();
   const { user, role, logout, canSubmitStories, canEditStories, canAccessAdminDashboard } = useUserRole();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
     { href: '/solutions', label: t('nav.solutions') },
-    { href: '/communities', label: t('nav.communities') },
+    { href: '/community', label: 'Community' },
     { href: '/writers', label: t('nav.writers') },
     { href: '/pricing', label: t('nav.pricing') },
   ];
@@ -44,10 +38,12 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">L</span>
+            <div className="w-8 h-8 bg-foreground flex items-center justify-center">
+              <span className="text-background font-bold text-lg" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>L</span>
             </div>
-            <span className="ml-2 text-xl font-bold text-foreground">LATAM <span className="text-primary">Reportero</span></span>
+            <span className="ml-2 text-xl font-bold tracking-tight" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+              LATAM Reportero
+            </span>
           </div>
         </Link>
 
@@ -57,7 +53,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors link-underline"
             >
               {link.label}
             </Link>
@@ -67,15 +63,7 @@ export default function Header() {
         {/* Right side actions */}
         <div className="flex items-center space-x-3">
           {/* Language Selector */}
-          <Select value={locale} onValueChange={setLocale}>
-            <SelectTrigger className="w-[70px] h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">EN</SelectItem>
-              <SelectItem value="es">ES</SelectItem>
-            </SelectContent>
-          </Select>
+          <LanguageSelector />
 
           {/* User Menu or Login */}
           {user ? (
@@ -146,7 +134,7 @@ export default function Header() {
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/auth/login">{t('nav.login')}</Link>
               </Button>
-              <Button size="sm" asChild>
+              <Button size="sm" className="bg-foreground text-background hover:bg-foreground/90" asChild>
                 <Link href="/auth/signup">{t('nav.signup')}</Link>
               </Button>
             </div>

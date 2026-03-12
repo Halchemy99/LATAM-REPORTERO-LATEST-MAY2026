@@ -5,17 +5,15 @@ import { useTranslation, useUserRole, useContentMode } from '@/lib/providers';
 import { mockArticles, mockWriters } from '@/lib/mock-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FeaturedStory from '@/components/FeaturedStory';
-import NewsCard from '@/components/NewsCard';
-import TrustScoreRating from '@/components/TrustScoreRating';
+import Newsletter from '@/components/Newsletter';
+import ContributorReputation from '@/components/ContributorReputation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight, Mail, CheckCircle, TrendingUp, Users, FileText } from 'lucide-react';
+import { ArrowRight, Clock, Users, Headphones, Video, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -23,11 +21,8 @@ export default function HomePage() {
   const { mode, setMode } = useContentMode();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    // Simulate loading
     setTimeout(() => {
       setArticles(mockArticles);
       setLoading(false);
@@ -35,203 +30,297 @@ export default function HomePage() {
   }, []);
 
   const featuredArticle = articles.find(a => a.featured) || articles[0];
-  
-  const filteredArticles = articles.filter(a => {
-    if (!a.featured) {
-      if (mode === 'ai') return a.isAiGenerated;
-      if (mode === 'human') return !a.isAiGenerated;
-      return true;
-    }
-    return false;
-  });
+  const latestArticles = articles.filter(a => !a.featured).slice(0, 5);
+  const sideArticles = articles.filter(a => !a.featured).slice(0, 3);
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container py-12">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <Skeleton className="col-span-8 h-[500px]" />
+            <div className="col-span-4 space-y-4">
+              <Skeleton className="h-40" />
+              <Skeleton className="h-40" />
+              <Skeleton className="h-40" />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-primary/5 to-background py-12 md:py-20">
-          <div className="container">
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                {t('hero.title')}
-              </h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                {t('hero.subtitle')}
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/solutions">
-                  <Button size="lg" className="group">
-                    {t('hero.cta')}
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Link href="/pricing">
-                  <Button size="lg" variant="outline">
-                    {t('nav.pricing')}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">500+</div>
-                <div className="text-sm text-muted-foreground">Articles</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">50+</div>
-                <div className="text-sm text-muted-foreground">Writers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">9</div>
-                <div className="text-sm text-muted-foreground">Countries</div>
-              </div>
-            </div>
-
-            {/* Featured Story */}
-            {loading ? (
-              <Skeleton className="h-[400px] rounded-2xl" />
-            ) : (
-              <FeaturedStory article={featuredArticle} />
-            )}
-          </div>
-        </section>
-
-        {/* News Section */}
-        <section className="py-12">
-          <div className="container">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-              <h2 className="text-2xl font-bold">{t('news.latest')}</h2>
-              <Tabs value={mode} onValueChange={setMode} className="w-full sm:w-auto">
-                <TabsList className="grid grid-cols-3 w-full sm:w-auto">
-                  <TabsTrigger value="all">{t('news.allStories')}</TabsTrigger>
-                  <TabsTrigger value="human">{t('news.humanWritten')}</TabsTrigger>
-                  <TabsTrigger value="ai">{t('news.aiVerified')}</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
-            {loading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                  <Skeleton key={i} className="h-[350px] rounded-xl" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredArticles.map(article => (
-                  <NewsCard key={article.id} article={article} />
-                ))}
-              </div>
-            )}
-
-            {filteredArticles.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No articles found for this filter.</p>
-              </div>
-            )}
-
-            <div className="text-center mt-8">
-              <Link href="/solutions">
-                <Button variant="outline" size="lg">
-                  View All Stories
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Reporter Spotlight */}
-        <section className="py-12 bg-muted/30">
-          <div className="container">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold">Reporter Spotlight</h2>
-              <Link href="/writers">
-                <Button variant="ghost" className="group">
-                  View All Writers
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockWriters.slice(0, 4).map(writer => (
-                <Card key={writer.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
-                      <img
-                        src={writer.avatar}
-                        alt={writer.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="font-semibold mb-1">{writer.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{writer.specialty}</p>
-                    <div className="flex justify-center mb-3">
-                      <TrustScoreRating score={writer.trustScore} size="small" />
-                    </div>
-                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant="outline" className="text-xs">
-                        {writer.articleCount} articles
+        {/* Editorial Hero Grid */}
+        <section className="container py-8 md:py-12">
+          <div className="editorial-grid">
+            {/* Featured Article - Large */}
+            {featuredArticle && (
+              <article className="editorial-grid-hero group" data-testid="featured-article">
+                <Link href={`/article/${featuredArticle.slug}`} className="block">
+                  <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden mb-4">
+                    <img
+                      src={featuredArticle.mainImage}
+                      alt={featuredArticle.title}
+                      className="w-full h-full object-cover image-zoom"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <Badge className="mb-3 bg-red-600 hover:bg-red-700 uppercase tracking-wider text-xs">
+                        {featuredArticle.category}
                       </Badge>
-                      {writer.verified && (
-                        <Badge className="bg-green-100 text-green-800 text-xs">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Verified
-                        </Badge>
-                      )}
+                      <h1 className="headline-hero text-white mb-3">
+                        {featuredArticle.title}
+                      </h1>
+                      <p className="text-lg opacity-90 mb-4 max-w-2xl">
+                        {featuredArticle.excerpt}
+                      </p>
+                      <div className="flex items-center gap-4 text-sm opacity-80">
+                        <span>By {featuredArticle.author.name}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          {featuredArticle.readTime} min read
+                        </span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </Link>
+              </article>
+            )}
+
+            {/* Side Articles */}
+            <div className="editorial-grid-side space-y-4">
+              {sideArticles.map((article, index) => (
+                <article 
+                  key={article.id} 
+                  className={`group ${index < sideArticles.length - 1 ? 'border-b pb-4' : ''}`}
+                  data-testid={`side-article-${index}`}
+                >
+                  <Link href={`/article/${article.slug}`} className="block">
+                    <Badge variant="outline" className="mb-2 text-xs uppercase tracking-wider">
+                      {article.region}
+                    </Badge>
+                    <h3 className="headline-card mb-2 group-hover:text-primary transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                      {article.excerpt}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{article.author.name}</span>
+                      <span>•</span>
+                      <span>{article.readTime} min</span>
+                    </div>
+                  </Link>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Newsletter Signup */}
-        <section className="py-16 bg-primary">
+        {/* Thick Divider */}
+        <div className="container">
+          <div className="editorial-divider-thick" />
+        </div>
+
+        {/* Latest News Section */}
+        <section className="container py-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="headline-section">Latest</h2>
+            <Link href="/solutions">
+              <Button variant="ghost" className="group">
+                All Stories
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {latestArticles.slice(0, 3).map((article) => (
+              <article key={article.id} className="group" data-testid={`latest-article-${article.id}`}>
+                <Link href={`/article/${article.slug}`}>
+                  <div className="relative aspect-[16/10] overflow-hidden mb-4">
+                    <img
+                      src={article.mainImage}
+                      alt={article.title}
+                      className="w-full h-full object-cover image-zoom"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs uppercase tracking-wider">
+                        {article.category}
+                      </Badge>
+                      {article.isEditoriallyReviewed && (
+                        <Badge className="badge-reviewed text-xs">Reviewed</Badge>
+                      )}
+                    </div>
+                    <h3 className="headline-card group-hover:text-primary transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-muted-foreground line-clamp-2">
+                      {article.excerpt}
+                    </p>
+                    <div className="flex items-center gap-3 pt-2">
+                      <img
+                        src={article.author.avatar}
+                        alt={article.author.name}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="text-sm">
+                        <div className="font-medium">{article.author.name}</div>
+                        <div className="text-muted-foreground text-xs">
+                          {new Date(article.publishedAt).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Media Section - Podcast/Video Teasers */}
+        <section className="bg-foreground text-background py-16">
           <div className="container">
-            <div className="max-w-2xl mx-auto text-center text-primary-foreground">
-              <Mail className="h-12 w-12 mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-4">Stay Informed</h2>
-              <p className="mb-8 opacity-90">
-                Get weekly solutions-oriented journalism delivered to your inbox.
-              </p>
-              {subscribed ? (
-                <div className="flex items-center justify-center gap-2 text-lg">
-                  <CheckCircle className="h-6 w-6" />
-                  Thanks for subscribing!
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Podcast */}
+              <div className="flex gap-6 items-start">
+                <div className="w-24 h-24 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Headphones className="h-12 w-12" />
                 </div>
-              ) : (
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                    required
-                  />
-                  <Button type="submit" variant="secondary" className="whitespace-nowrap">
-                    Subscribe
+                <div>
+                  <Badge variant="outline" className="mb-2 border-background/30 text-background/70">
+                    Podcast
+                  </Badge>
+                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                    Voces de América Latina
+                  </h3>
+                  <p className="text-background/70 mb-4">
+                    Weekly conversations with journalists, activists, and changemakers across the region.
+                  </p>
+                  <Button variant="secondary" size="sm">
+                    Listen Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
-                </form>
-              )}
+                </div>
+              </div>
+
+              {/* Video */}
+              <div className="flex gap-6 items-start">
+                <div className="w-24 h-24 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Video className="h-12 w-12" />
+                </div>
+                <div>
+                  <Badge variant="outline" className="mb-2 border-background/30 text-background/70">
+                    Video
+                  </Badge>
+                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                    Documentary Series
+                  </h3>
+                  <p className="text-background/70 mb-4">
+                    In-depth visual storytelling from communities driving change across Latin America.
+                  </p>
+                  <Button variant="secondary" size="sm">
+                    Watch Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* Contributors / Masthead Section */}
+        <section className="container py-16">
+          <div className="text-center mb-12">
+            <h2 className="headline-section mb-4">Our Contributors</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Experienced journalists and community reporters bringing you solutions-oriented coverage from across Latin America.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {mockWriters.slice(0, 4).map((writer) => (
+              <Card key={writer.id} className="editorial-card" data-testid={`contributor-${writer.id}`}>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={writer.avatar}
+                      alt={writer.name}
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold truncate">{writer.name}</h3>
+                      <p className="text-sm text-muted-foreground">{writer.specialty}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <ContributorReputation contributor={writer} variant="default" />
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
+                    {writer.bio}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link href="/writers">
+              <Button variant="outline">
+                View All Contributors
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+
+        {/* Stats Bar */}
+        <section className="border-y">
+          <div className="container py-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  500+
+                </div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">Articles</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  50+
+                </div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">Contributors</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  12
+                </div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">Countries</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  3
+                </div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">Languages</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Newsletter */}
+        <Newsletter variant="hero" />
       </main>
 
       <Footer />
