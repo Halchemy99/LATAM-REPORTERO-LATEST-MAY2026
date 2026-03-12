@@ -1,0 +1,154 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "LATAM Reportero",
+      "tone": "Investigative, Authoritative, Unfiltered, Human",
+      "archetype": "The Truth Teller (Swiss & High-Contrast)",
+      "keywords": ["Credibility", "Depth", "Contrast", "Impact", "Clarity"]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Playfair Display, serif",
+        "body": "Merriweather, serif",
+        "ui": "Inter, sans-serif"
+      },
+      "scale": {
+        "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-none",
+        "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
+        "h3": "text-2xl md:text-3xl font-medium",
+        "body_large": "text-lg md:text-xl leading-relaxed",
+        "body_default": "text-base leading-relaxed",
+        "caption": "text-sm text-muted-foreground uppercase tracking-widest"
+      },
+      "imports": [
+        "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@400;500;600&display=swap"
+      ]
+    },
+    "colors": {
+      "light": {
+        "background": "#ffffff",
+        "foreground": "#09090b",
+        "card": "#ffffff",
+        "card_foreground": "#09090b",
+        "popover": "#ffffff",
+        "popover_foreground": "#09090b",
+        "primary": "#09090b",
+        "primary_foreground": "#fafafa",
+        "secondary": "#f4f4f5",
+        "secondary_foreground": "#18181b",
+        "muted": "#f4f4f5",
+        "muted_foreground": "#71717a",
+        "accent": "#f4f4f5",
+        "accent_foreground": "#18181b",
+        "destructive": "#ef4444",
+        "destructive_foreground": "#fafafa",
+        "border": "#e4e4e7",
+        "input": "#e4e4e7",
+        "ring": "#09090b"
+      },
+      "dark": {
+        "background": "#020617",
+        "foreground": "#fafafa",
+        "card": "#020617",
+        "card_foreground": "#fafafa",
+        "popover": "#020617",
+        "popover_foreground": "#fafafa",
+        "primary": "#fafafa",
+        "primary_foreground": "#18181b",
+        "secondary": "#27272a",
+        "secondary_foreground": "#fafafa",
+        "muted": "#27272a",
+        "muted_foreground": "#a1a1aa",
+        "accent": "#27272a",
+        "accent_foreground": "#fafafa",
+        "destructive": "#7f1d1d",
+        "destructive_foreground": "#fafafa",
+        "border": "#27272a",
+        "input": "#27272a",
+        "ring": "#d4d4d8"
+      },
+      "brand": {
+        "journalism_red": "#dc2626",
+        "trust_blue": "#1e3a8a",
+        "paper_off_white": "#f9f9f9"
+      }
+    },
+    "layout": {
+      "spacing_scale": {
+        "section_padding": "py-24 md:py-32",
+        "container_padding": "px-6 md:px-12",
+        "element_gap": "gap-8"
+      },
+      "grid_systems": {
+        "editorial_hero": "grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(200px,auto)]",
+        "article_list": "grid grid-cols-1 md:grid-cols-3 gap-8",
+        "sidebar_layout": "grid grid-cols-1 lg:grid-cols-12 gap-12"
+      },
+      "container_width": "max-w-7xl mx-auto"
+    },
+    "components": {
+      "buttons": {
+        "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-none h-12 px-8 font-serif uppercase tracking-wider text-sm transition-all",
+        "outline": "border-2 border-primary bg-transparent hover:bg-accent text-primary rounded-none h-12 px-8 font-serif uppercase tracking-wider text-sm transition-all",
+        "ghost": "hover:bg-accent hover:text-accent-foreground rounded-none h-12 px-6 font-medium transition-all"
+      },
+      "cards": {
+        "editorial": "group relative overflow-hidden bg-background border border-border/40 hover:border-primary/20 transition-colors duration-300",
+        "feature": "col-span-1 md:col-span-8 row-span-2 relative min-h-[500px] flex items-end p-8 text-white",
+        "compact": "flex gap-4 items-start border-b border-border/40 pb-6 last:border-0"
+      },
+      "inputs": {
+        "style": "flex h-12 w-full border-b-2 border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 rounded-none transition-colors"
+      }
+    },
+    "motion": {
+      "micro_interactions": {
+        "hover_lift": "hover:-translate-y-1 transition-transform duration-300",
+        "image_zoom": "group-hover:scale-105 transition-transform duration-700 ease-out",
+        "link_underline": "relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
+      },
+      "page_transitions": {
+        "initial": { "opacity": 0, "y": 20 },
+        "animate": { "opacity": 1, "y": 0 },
+        "exit": { "opacity": 0, "y": -20 },
+        "transition": { "duration": 0.4, "ease": "easeOut" }
+      }
+    },
+    "assets": {
+      "images": {
+        "hero_protest": "https://images.unsplash.com/photo-1577769893049-6f59780ef61f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHw0fHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85",
+        "community_crowd": "https://images.unsplash.com/photo-1727782376164-ceec7232a10d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwzfHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85",
+        "podcast_mic": "https://images.unsplash.com/photo-1709846487080-757b0c1af794?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwzfHxtaWNyb3Bob25lJTIwc3R1ZGlvJTIwcG9kY2FzdHxlbnwwfHx8fDE3NzMzNDU0Mjl8MA&ixlib=rb-4.1.0&q=85",
+        "studio_dark": "https://images.unsplash.com/photo-1709846486154-f9172678be6f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwyfHxtaWNyb3Bob25lJTIwc3R1ZGlvJTIwcG9kY2FzdHxlbnwwfHx8fDE3NzMzNDU0Mjl8MA&ixlib=rb-4.1.0&q=85",
+        "placeholder_news": "https://images.unsplash.com/photo-1605648933008-c8afe8772106?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwyfHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85"
+      },
+      "icons": {
+        "library": "lucide-react",
+        "style": "stroke-[1.5px] w-5 h-5"
+      }
+    },
+    "accessibility": {
+      "contrast_check": "Ensure all text meets WCAG AA (4.5:1) minimum. Use APCA for large text.",
+      "reduced_motion": "Respect 'prefers-reduced-motion'. disable parallax and heavy transitions.",
+      "focus_states": "Visible focus ring (2px solid primary) on all interactive elements."
+    }
+  },
+  "instructions_to_main_agent": [
+    "INSTALL FONTS: Add the Google Fonts import to your index.css or index.html immediately.",
+    "THEME: Implement the 'paper' feel. Avoid pure white backgrounds in sections; use subtle noise or off-white (#f9f9f9) to reduce eye strain, but keep text high-contrast.",
+    "LAYOUT: Homepage MUST use the 'Editorial Hero' grid. Do not stack everything vertically. Use the 'Bento' concept but for news (Featured, Opinion, Latest).",
+    "COMPONENTS: Use Shadcn for functional UI (Modals, Forms) but style them to look 'Editorial' (sharp corners, serif fonts in headers).",
+    "NAVIGATION: Sticky header. White background. Black text. Simple. High contrast.",
+    "ARTICLE PAGE: This is the core product. Center the content. Max-width 65ch for readability. Large, dramatic hero image.",
+    "IMAGES: Use the provided Unsplash URLs for 'Featured' and 'Community' sections. Do not use placeholders if possible.",
+    "TESTING: Add 'data-testid' to all interactive elements (buttons, links, inputs).",
+    "PERFORMANCE: Use 'next/image' for all images. Lazy load below the fold."
+  ],
+  "universal_guidelines": [
+    "Do not use generic 'Inter' for headings. Use 'Playfair Display'.",
+    "Do not use gradients for text or backgrounds unless it's a specific 'Breaking News' banner.",
+    "Use 2x more whitespace than you think is necessary.",
+    "Never use 'lorem ipsum' in final output if possible; use realistic news headlines.",
+    "Ensure the 'Contributor' section feels like a 'Masthead' (list of names/roles) rather than a social media profile grid."
+  ]
+}
