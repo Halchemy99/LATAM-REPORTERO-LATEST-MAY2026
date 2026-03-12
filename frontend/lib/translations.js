@@ -315,3 +315,162 @@ export const es = {
     society: 'Sociedad'
   }
 };
+
+// Portuguese translations
+export const pt = {
+  nav: {
+    solutions: 'Soluções',
+    communities: 'Comunidades',
+    writers: 'Escritores',
+    pricing: 'Preços',
+    login: 'Entrar',
+    signup: 'Cadastrar',
+    logout: 'Sair',
+    dashboard: 'Painel',
+    profile: 'Perfil',
+    bookmarks: 'Salvos',
+    submit: 'Enviar História',
+    admin: 'Admin',
+    editor: 'Editor'
+  },
+  hero: {
+    title: 'Jornalismo Orientado a Soluções para América Latina',
+    subtitle: 'Descubra histórias que importam. Cada artigo segue Problema → Soluções → Impacto.',
+    cta: 'Explorar Histórias'
+  },
+  news: {
+    allStories: 'Todas as Histórias',
+    humanWritten: 'Escrito por Humanos',
+    aiVerified: 'Verificado por IA',
+    readMore: 'Ler Mais',
+    minuteRead: 'min de leitura',
+    featured: 'Destaque',
+    trending: 'Tendência',
+    latest: 'Mais Recente'
+  },
+  article: {
+    problem: 'O Problema',
+    solutions: 'Soluções',
+    impact: 'Impacto',
+    sources: 'Fontes',
+    relatedArticles: 'Artigos Relacionados',
+    comments: 'Comentários',
+    addComment: 'Adicionar um comentário...',
+    supportWriter: 'Apoiar Este Escritor',
+    bookmark: 'Salvar',
+    share: 'Compartilhar',
+    trustScore: 'Pontuação de Confiança'
+  },
+  auth: {
+    loginTitle: 'Bem-vindo',
+    loginSubtitle: 'Entre para acessar conteúdo premium',
+    signupTitle: 'Junte-se ao LATAM Reportero',
+    signupSubtitle: 'Acesse jornalismo orientado a soluções',
+    email: 'E-mail',
+    password: 'Senha',
+    forgotPassword: 'Esqueceu a senha?',
+    noAccount: 'Não tem conta?',
+    hasAccount: 'Já tem conta?',
+    demoAccounts: 'Contas Demo',
+    demoPayment: 'Métodos de Pagamento Demo'
+  },
+  pricing: {
+    title: 'Escolha Seu Plano',
+    subtitle: 'Apoie o jornalismo independente e desbloqueie conteúdo premium',
+    free: 'Grátis',
+    freeDesc: 'Conteúdo verificado por IA',
+    monthly: 'Mensal',
+    monthlyDesc: 'Acesso completo',
+    annual: 'Anual',
+    annualDesc: 'Melhor valor',
+    lifetime: 'Vitalício',
+    lifetimeDesc: 'Acesso para sempre',
+    perMonth: '/mês',
+    perYear: '/ano',
+    oneTime: 'pagamento único',
+    currentPlan: 'Plano Atual',
+    upgrade: 'Atualizar',
+    features: {
+      aiContent: 'Acesso a conteúdo verificado por IA',
+      humanContent: 'Artigos premium escritos por humanos',
+      communities: 'Discussões comunitárias',
+      bookmark: 'Salvar artigos',
+      trustScore: 'Avaliar pontuação de confiança',
+      micropayments: 'Apoiar escritores diretamente',
+      earlyAccess: 'Acesso antecipado a histórias'
+    }
+  },
+  footer: {
+    about: 'Sobre',
+    categories: 'Categorias',
+    community: 'Comunidade',
+    legal: 'Legal',
+    privacy: 'Política de Privacidade',
+    terms: 'Termos de Serviço',
+    copyright: '© 2025 LATAM Reportero. Todos os direitos reservados.',
+    description: 'Jornalismo orientado a soluções cobrindo América Latina'
+  },
+  common: {
+    loading: 'Carregando...',
+    error: 'Ocorreu um erro',
+    save: 'Salvar',
+    cancel: 'Cancelar',
+    submit: 'Enviar',
+    delete: 'Excluir',
+    search: 'Buscar',
+    close: 'Fechar'
+  },
+  dashboard: {
+    welcome: 'Bem-vindo',
+    stats: 'Suas Estatísticas',
+    recentArticles: 'Artigos Recentes',
+    bookmarked: 'Salvos',
+    articlesRead: 'Artigos Lidos',
+    subscription: 'Assinatura'
+  },
+  contributor: {
+    submitStory: 'Enviar uma História',
+    myStories: 'Minhas Histórias',
+    drafts: 'Rascunhos',
+    pending: 'Em Revisão',
+    published: 'Publicados',
+    rejected: 'Rejeitados'
+  },
+  editor: {
+    reviewQueue: 'Fila de Revisão',
+    approve: 'Aprovar',
+    reject: 'Rejeitar',
+    feedback: 'Feedback',
+    pendingReview: 'Pendente de Revisão'
+  },
+  admin: {
+    userManagement: 'Gestão de Usuários',
+    systemStats: 'Estatísticas do Sistema',
+    roles: 'Funções',
+    suspended: 'Suspensos',
+    totalUsers: 'Usuários Totais',
+    totalArticles: 'Artigos Totais',
+    revenue: 'Receita'
+  },
+  regions: {
+    all: 'Todas as Regiões',
+    mexico: 'México',
+    brazil: 'Brasil',
+    argentina: 'Argentina',
+    chile: 'Chile',
+    colombia: 'Colômbia',
+    peru: 'Peru',
+    venezuela: 'Venezuela',
+    ecuador: 'Equador'
+  },
+  categories: {
+    politics: 'Política',
+    economy: 'Economia',
+    environment: 'Meio Ambiente',
+    health: 'Saúde',
+    education: 'Educação',
+    technology: 'Tecnologia',
+    culture: 'Cultura',
+    society: 'Sociedade'
+  }
+};

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { en, es } from './translations';
+import { en, es, pt } from './translations';
 import { createClient } from './supabase/client';
 import { demoUsers } from './mock-data';
 
@@ -41,7 +41,7 @@ export function I18nProvider({ children }) {
   }, []);
 
   const t = useCallback((key) => {
-    const translations = locale === 'es' ? es : en;
+    const translations = locale === 'es' ? es : locale === 'pt' ? pt : en;
     const keys = key.split('.');
     let value = translations;
     for (const k of keys) {

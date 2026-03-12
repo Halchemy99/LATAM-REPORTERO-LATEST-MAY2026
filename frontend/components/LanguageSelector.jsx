@@ -40,11 +40,16 @@ const INDIGENOUS_LANGUAGES = [
 ];
 
 export default function LanguageSelector({ variant = 'dropdown' }) {
-  const { language, setLanguage } = useTranslation();
+  const { locale, setLocale } = useTranslation();
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [selectedIndigenous, setSelectedIndigenous] = useState(null);
 
-  const currentLang = ACTIVE_LANGUAGES.find(l => l.code === language) || ACTIVE_LANGUAGES[0];
+  const currentLang = ACTIVE_LANGUAGES.find(l => l.code === locale) || ACTIVE_LANGUAGES[0];
+
+  const handleLanguageSelect = (langCode) => {
+    // All three languages now have translations
+    setLocale(langCode);
+  };
 
   const handleIndigenousSelect = (lang) => {
     setSelectedIndigenous(lang);
@@ -61,9 +66,9 @@ export default function LanguageSelector({ variant = 'dropdown' }) {
             {ACTIVE_LANGUAGES.map(lang => (
               <button
                 key={lang.code}
-                onClick={() => setLanguage(lang.code)}
+                onClick={() => handleLanguageSelect(lang.code)}
                 className={`p-4 rounded-lg border text-left transition-all ${
-                  language === lang.code 
+                  locale === lang.code 
                     ? 'border-primary bg-primary/5' 
                     : 'border-border hover:border-primary/50'
                 }`}
@@ -167,8 +172,8 @@ export default function LanguageSelector({ variant = 'dropdown' }) {
           {ACTIVE_LANGUAGES.map(lang => (
             <DropdownMenuItem
               key={lang.code}
-              onClick={() => setLanguage(lang.code)}
-              className={language === lang.code ? 'bg-accent' : ''}
+              onClick={() => handleLanguageSelect(lang.code)}
+              className={locale === lang.code ? 'bg-accent' : ''}
               data-testid={`lang-option-${lang.code}`}
             >
               <div className="flex justify-between w-full">
