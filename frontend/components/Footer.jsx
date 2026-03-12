@@ -85,7 +85,7 @@ export default function Footer() {
               <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/latam-reportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn">
                 <Linkedin className="h-5 w-5" />
               </a>
               <a href="mailto:contact@latamreportero.com" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Email">
