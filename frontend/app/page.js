@@ -414,10 +414,12 @@ export default function HomePage() {
         {/* Top Writers Section */}
         <section className="container py-12">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="headline-section">{t('news.topWriters')}</h2>
+            <h2 className="headline-section">
+              {locale === 'es' ? 'Escritores Destacados' : locale === 'pt' ? 'Escritores em Destaque' : 'Top Writers'}
+            </h2>
             <Link href="/writers">
               <Button variant="ghost" className="group">
-                {t('news.allWriters')}
+                {locale === 'es' ? 'Ver Todos' : locale === 'pt' ? 'Ver Todos' : 'View All'}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
