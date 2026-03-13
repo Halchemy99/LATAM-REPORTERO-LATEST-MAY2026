@@ -776,3 +776,117 @@ export async function publishScheduledArticles() {
   return scheduledArticles.length;
 }
 
+// ============================================
+// ARTICLE COMMENTS / EDITORIAL NOTES
+// ============================================
+
+export async function getArticleComments(articleId) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('article_comments')
+    .select(`
+      *,
+      user:users(id, email, full_name, avatar_url)
+    `)
+    .eq('article_id', articleId)
+    .order('created_at', { ascending: true });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+export async function addArticleComment(articleId, userId, content, blockId = null) {
+  const supabase = createClient();
+  
+  const commentData = {
+    article_id: articleId,
+    user_id: userId,
+    content: content,
+    block_id: blockId, // Optional: reference to a specific block
+    is_resolved: false,
+    created_at: new Date().toISOString()
+  };
+  
+  const { data, error } = await supabase
+    .from('article_comments')
+    .insert(commentData)
+    .select(`
+      *,
+      user:users(id, email, full_name, avatar_url)
+    `)
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function updateComment(commentId, updates) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('article_comments')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', commentId)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function resolveComment(commentId, resolved = true) {
+  return updateComment(commentId, { is_resolved: resolved });
+}
+
+export async function deleteComment(commentId) {
+  const supabase = createClient();
+  
+  const { error } = await supabase
+    .from('article_comments')
+    .delete()
+    .eq('id', commentId);
+  
+  if (error) throw error;
+  return true;
+}
+
+export async function replyToComment(commentId, userId, content) {
+  const supabase = createClient();
+  
+  // Get original comment to get article_id
+  const { data: originalComment, error: fetchError } = await supabase
+    .from('article_comments')
+    .select('article_id, block_id')
+    .eq('id', commentId)
+    .single();
+  
+  if (fetchError) throw fetchError;
+  
+  const replyData = {
+    article_id: originalComment.article_id,
+    user_id: userId,
+    content: content,
+    block_id: originalComment.block_id,
+    parent_id: commentId,
+    is_resolved: false,
+    created_at: new Date().toISOString()
+  };
+  
+  const { data, error } = await supabase
+    .from('article_comments')
+    .insert(replyData)
+    .select(`
+      *,
+      user:users(id, email, full_name, avatar_url)
+    `)
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+

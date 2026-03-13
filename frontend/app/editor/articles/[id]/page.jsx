@@ -20,6 +20,7 @@ import {
 } from '@/lib/supabase/cms';
 import Header from '@/components/Header';
 import BlockEditor from '@/components/cms/BlockEditor';
+import ArticleComments from '@/components/cms/ArticleComments';
 import { ArticleContent } from '@/components/cms/BlockRenderer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -873,6 +874,9 @@ export default function EditArticlePage() {
                   </Tabs>
                 </CardContent>
               </Card>
+              
+              {/* Editorial Notes / Comments */}
+              <ArticleComments articleId={params.id} className="mt-6" />
             </div>
           </div>
         )}
