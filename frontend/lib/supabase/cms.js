@@ -630,3 +630,149 @@ export function calculateReadTime(blocks, locale = 'en') {
   
   return Math.max(1, Math.ceil(wordCount / 200)); // 200 words per minute
 }
+
+// ============================================
+// VERSION HISTORY
+// ============================================
+
+export async function saveArticleVersion(articleId, articleData, contentBlocks, userId, changeNote = '') {
+  const supabase = createClient();
+  
+  const versionData = {
+    article_id: articleId,
+    version_data: {
+      article: articleData,
+      content_blocks: contentBlocks
+    },
+    created_by: userId,
+    change_note: changeNote,
+    created_at: new Date().toISOString()
+  };
+  
+  const { data, error } = await supabase
+    .from('article_versions')
+    .insert(versionData)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function getArticleVersions(articleId) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('article_versions')
+    .select('*')
+    .eq('article_id', articleId)
+    .order('created_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getArticleVersion(versionId) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('article_versions')
+    .select('*')
+    .eq('id', versionId)
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function restoreArticleVersion(articleId, versionId) {
+  const supabase = createClient();
+  
+  // Get the version data
+  const version = await getArticleVersion(versionId);
+  if (!version) throw new Error('Version not found');
+  
+  const { article, content_blocks } = version.version_data;
+  
+  // Update the article with version data (excluding id and timestamps)
+  const { id, created_at, updated_at, ...articleFields } = article;
+  
+  await updateArticle(articleId, {
+    ...articleFields,
+    content_blocks
+  });
+  
+  return true;
+}
+
+// ============================================
+// SCHEDULED PUBLISHING
+// ============================================
+
+export async function scheduleArticle(articleId, scheduledAt) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('cms_articles')
+    .update({ 
+      status: 'scheduled',
+      scheduled_at: scheduledAt
+    })
+    .eq('id', articleId)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function unscheduleArticle(articleId) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('cms_articles')
+    .update({ 
+      status: 'draft',
+      scheduled_at: null
+    })
+    .eq('id', articleId)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+export async function getScheduledArticles() {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('cms_articles')
+    .select('*')
+    .eq('status', 'scheduled')
+    .not('scheduled_at', 'is', null)
+    .lte('scheduled_at', new Date().toISOString());
+  
+  if (error) throw error;
+  return data || [];
+}
+
+export async function publishScheduledArticles() {
+  const supabase = createClient();
+  
+  // Get all articles that should be published
+  const scheduledArticles = await getScheduledArticles();
+  
+  for (const article of scheduledArticles) {
+    await supabase
+      .from('cms_articles')
+      .update({ 
+        status: 'published',
+        published_at: new Date().toISOString()
+      })
+      .eq('id', article.id);
+  }
+  
+  return scheduledArticles.length;
+}
+
