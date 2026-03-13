@@ -45,26 +45,44 @@ export default function HomePage() {
   
   // Helper to get category name
   const getCategoryName = (article) => {
-    if (usingCMS && article.category) {
-      return article.category[`name_${locale}`] || article.category.name_en || article.category.slug;
+    if (usingCMS) {
+      if (article.category) {
+        return article.category[`name_${locale}`] || article.category.name_en || article.category.slug;
+      }
+      return locale === 'es' ? 'General' : locale === 'pt' ? 'Geral' : 'General';
     }
+    if (!article.category) return 'General';
     return t(`categories.${article.category}`) || article.category;
   };
   
   // Helper to get region
   const getRegion = (article) => {
     if (usingCMS) {
-      return article.region || 'all-regions';
+      return article.region || 'latin-america';
     }
-    return article.region;
+    return article.region || 'latin-america';
+  };
+  
+  // Helper to get region display name
+  const getRegionName = (article) => {
+    const region = getRegion(article);
+    const regionName = t(`regions.${region}`);
+    // If translation returns the key itself, show a fallback
+    if (regionName === `regions.${region}` || !regionName) {
+      return locale === 'es' ? 'América Latina' : locale === 'pt' ? 'América Latina' : 'Latin America';
+    }
+    return regionName;
   };
   
   // Helper to get author name
   const getAuthorName = (article) => {
-    if (usingCMS && article.author) {
-      return article.author.name || 'Unknown Author';
+    if (usingCMS) {
+      if (article.author) {
+        return article.author.name || 'Staff Writer';
+      }
+      return 'Staff Writer';
     }
-    return article.author?.name || 'Unknown Author';
+    return article.author?.name || 'Staff Writer';
   };
   
   // Helper to get author avatar
@@ -222,7 +240,7 @@ export default function HomePage() {
                 >
                   <Link href={`/article/${getSlug(article)}`} className="block">
                     <Badge className="mb-2 category-tag-beige text-xs uppercase tracking-wider">
-                      {t(`regions.${getRegion(article)}`) || getRegion(article)}
+                      {getRegionName(article)}
                     </Badge>
                     <h3 className="headline-card mb-2 group-hover:text-[#8c52ff] transition-colors">
                       {getTitle(article)}
