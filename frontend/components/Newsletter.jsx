@@ -103,13 +103,13 @@ export default function Newsletter({ variant = 'default', className = '' }) {
   // Hero variant - large, prominent
   if (variant === 'hero') {
     return (
-      <div className={`newsletter-section text-center ${className}`} data-testid="newsletter-hero">
+      <div className={`text-center text-white ${className}`} style={{ background: 'linear-gradient(135deg, #6111ff 0%, #8c52ff 100%)' }} data-testid="newsletter-hero">
         <div className="max-w-2xl mx-auto px-6 py-16">
           <Mail className="h-12 w-12 mx-auto mb-6 opacity-80" />
-          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Raleway, sans-serif' }}>
             Stay Informed
           </h2>
-          <p className="text-lg mb-8 opacity-90">
+          <p className="text-lg mb-8 opacity-90" style={{ fontFamily: 'Source Serif 4, serif' }}>
             Get solutions-oriented journalism delivered weekly. 
             Stories that matter for Latin America.
           </p>
@@ -127,15 +127,14 @@ export default function Newsletter({ variant = 'default', className = '' }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-inherit placeholder:text-inherit/60 h-12"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 h-12"
                 data-testid="newsletter-email-hero"
               />
               <Button 
                 type="submit" 
-                variant="secondary" 
                 size="lg"
                 disabled={isLoading}
-                className="whitespace-nowrap h-12"
+                className="whitespace-nowrap h-12 bg-white text-[#6111ff] hover:bg-white/90"
                 data-testid="newsletter-submit-hero"
               >
                 {isLoading ? (
@@ -160,13 +159,13 @@ export default function Newsletter({ variant = 'default', className = '' }) {
 
   // Default variant
   return (
-    <div className={`bg-muted/50 rounded-lg p-8 ${className}`} data-testid="newsletter-default">
+    <div className={`bg-[#E7DAC4]/30 rounded-lg p-8 ${className}`} data-testid="newsletter-default">
       <div className="max-w-xl mx-auto text-center">
-        <Mail className="h-10 w-10 mx-auto mb-4 text-primary" />
-        <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+        <Mail className="h-10 w-10 mx-auto mb-4 text-[#8c52ff]" />
+        <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
           Subscribe to our newsletter
         </h3>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
           Get the latest solutions journalism from Latin America delivered to your inbox every week.
         </p>
         
@@ -183,14 +182,14 @@ export default function Newsletter({ variant = 'default', className = '' }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 h-12"
+              className="flex-1 h-12 border-[#8c52ff]/30 focus:border-[#8c52ff]"
               data-testid="newsletter-email-default"
             />
             <Button 
               type="submit" 
               size="lg"
               disabled={isLoading}
-              className="h-12"
+              className="h-12 bg-gradient-to-r from-[#8c52ff] to-[#6111ff] text-white hover:shadow-lg hover:shadow-[#8c52ff]/30 transition-all"
               data-testid="newsletter-submit-default"
             >
               {isLoading ? (

@@ -67,24 +67,24 @@ export default function HomePage() {
             {featuredArticle && (
               <article className="editorial-grid-hero group" data-testid="featured-article">
                 <Link href={`/article/${featuredArticle.slug}`} className="block">
-                  <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden mb-4">
+                  <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden mb-4 rounded-lg">
                     <img
                       src={featuredArticle.mainImage}
                       alt={L(featuredArticle.title)}
                       className="w-full h-full object-cover image-zoom"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <Badge className="mb-3 bg-red-600 hover:bg-red-700 uppercase tracking-wider text-xs">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+                      <Badge className="mb-3 bg-gradient-to-r from-[#8c52ff] to-[#6111ff] hover:from-[#9d6bff] hover:to-[#7a2fff] uppercase tracking-wider text-xs border-0">
                         {t(`categories.${featuredArticle.category}`) || featuredArticle.category}
                       </Badge>
                       <h1 className="headline-hero text-white mb-3">
                         {L(featuredArticle.title)}
                       </h1>
-                      <p className="text-lg opacity-90 mb-4 max-w-2xl">
+                      <p className="text-lg opacity-90 mb-4 max-w-2xl" style={{ fontFamily: 'Source Serif 4, serif' }}>
                         {L(featuredArticle.excerpt)}
                       </p>
-                      <div className="flex items-center gap-4 text-sm opacity-80">
+                      <div className="flex items-center gap-4 text-sm opacity-80" style={{ fontFamily: 'Raleway, sans-serif' }}>
                         <span>{locale === 'es' ? 'Por' : locale === 'pt' ? 'Por' : 'By'} {featuredArticle.author.name}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
@@ -103,20 +103,20 @@ export default function HomePage() {
               {sideArticles.map((article, index) => (
                 <article 
                   key={article.id} 
-                  className={`group ${index < sideArticles.length - 1 ? 'border-b pb-4' : ''}`}
+                  className={`group ${index < sideArticles.length - 1 ? 'border-b border-[#8c52ff]/10 pb-4' : ''}`}
                   data-testid={`side-article-${index}`}
                 >
                   <Link href={`/article/${article.slug}`} className="block">
-                    <Badge variant="outline" className="mb-2 text-xs uppercase tracking-wider">
+                    <Badge className="mb-2 category-tag-beige text-xs uppercase tracking-wider">
                       {t(`regions.${article.region}`) || article.region}
                     </Badge>
-                    <h3 className="headline-card mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="headline-card mb-2 group-hover:text-[#8c52ff] transition-colors">
                       {L(article.title)}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2" style={{ fontFamily: 'Source Serif 4, serif' }}>
                       {L(article.excerpt)}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground" style={{ fontFamily: 'Raleway, sans-serif' }}>
                       <span>{article.author.name}</span>
                       <span>•</span>
                       <span>{article.readTime} min</span>
@@ -195,27 +195,27 @@ export default function HomePage() {
         </section>
 
         {/* Media Section - Podcast/Video Teasers */}
-        <section className="bg-foreground text-background py-16">
-          <div className="container">
+        <section className="py-16" style={{ background: 'linear-gradient(135deg, #6111ff 0%, #8c52ff 100%)' }}>
+          <div className="container text-white">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Podcast */}
               <div className="flex gap-6 items-start">
-                <div className="w-24 h-24 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
                   <Headphones className="h-12 w-12" />
                 </div>
                 <div>
-                  <Badge variant="outline" className="mb-2 border-background/30 text-background/70">
+                  <Badge variant="outline" className="mb-2 border-white/30 text-white/70">
                     Podcast
                   </Badge>
-                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
                     Voces de América Latina
                   </h3>
-                  <p className="text-background/70 mb-4">
+                  <p className="text-white/70 mb-4" style={{ fontFamily: 'Source Serif 4, serif' }}>
                     {locale === 'es' ? 'Conversaciones semanales con periodistas, activistas y agentes de cambio de toda la región.' :
                      locale === 'pt' ? 'Conversas semanais com jornalistas, ativistas e agentes de mudança de toda a região.' :
                      'Weekly conversations with journalists, activists, and changemakers across the region.'}
                   </p>
-                  <Button variant="secondary" size="sm">
+                  <Button className="bg-white text-[#6111ff] hover:bg-white/90" size="sm">
                     {locale === 'es' ? 'Escuchar Ahora' : locale === 'pt' ? 'Ouvir Agora' : 'Listen Now'}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -224,22 +224,22 @@ export default function HomePage() {
 
               {/* Video */}
               <div className="flex gap-6 items-start">
-                <div className="w-24 h-24 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
                   <Video className="h-12 w-12" />
                 </div>
                 <div>
-                  <Badge variant="outline" className="mb-2 border-background/30 text-background/70">
+                  <Badge variant="outline" className="mb-2 border-white/30 text-white/70">
                     Video
                   </Badge>
-                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
                     {locale === 'es' ? 'Serie Documental' : locale === 'pt' ? 'Série Documental' : 'Documentary Series'}
                   </h3>
-                  <p className="text-background/70 mb-4">
+                  <p className="text-white/70 mb-4" style={{ fontFamily: 'Source Serif 4, serif' }}>
                     {locale === 'es' ? 'Narrativas visuales profundas de comunidades que impulsan el cambio en América Latina.' :
                      locale === 'pt' ? 'Narrativas visuais profundas de comunidades que impulsionam mudanças na América Latina.' :
                      'In-depth visual storytelling from communities driving change across Latin America.'}
                   </p>
-                  <Button variant="secondary" size="sm">
+                  <Button className="bg-white text-[#6111ff] hover:bg-white/90" size="sm">
                     {locale === 'es' ? 'Ver Ahora' : locale === 'pt' ? 'Assistir Agora' : 'Watch Now'}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -299,38 +299,38 @@ export default function HomePage() {
         </section>
 
         {/* Stats Bar */}
-        <section className="border-y">
+        <section className="border-y border-[#8c52ff]/10 bg-[#E7DAC4]/20">
           <div className="container py-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   500+
                 </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">
+                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   {locale === 'es' ? 'Artículos' : locale === 'pt' ? 'Artigos' : 'Articles'}
                 </div>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   50+
                 </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">
+                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   {locale === 'es' ? 'Colaboradores' : locale === 'pt' ? 'Colaboradores' : 'Contributors'}
                 </div>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   12
                 </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">
+                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   {locale === 'es' ? 'Países' : locale === 'pt' ? 'Países' : 'Countries'}
                 </div>
               </div>
               <div>
-                <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
+                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   3
                 </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">
+                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
                   {locale === 'es' ? 'Idiomas' : locale === 'pt' ? 'Idiomas' : 'Languages'}
                 </div>
               </div>

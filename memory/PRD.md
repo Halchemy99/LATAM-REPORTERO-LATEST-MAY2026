@@ -55,15 +55,21 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - ✅ Preview mode
 - ✅ Block reordering
 
-### 4. Design Direction (Implemented)
-- ✅ NYT-style editorial design
-- ✅ Playfair Display serif font for headlines
-- ✅ Merriweather for body text
-- ✅ Inter for UI elements
-- ✅ Clean black/white aesthetic with red accents
+### 4. Design Direction (Updated Dec 2025)
+- ✅ Brand Guidelines Implementation:
+  - **Primary Colors:** Light Purple (#8c52ff), Dark Purple (#6111ff)
+  - **Secondary Colors:** Offset Beige (#E7DAC4), Brand White (#f9f6f6), Off-Black (#1a1919)
+- ✅ Typography:
+  - Headlines: Raleway (bold, sans-serif)
+  - Subheadings: Marcellus (elegant serif)
+  - Body: Source Serif 4 / Times New Roman Medium
+  - Captions: Source Serif 4 Italic
+- ✅ Purple gradient buttons and accents
+- ✅ Beige category tags
 - ✅ Editorial grid layout
-- ✅ Podcast/Video section
-- ✅ Stats bar
+- ✅ Podcast/Video section with purple gradient background
+- ✅ Stats bar with gradient text
+- ✅ Newsletter section with purple gradient
 
 ### 5. Crypto Donations (Implemented)
 - ✅ MetaMask integration
@@ -114,6 +120,21 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Updated Homepage (NYT-style)
 - Updated Pricing page (USD/MXN, crypto)
 - Updated Footer
+
+### Session 3 (Brand Guidelines - Dec 2025)
+- Applied brand guidelines from PDF document
+- Updated color palette: Light Purple (#8c52ff), Dark Purple (#6111ff), Beige (#E7DAC4)
+- Typography: Raleway (headlines), Marcellus (subheadings), Source Serif 4 (body)
+- Purple gradient buttons and newsletter sections
+- Beige accent tags for regions
+- Updated Header with gradient logo and purple accents
+- Updated Footer with beige background tint
+- Updated Homepage with brand colors throughout
+- Updated Article pages with brand styling
+- Fixed article page localization errors (getLocalizedContent)
+- Fixed Writers page localization errors
+- Fixed TrustScoreRating null check
+- Created /app/design_guidelines.md for brand reference
 
 ## Backlog / Future Tasks
 

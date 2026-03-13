@@ -36,24 +36,24 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href="/" className="flex items-center space-x-2 group">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-foreground flex items-center justify-center">
-              <span className="text-background font-bold text-lg" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>L</span>
+            <div className="w-9 h-9 bg-gradient-to-br from-[#8c52ff] to-[#6111ff] flex items-center justify-center rounded-sm group-hover:shadow-lg group-hover:shadow-[#8c52ff]/30 transition-shadow duration-300">
+              <span className="text-white font-bold text-lg" style={{ fontFamily: 'Raleway, sans-serif' }}>L</span>
             </div>
-            <span className="ml-2 text-xl font-bold tracking-tight" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
-              LATAM Reportero
+            <span className="ml-2.5 text-xl font-bold tracking-tight" style={{ fontFamily: 'Raleway, sans-serif' }}>
+              LATAM <span className="text-[#8c52ff]">Reportero</span>
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors link-underline"
+              className="nav-link link-underline"
             >
               {link.label}
             </Link>
@@ -69,8 +69,8 @@ export default function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center space-x-2" data-testid="user-menu-trigger">
-                  <User className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 border-[#8c52ff]/30 hover:border-[#8c52ff] hover:bg-[#8c52ff]/5" data-testid="user-menu-trigger">
+                  <User className="h-4 w-4 text-[#8c52ff]" />
                   <span className="hidden sm:inline max-w-[100px] truncate">{user.name || user.email}</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -131,10 +131,10 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" className="hover:text-[#8c52ff]" asChild>
                 <Link href="/auth/login">{t('nav.login')}</Link>
               </Button>
-              <Button size="sm" className="bg-foreground text-background hover:bg-foreground/90" asChild>
+              <Button size="sm" className="bg-gradient-to-r from-[#8c52ff] to-[#6111ff] text-white hover:shadow-lg hover:shadow-[#8c52ff]/30 transition-all duration-300" asChild>
                 <Link href="/auth/signup">{t('nav.signup')}</Link>
               </Button>
             </div>
@@ -143,7 +143,7 @@ export default function Header() {
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-[#8c52ff]/10">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -154,7 +154,8 @@ export default function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    className="text-lg font-semibold text-foreground hover:text-[#8c52ff] transition-colors"
+                    style={{ fontFamily: 'Raleway, sans-serif' }}
                   >
                     {link.label}
                   </Link>
@@ -164,14 +165,16 @@ export default function Header() {
                     <Link
                       href="/auth/login"
                       onClick={() => setMobileOpen(false)}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                      className="text-lg font-semibold text-foreground hover:text-[#8c52ff] transition-colors"
+                      style={{ fontFamily: 'Raleway, sans-serif' }}
                     >
                       {t('nav.login')}
                     </Link>
                     <Link
                       href="/auth/signup"
                       onClick={() => setMobileOpen(false)}
-                      className="text-lg font-medium text-primary"
+                      className="text-lg font-semibold text-[#8c52ff]"
+                      style={{ fontFamily: 'Raleway, sans-serif' }}
                     >
                       {t('nav.signup')}
                     </Link>
