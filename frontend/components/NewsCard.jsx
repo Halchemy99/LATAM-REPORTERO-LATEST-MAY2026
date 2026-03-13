@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslation } from '@/lib/providers';
+import { getLocalizedContent } from '@/lib/mock-data';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Clock, Bot, User } from 'lucide-react';
@@ -9,6 +10,9 @@ import { format } from 'date-fns';
 
 export default function NewsCard({ article }) {
   const { t, locale } = useTranslation();
+  
+  // Helper to safely get localized content
+  const getContent = (content) => getLocalizedContent(content, locale);
 
   const categoryColors = {
     environment: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
@@ -58,10 +62,10 @@ export default function NewsCard({ article }) {
         </div>
         <CardContent className="p-4">
           <h3 className="font-semibold text-lg line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-            {article.title}
+            {getContent(article.title)}
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-            {article.excerpt}
+            {getContent(article.excerpt)}
           </p>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
