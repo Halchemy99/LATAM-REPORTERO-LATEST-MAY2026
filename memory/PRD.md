@@ -177,26 +177,42 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Updated article page to read from CMS (with mock data fallback)
 - Updated editor dashboard with CMS links
 
+### Session 5 (CMS Testing & Bug Fixes - March 2026)
+- Fixed dashboard localization bug in NewsCard.jsx (added getLocalizedContent helper)
+- Fixed CMS article save failing with UUID validation error (empty strings → null for category_id, author_id)
+- Configured Supabase RLS policies for users and cms_articles tables
+- Successfully tested full CMS workflow: login → create article → save draft → view in list
+- Test article created: "CMS Test - Renewable Energy in Chile"
+
 ## Backlog / Future Tasks
 
 ### P0 (Critical)
-- [x] Create Supabase Storage bucket named `cms-media` for media uploads (USER ACTION REQUIRED)
+- [x] Create Supabase Storage bucket named `cms-media` for media uploads (DONE)
+- [x] Configure RLS policies for users, cms_articles tables (DONE)
+- [x] Test CMS article creation flow (DONE)
 - [ ] Integrate Stripe when keys available
 - [ ] Add newsletter backend (email service integration)
 
 ### P1 (High Priority)
-- [ ] Create first CMS article and test full flow
+- [ ] Connect homepage to CMS (replace mock data)
+- [ ] Connect writers page to CMS (replace mock data)
+- [ ] Test media upload to cms-media bucket
+- [ ] Implement MetaMask crypto donations
 - [ ] Implement article upvoting system
-- [ ] Add podcast/video content types
-- [ ] Real-time community notifications
 
 ### P2 (Medium Priority)
+- [ ] Migrate existing mock articles to CMS
+- [ ] Add podcast/video content types
 - [ ] Indigenous language translations
 - [ ] Contributor profile pages
 - [ ] Article comments system
+
+### P3 (Low Priority)
+- [ ] Build remaining complex CMS block components (chart, map_embed)
+- [ ] Create "Coming Soon" pages for indigenous languages
 - [ ] Mobile app consideration
 
 ## URLs & Credentials
 - **Preview URL:** https://cms-testing-flow.preview.emergentagent.com
-- **Admin Login:** oket.hoxha@gmail.com / emergent2026
+- **Admin Login:** oket.hoxha@gmail.com / emergent2030
 - **Supabase:** https://yrvrpmoidlvrtukvrvnv.supabase.co

@@ -115,10 +115,19 @@ export async function createArticle(articleData) {
   
   const { content_blocks, tags, ...article } = articleData;
   
+  // Clean up empty string values for UUID fields (convert to null)
+  const cleanedArticle = { ...article };
+  const uuidFields = ['category_id', 'author_id'];
+  uuidFields.forEach(field => {
+    if (cleanedArticle[field] === '' || cleanedArticle[field] === undefined) {
+      cleanedArticle[field] = null;
+    }
+  });
+  
   // Create article
   const { data: newArticle, error } = await supabase
     .from('cms_articles')
-    .insert(article)
+    .insert(cleanedArticle)
     .select()
     .single();
   
@@ -161,10 +170,19 @@ export async function updateArticle(id, articleData) {
   
   const { content_blocks, tags, ...article } = articleData;
   
+  // Clean up empty string values for UUID fields (convert to null)
+  const cleanedArticle = { ...article };
+  const uuidFields = ['category_id', 'author_id'];
+  uuidFields.forEach(field => {
+    if (cleanedArticle[field] === '' || cleanedArticle[field] === undefined) {
+      cleanedArticle[field] = null;
+    }
+  });
+  
   // Update article
   const { data: updatedArticle, error } = await supabase
     .from('cms_articles')
-    .update(article)
+    .update(cleanedArticle)
     .eq('id', id)
     .select()
     .single();
