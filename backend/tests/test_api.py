@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = "https://cms-testing-flow.preview.emergentagent.com"
+BASE_URL = "https://reportero-cms.preview.emergentagent.com"
 
 
 class TestHealthEndpoints:

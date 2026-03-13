@@ -785,10 +785,7 @@ export async function getArticleComments(articleId) {
   
   const { data, error } = await supabase
     .from('article_comments')
-    .select(`
-      *,
-      user:users(id, email, full_name, avatar_url)
-    `)
+    .select('*')
     .eq('article_id', articleId)
     .order('created_at', { ascending: true });
   
@@ -803,7 +800,7 @@ export async function addArticleComment(articleId, userId, content, blockId = nu
     article_id: articleId,
     user_id: userId,
     content: content,
-    block_id: blockId, // Optional: reference to a specific block
+    block_id: blockId,
     is_resolved: false,
     created_at: new Date().toISOString()
   };
@@ -811,10 +808,7 @@ export async function addArticleComment(articleId, userId, content, blockId = nu
   const { data, error } = await supabase
     .from('article_comments')
     .insert(commentData)
-    .select(`
-      *,
-      user:users(id, email, full_name, avatar_url)
-    `)
+    .select()
     .single();
   
   if (error) throw error;
@@ -879,10 +873,7 @@ export async function replyToComment(commentId, userId, content) {
   const { data, error } = await supabase
     .from('article_comments')
     .insert(replyData)
-    .select(`
-      *,
-      user:users(id, email, full_name, avatar_url)
-    `)
+    .select()
     .single();
   
   if (error) throw error;

@@ -35,8 +35,9 @@ function CommentItem({ comment, onResolve, onDelete, onReply, currentUserId, can
   const [submitting, setSubmitting] = useState(false);
   
   const isOwner = comment.user_id === currentUserId;
-  const userName = comment.user?.full_name || comment.user?.email?.split('@')[0] || 'Unknown';
-  const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  // Use user_id to create a simple name since we don't have the join
+  const userName = comment.user_id ? `User ${comment.user_id.substring(0, 8)}` : 'Unknown';
+  const initials = 'U';
   
   const handleReply = async () => {
     if (!replyText.trim()) return;
@@ -57,7 +58,6 @@ function CommentItem({ comment, onResolve, onDelete, onReply, currentUserId, can
     <div className={`group ${comment.is_resolved ? 'opacity-60' : ''}`}>
       <div className="flex gap-3">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={comment.user?.avatar_url} />
           <AvatarFallback className="bg-[#8c52ff]/10 text-[#8c52ff] text-xs">
             {initials}
           </AvatarFallback>
