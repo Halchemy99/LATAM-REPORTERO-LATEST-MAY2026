@@ -185,20 +185,32 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Test article created: "CMS Test - Renewable Energy in Chile"
 - Fixed Editor Dashboard localization bug (added getLocalizedContent for article.title and article.excerpt)
 
+### Session 6 (CMS-Homepage Connection & Stripe Integration - March 2026)
+- Connected Homepage to CMS with fallback to mock data (uses getArticles from CMS, falls back to mockArticles)
+- Connected Writers page to CMS with fallback to mock data (uses getAuthors from CMS, falls back to mockWriters)
+- Implemented full Stripe payment integration:
+  - Backend endpoints: /api/payments/plans, /api/payments/checkout, /api/payments/status, /api/webhook/stripe
+  - Subscription plans: Standard ($9.99/mo), Premium ($19.99/mo)
+  - Checkout session creation with MongoDB transaction logging
+  - Payment status polling on frontend
+- Updated Pricing page with real Stripe checkout functionality
+- All tests passing: Backend 100% (11/11), Frontend 100%
+
 ## Backlog / Future Tasks
 
 ### P0 (Critical)
 - [x] Create Supabase Storage bucket named `cms-media` for media uploads (DONE)
 - [x] Configure RLS policies for users, cms_articles tables (DONE)
 - [x] Test CMS article creation flow (DONE)
-- [ ] Integrate Stripe when keys available
+- [x] Integrate Stripe (DONE - using sk_test_emergent)
 - [ ] Add newsletter backend (email service integration)
 
 ### P1 (High Priority)
-- [ ] Connect homepage to CMS (replace mock data)
-- [ ] Connect writers page to CMS (replace mock data)
+- [x] Connect homepage to CMS (replace mock data) (DONE - with fallback)
+- [x] Connect writers page to CMS (replace mock data) (DONE - with fallback)
 - [ ] Test media upload to cms-media bucket
 - [ ] Implement MetaMask crypto donations
+- [ ] Publish CMS articles to make them appear on homepage
 - [ ] Implement article upvoting system
 
 ### P2 (Medium Priority)
