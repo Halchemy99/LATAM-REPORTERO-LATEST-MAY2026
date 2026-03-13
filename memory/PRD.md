@@ -40,20 +40,45 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
   - Tzeltal - ~500K speakers
 - ✅ "Coming Soon" dialog when indigenous language selected
 
-### 3. CMS Editor (Implemented - Component Ready)
-- ✅ ArticleEditor component created with blocks:
-  - Paragraph, Heading (H2/H3/H4)
-  - Quote blocks with attribution
-  - Image with caption
-  - Image Gallery
-  - YouTube embed
-  - TikTok embed
-  - Investigation Timeline
-  - Expandable sections
-  - Lists (bulleted/numbered)
-  - Custom embed code
-- ✅ Preview mode
-- ✅ Block reordering
+### 3. CMS Editor (Fully Implemented - Dec 2025)
+- ✅ **Database Schema (Supabase)**:
+  - `authors` - Extended author profiles
+  - `categories` - Article categories (8 seeded)
+  - `tags` - Article tags (10 seeded)
+  - `cms_articles` - Main articles with multilingual support, SEO, status workflow
+  - `article_tags` - Many-to-many relationship
+  - `content_blocks` - 25+ modular block types
+  - `media_assets` - Centralized media library
+  - `editorial_notes` - Review workflow notes
+  - `article_versions` - Version history
+
+- ✅ **Content Block Types**:
+  - **Text**: paragraph, heading, subheading, pull_quote, callout_box, fact_box, key_takeaways
+  - **Media**: image, image_gallery, carousel, video_embed (YouTube/Vimeo/TikTok), audio_clip, podcast_embed
+  - **Data/Visual**: chart, infographic, timeline, data_table, map_embed
+  - **Layout**: divider, section_break, two_column, highlight_section
+  - **Engagement**: newsletter_signup, call_to_action, related_articles, sources_list
+
+- ✅ **Editor Features**:
+  - Drag-and-drop block reordering (@dnd-kit)
+  - Multilingual content tabs (EN/ES/PT)
+  - Live preview mode
+  - Auto-generated slugs
+  - SEO settings per language
+  - Featured image with caption/credit
+  - Category, author, region selection
+  - Premium/Featured article toggles
+  - Tag selection
+
+- ✅ **Editorial Workflow**:
+  - Status: draft → in_review → approved/rejected → published/archived
+  - Status change with editorial notes
+  - Role-based actions (editors can approve/reject, admins can publish)
+
+- ✅ **CMS Routes**:
+  - `/editor/articles` - Article list with filters
+  - `/editor/articles/new` - Create new article
+  - `/editor/articles/[id]` - Edit existing article
 
 ### 4. Design Direction (Updated Dec 2025)
 - ✅ Brand Guidelines Implementation:
@@ -136,14 +161,29 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Fixed TrustScoreRating null check
 - Created /app/design_guidelines.md for brand reference
 
+### Session 4 (CMS Implementation - Dec 2025)
+- Full CMS database schema created in Supabase (9 tables)
+- CMS API utilities (`/lib/supabase/cms.js`)
+- 25+ content block components with renderers
+- Block Editor with drag-and-drop (@dnd-kit)
+- Article list page with filters (`/editor/articles`)
+- New article editor (`/editor/articles/new`)
+- Edit article editor (`/editor/articles/[id]`)
+- Multilingual content support (EN/ES/PT tabs)
+- SEO settings per language
+- Editorial workflow (draft → review → publish)
+- Role-based access control
+
 ## Backlog / Future Tasks
 
 ### P0 (Critical)
 - [ ] Integrate Stripe when keys available
-- [ ] Connect ArticleEditor to article creation flow
+- [ ] Add Media Library UI (`/editor/media`)
 - [ ] Add newsletter backend (email service integration)
+- [ ] Create Supabase Storage bucket for media uploads
 
 ### P1 (High Priority)
+- [ ] Connect CMS articles to public article page (read from CMS instead of mock data)
 - [ ] Implement article upvoting system
 - [ ] Add podcast/video content types
 - [ ] Real-time community notifications
