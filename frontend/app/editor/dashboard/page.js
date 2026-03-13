@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation, useUserRole } from '@/lib/providers';
-import { mockArticles } from '@/lib/mock-data';
+import { mockArticles, getLocalizedContent } from '@/lib/mock-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,7 @@ import {
 import { toast } from 'sonner';
 
 export default function EditorDashboardPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { user, canEditStories, isLoading } = useUserRole();
   const router = useRouter();
   const [pendingArticles, setPendingArticles] = useState([]);
@@ -39,6 +39,9 @@ export default function EditorDashboardPage() {
   const [feedback, setFeedback] = useState('');
   const [showDialog, setShowDialog] = useState(false);
   const [dialogAction, setDialogAction] = useState('approve');
+  
+  // Helper to get localized content
+  const getContent = (content) => getLocalizedContent(content, locale);
 
   useEffect(() => {
     if (!isLoading && (!user || !canEditStories)) {
@@ -186,7 +189,7 @@ export default function EditorDashboardPage() {
                           <div className="flex flex-col md:flex-row gap-4">
                             <img
                               src={article.mainImage}
-                              alt={article.title}
+                              alt={getContent(article.title)}
                               className="w-full md:w-48 h-32 object-cover rounded-lg"
                             />
                             <div className="flex-1">
@@ -195,7 +198,7 @@ export default function EditorDashboardPage() {
                                   <Badge variant="outline" className="mb-2">
                                     {t(`categories.${article.category}`)}
                                   </Badge>
-                                  <h3 className="text-lg font-semibold">{article.title}</h3>
+                                  <h3 className="text-lg font-semibold">{getContent(article.title)}</h3>
                                 </div>
                                 <Badge className="bg-amber-100 text-amber-800">
                                   <Clock className="h-3 w-3 mr-1" />
@@ -203,7 +206,7 @@ export default function EditorDashboardPage() {
                                 </Badge>
                               </div>
                               <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                                {article.excerpt}
+                                {getContent(article.excerpt)}
                               </p>
                               <div className="flex items-center justify-between">
                                 <div className="text-sm text-muted-foreground">

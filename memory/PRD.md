@@ -183,6 +183,7 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Configured Supabase RLS policies for users and cms_articles tables
 - Successfully tested full CMS workflow: login → create article → save draft → view in list
 - Test article created: "CMS Test - Renewable Energy in Chile"
+- Fixed Editor Dashboard localization bug (added getLocalizedContent for article.title and article.excerpt)
 
 ## Backlog / Future Tasks
 
