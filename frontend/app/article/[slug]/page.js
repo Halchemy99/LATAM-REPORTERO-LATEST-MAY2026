@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import { mockArticles, getLocalizedContent } from '@/lib/mock-data';
+import { getArticleBySlug } from '@/lib/supabase/cms';
+import { ArticleContent } from '@/components/cms/BlockRenderer';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ArticleVoiceBot from '@/components/ArticleVoiceBot';
@@ -41,6 +43,7 @@ export default function ArticlePage() {
   const { t, locale } = useTranslation();
   const { user, role, canAccessHumanContent } = useUserRole();
   const [article, setArticle] = useState(null);
+  const [isCmsArticle, setIsCmsArticle] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -52,15 +55,40 @@ export default function ArticlePage() {
   const [sourcesOpen, setSourcesOpen] = useState(false);
 
   useEffect(() => {
-    const slug = params?.slug;
-    if (slug) {
-      setTimeout(() => {
+    const loadArticle = async () => {
+      const slug = params?.slug;
+      if (!slug) return;
+      
+      try {
+        setLoading(true);
+        
+        // First try to fetch from CMS
+        try {
+          const cmsArticle = await getArticleBySlug(slug, locale);
+          if (cmsArticle) {
+            setArticle(cmsArticle);
+            setIsCmsArticle(true);
+            setLoading(false);
+            return;
+          }
+        } catch (cmsError) {
+          // CMS article not found, fall back to mock data
+          console.log('CMS article not found, using mock data');
+        }
+        
+        // Fall back to mock data
         const found = mockArticles.find(a => a.slug === slug);
         setArticle(found || mockArticles[0]);
+        setIsCmsArticle(false);
         setLoading(false);
-      }, 300);
-    }
-  }, [params?.slug]);
+      } catch (error) {
+        console.error('Error loading article:', error);
+        setLoading(false);
+      }
+    };
+    
+    loadArticle();
+  }, [params?.slug, locale]);
 
   const handleBookmark = () => {
     setBookmarked(!bookmarked);
@@ -132,6 +160,32 @@ export default function ArticlePage() {
     );
   }
 
+  // Helper function to get article field (handles both CMS and mock data formats)
+  const getArticleField = (field, defaultValue = '') => {
+    if (isCmsArticle) {
+      // CMS article format: title_en, title_es, title_pt
+      return article[`${field}_${locale}`] || article[`${field}_en`] || defaultValue;
+    } else {
+      // Mock data format: title: { en, es, pt }
+      return getLocalizedContent(article[field], locale) || defaultValue;
+    }
+  };
+
+  const articleTitle = getArticleField('title', 'Untitled');
+  const articleExcerpt = isCmsArticle 
+    ? getArticleField('standfirst', '')
+    : getLocalizedContent(article.excerpt, locale);
+  const articleImage = isCmsArticle ? article.featured_image : article.mainImage;
+  const articleCategory = isCmsArticle 
+    ? (article.category?.[`name_${locale}`] || article.category?.name_en || 'News')
+    : (t(`categories.${article.category}`) || article.category);
+  const articleRegion = isCmsArticle ? article.region : article.region;
+  const authorName = isCmsArticle 
+    ? (article.author?.name || 'Staff')
+    : (article.author?.name || 'AI Analysis');
+  const readTime = isCmsArticle ? article.read_time : article.readTime;
+  const publishedDate = isCmsArticle ? article.published_at : article.publishedAt;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -140,39 +194,48 @@ export default function ArticlePage() {
         {/* Hero Image */}
         <div className="relative h-[400px] md:h-[500px]">
           <img
-            src={article.mainImage}
-            alt={getLocalizedContent(article.title, locale)}
+            src={articleImage || '/placeholder-image.jpg'}
+            alt={articleTitle}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
             <div className="container">
               <div className="flex flex-wrap gap-2 mb-4">
-                <Badge className="bg-primary">
-                  {t(`categories.${article.category}`) || article.category}
+                <Badge className="bg-gradient-to-r from-[#8c52ff] to-[#6111ff]">
+                  {articleCategory}
                 </Badge>
-                <Badge variant="outline" className="bg-black/30 text-white border-white/30">
-                  {t(`regions.${article.region}`) || article.region}
-                </Badge>
-                <Badge 
-                  className={article.isAiGenerated 
-                    ? 'bg-cyan-600 text-white' 
-                    : 'bg-green-600 text-white'
-                  }
-                >
-                  {article.isAiGenerated ? (
-                    <><Bot className="h-3 w-3 mr-1" /> AI Verified</>
-                  ) : (
-                    <><User className="h-3 w-3 mr-1" /> Human Written</>
-                  )}
-                </Badge>
+                {articleRegion && (
+                  <Badge variant="outline" className="bg-black/30 text-white border-white/30">
+                    {t(`regions.${articleRegion}`) || articleRegion}
+                  </Badge>
+                )}
+                {!isCmsArticle && (
+                  <Badge 
+                    className={article.isAiGenerated 
+                      ? 'bg-cyan-600 text-white' 
+                      : 'bg-green-600 text-white'
+                    }
+                  >
+                    {article.isAiGenerated ? (
+                      <><Bot className="h-3 w-3 mr-1" /> AI Verified</>
+                    ) : (
+                      <><User className="h-3 w-3 mr-1" /> Human Written</>
+                    )}
+                  </Badge>
+                )}
+                {isCmsArticle && article.is_premium && (
+                  <Badge className="bg-amber-500 text-white">Premium</Badge>
+                )}
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 max-w-4xl">
-                {getLocalizedContent(article.title, locale)}
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 max-w-4xl" style={{ fontFamily: 'Raleway, sans-serif' }}>
+                {articleTitle}
               </h1>
-              <p className="text-lg text-white/80 max-w-2xl">
-                {getLocalizedContent(article.excerpt, locale)}
-              </p>
+              {articleExcerpt && (
+                <p className="text-lg text-white/80 max-w-2xl" style={{ fontFamily: 'Source Serif 4, serif' }}>
+                  {articleExcerpt}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -184,24 +247,26 @@ export default function ArticlePage() {
               {/* Author Info */}
               <div className="flex items-center justify-between mb-8 p-4 bg-muted/50 rounded-lg">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    {article.isAiGenerated ? (
-                      <Bot className="h-6 w-6 text-primary" />
+                  <div className="w-12 h-12 rounded-full bg-[#8c52ff]/10 flex items-center justify-center">
+                    {(!isCmsArticle && article.isAiGenerated) ? (
+                      <Bot className="h-6 w-6 text-[#8c52ff]" />
                     ) : (
-                      <span className="text-primary font-semibold text-lg">
-                        {article.author?.name?.charAt(0)}
+                      <span className="text-[#8c52ff] font-semibold text-lg">
+                        {authorName?.charAt(0) || 'S'}
                       </span>
                     )}
                   </div>
                   <div>
-                    <p className="font-semibold">{article.author?.name || 'AI Analysis'}</p>
+                    <p className="font-semibold">{authorName}</p>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <TrustScoreRating score={article.trustScore} size="small" />
+                      {!isCmsArticle && <TrustScoreRating score={article.trustScore} size="small" />}
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {article.readTime} {t('news.minuteRead')}
+                        {readTime || 5} {t('news.minuteRead')}
                       </span>
-                      <span>{format(new Date(article.publishedAt), 'MMM d, yyyy')}</span>
+                      {publishedDate && (
+                        <span>{format(new Date(publishedDate), 'MMM d, yyyy')}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -210,7 +275,7 @@ export default function ArticlePage() {
                     <Heart className={`h-5 w-5 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleBookmark}>
-                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-primary text-primary' : ''}`} />
+                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-[#8c52ff] text-[#8c52ff]' : ''}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleShare}>
                     <Share2 className="h-5 w-5" />
@@ -232,7 +297,11 @@ export default function ArticlePage() {
                     </Link>
                   </CardContent>
                 </Card>
+              ) : isCmsArticle && article.content_blocks?.length > 0 ? (
+                /* CMS Article Content */
+                <ArticleContent blocks={article.content_blocks} locale={locale} />
               ) : (
+                /* Mock Data Article Content */
                 <>
                   {/* Problem Section */}
                   <section className="mb-8">

@@ -103,11 +103,29 @@ export default function EditorDashboardPage() {
       <main className="flex-1 py-8">
         <div className="container">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <Edit className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold">Editor Dashboard</h1>
-              <p className="text-muted-foreground">Review and manage submitted articles</p>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Edit className="h-8 w-8 text-[#8c52ff]" />
+              <div>
+                <h1 className="text-3xl font-bold" style={{ fontFamily: 'Raleway, sans-serif' }}>Editor Dashboard</h1>
+                <p className="text-muted-foreground">Review and manage submitted articles</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                onClick={() => router.push('/editor/articles')}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                All Articles
+              </Button>
+              <Button 
+                className="bg-gradient-to-r from-[#8c52ff] to-[#6111ff] text-white"
+                onClick={() => router.push('/editor/articles/new')}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                New Article
+              </Button>
             </div>
           </div>
 

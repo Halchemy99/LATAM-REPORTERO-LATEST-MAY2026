@@ -169,21 +169,23 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Article list page with filters (`/editor/articles`)
 - New article editor (`/editor/articles/new`)
 - Edit article editor (`/editor/articles/[id]`)
+- Media Library UI (`/editor/media`)
 - Multilingual content support (EN/ES/PT tabs)
 - SEO settings per language
 - Editorial workflow (draft → review → publish)
 - Role-based access control
+- Updated article page to read from CMS (with mock data fallback)
+- Updated editor dashboard with CMS links
 
 ## Backlog / Future Tasks
 
 ### P0 (Critical)
+- [x] Create Supabase Storage bucket named `cms-media` for media uploads (USER ACTION REQUIRED)
 - [ ] Integrate Stripe when keys available
-- [ ] Add Media Library UI (`/editor/media`)
 - [ ] Add newsletter backend (email service integration)
-- [ ] Create Supabase Storage bucket for media uploads
 
 ### P1 (High Priority)
-- [ ] Connect CMS articles to public article page (read from CMS instead of mock data)
+- [ ] Create first CMS article and test full flow
 - [ ] Implement article upvoting system
 - [ ] Add podcast/video content types
 - [ ] Real-time community notifications
