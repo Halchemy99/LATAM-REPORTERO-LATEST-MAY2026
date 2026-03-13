@@ -196,6 +196,29 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - Updated Pricing page with real Stripe checkout functionality
 - All tests passing: Backend 100% (11/11), Frontend 100%
 
+### Session 7 (CMS Enhancements - March 2026)
+- **Version History**: 
+  - Added `article_versions` table for storing article snapshots
+  - Auto-saves version on each article save
+  - View version history with timestamps
+  - Restore any previous version with one click
+- **Scheduled Publishing**:
+  - Added `scheduled_at` column to cms_articles
+  - Schedule dialog with date/time pickers
+  - Status changes to "scheduled" when scheduled
+  - Unschedule option to revert to draft
+- **Live Preview**:
+  - Full-page preview dialog showing how article appears to readers
+  - Renders with actual typography and styling
+- **Custom URL Support**:
+  - Default URL format: `title-slug-YYYY-MM-DD` (e.g., `/article/my-article-2026-03-13`)
+  - Toggle for custom URL override
+  - Added `custom_slug` and `use_custom_slug` columns
+- **UI Improvements**:
+  - Articles list now clickable to edit
+  - Better fallbacks for missing images (gradient placeholders)
+  - Fixed translation key issues ("Top Writers" etc.)
+
 ## Backlog / Future Tasks
 
 ### P0 (Critical)
@@ -203,14 +226,18 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - [x] Configure RLS policies for users, cms_articles tables (DONE)
 - [x] Test CMS article creation flow (DONE)
 - [x] Integrate Stripe (DONE - using sk_test_emergent)
+- [x] Version history (DONE)
+- [x] Scheduled publishing (DONE)
+- [x] Live preview (DONE)
 - [ ] Add newsletter backend (email service integration)
 
 ### P1 (High Priority)
 - [x] Connect homepage to CMS (replace mock data) (DONE - with fallback)
 - [x] Connect writers page to CMS (replace mock data) (DONE - with fallback)
+- [ ] Block editor UX improvements (smoother drag-drop, inline editing)
+- [ ] Draft comments/notes for editorial feedback
 - [ ] Test media upload to cms-media bucket
 - [ ] Implement MetaMask crypto donations
-- [ ] Publish CMS articles to make them appear on homepage
 - [ ] Implement article upvoting system
 
 ### P2 (Medium Priority)
