@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,6 +10,7 @@ from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 from supabase import create_client, Client
 
 
@@ -22,6 +23,9 @@ EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 # Supabase configuration
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+
+# Stripe configuration
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -69,6 +73,30 @@ class VoiceBotChatRequest(BaseModel):
 class AdminPasswordChangeRequest(BaseModel):
     userId: str
     newPassword: str
+
+# Stripe Payment Models
+class CreateCheckoutRequest(BaseModel):
+    plan_id: str  # 'standard' or 'premium'
+    origin_url: str  # Frontend origin URL
+
+class CheckoutStatusRequest(BaseModel):
+    session_id: str
+
+# Define subscription plans (server-side only)
+SUBSCRIPTION_PLANS = {
+    "standard": {
+        "name": "Standard",
+        "amount": 9.99,
+        "currency": "usd",
+        "features": ["Access to all articles", "AI Voice Bot", "Community access"]
+    },
+    "premium": {
+        "name": "Premium",
+        "amount": 19.99,
+        "currency": "usd",
+        "features": ["All Standard features", "Exclusive content", "Priority support", "Early access"]
+    }
+}
 
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
@@ -204,6 +232,153 @@ async def admin_change_password(request: AdminPasswordChangeRequest):
     except Exception as e:
         logger.error(f"Error changing password: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to change password: {str(e)}")
+
+# ============================================
+# STRIPE PAYMENT ENDPOINTS
+# ============================================
+
+@api_router.get("/payments/plans")
+async def get_subscription_plans():
+    """Get available subscription plans"""
+    return {
+        "plans": [
+            {"id": plan_id, **plan_data}
+            for plan_id, plan_data in SUBSCRIPTION_PLANS.items()
+        ]
+    }
+
+@api_router.post("/payments/checkout")
+async def create_checkout_session(request: CreateCheckoutRequest, http_request: Request):
+    """Create a Stripe checkout session for a subscription plan"""
+    if not STRIPE_API_KEY:
+        raise HTTPException(status_code=500, detail="Stripe is not configured")
+    
+    # Validate plan exists
+    if request.plan_id not in SUBSCRIPTION_PLANS:
+        raise HTTPException(status_code=400, detail=f"Invalid plan: {request.plan_id}")
+    
+    plan = SUBSCRIPTION_PLANS[request.plan_id]
+    
+    try:
+        # Initialize Stripe checkout
+        host_url = str(http_request.base_url).rstrip('/')
+        webhook_url = f"{host_url}/api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        
+        # Build success and cancel URLs using frontend origin
+        success_url = f"{request.origin_url}/pricing?session_id={{CHECKOUT_SESSION_ID}}&status=success"
+        cancel_url = f"{request.origin_url}/pricing?status=cancelled"
+        
+        # Create checkout session request
+        checkout_request = CheckoutSessionRequest(
+            amount=plan["amount"],
+            currency=plan["currency"],
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                "plan_id": request.plan_id,
+                "plan_name": plan["name"]
+            }
+        )
+        
+        # Create checkout session
+        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
+        
+        # Store transaction in database
+        transaction_doc = {
+            "id": str(uuid.uuid4()),
+            "session_id": session.session_id,
+            "plan_id": request.plan_id,
+            "plan_name": plan["name"],
+            "amount": plan["amount"],
+            "currency": plan["currency"],
+            "payment_status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.payment_transactions.insert_one(transaction_doc)
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.session_id
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating checkout session: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create checkout: {str(e)}")
+
+@api_router.get("/payments/status/{session_id}")
+async def get_payment_status(session_id: str, http_request: Request):
+    """Get the status of a payment session"""
+    if not STRIPE_API_KEY:
+        raise HTTPException(status_code=500, detail="Stripe is not configured")
+    
+    try:
+        # Initialize Stripe checkout
+        host_url = str(http_request.base_url).rstrip('/')
+        webhook_url = f"{host_url}/api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        
+        # Get checkout status
+        status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
+        
+        # Update transaction in database
+        await db.payment_transactions.update_one(
+            {"session_id": session_id},
+            {"$set": {
+                "payment_status": status.payment_status,
+                "status": status.status,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        return {
+            "session_id": session_id,
+            "status": status.status,
+            "payment_status": status.payment_status,
+            "amount": status.amount_total / 100,  # Convert cents to dollars
+            "currency": status.currency,
+            "metadata": status.metadata
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting payment status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get payment status: {str(e)}")
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    if not STRIPE_API_KEY:
+        raise HTTPException(status_code=500, detail="Stripe is not configured")
+    
+    try:
+        # Get request body
+        body = await request.body()
+        signature = request.headers.get("Stripe-Signature")
+        
+        # Initialize Stripe checkout
+        host_url = str(request.base_url).rstrip('/')
+        webhook_url = f"{host_url}/api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        
+        # Handle webhook
+        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        
+        # Update transaction based on webhook event
+        if webhook_response.session_id:
+            await db.payment_transactions.update_one(
+                {"session_id": webhook_response.session_id},
+                {"$set": {
+                    "payment_status": webhook_response.payment_status,
+                    "event_type": webhook_response.event_type,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+        
+        return {"status": "received"}
+        
+    except Exception as e:
+        logger.error(f"Webhook error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
 
 # Include the router in the main app
 app.include_router(api_router)

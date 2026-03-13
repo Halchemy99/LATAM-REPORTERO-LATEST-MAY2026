@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/providers';
 import { mockWriters, getLocalizedContent } from '@/lib/mock-data';
+import { getAuthors } from '@/lib/supabase/cms';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TrustScoreRating from '@/components/TrustScoreRating';
@@ -11,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -18,14 +20,64 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, CheckCircle, FileText, MapPin, Users } from 'lucide-react';
+import { Search, CheckCircle, FileText, MapPin, Users, Loader2 } from 'lucide-react';
 
 export default function WritersPage() {
   const { t, locale } = useTranslation();
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('all');
+  const [writers, setWriters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [usingCMS, setUsingCMS] = useState(false);
 
-  const filteredWriters = mockWriters.filter(writer => {
+  useEffect(() => {
+    const loadWriters = async () => {
+      try {
+        // Try to fetch from CMS first
+        const cmsAuthors = await getAuthors();
+        
+        if (cmsAuthors && cmsAuthors.length > 0) {
+          // Transform CMS authors to match the expected format
+          const transformedAuthors = cmsAuthors.map(author => ({
+            id: author.id,
+            name: author.name,
+            avatar: author.avatar_url || '/placeholder-avatar.png',
+            specialty: {
+              en: author.expertise_en || author.title || 'Journalist',
+              es: author.expertise_es || author.title || 'Periodista',
+              pt: author.expertise_pt || author.title || 'Jornalista'
+            },
+            bio: {
+              en: author.bio_en || '',
+              es: author.bio_es || '',
+              pt: author.bio_pt || ''
+            },
+            trustScore: author.trust_score || 85,
+            articleCount: author.article_count || 0,
+            region: author.region || 'all-regions',
+            verified: author.is_verified || false,
+            slug: author.slug
+          }));
+          setWriters(transformedAuthors);
+          setUsingCMS(true);
+        } else {
+          // Fallback to mock data
+          setWriters(mockWriters);
+          setUsingCMS(false);
+        }
+      } catch (error) {
+        console.log('CMS authors fetch failed, using mock data:', error.message);
+        setWriters(mockWriters);
+        setUsingCMS(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadWriters();
+  }, []);
+
+  const filteredWriters = writers.filter(writer => {
     if (region !== 'all' && writer.region?.toLowerCase() !== region) return false;
     if (search) {
       const searchLower = search.toLowerCase();
@@ -39,6 +91,42 @@ export default function WritersPage() {
   });
 
   const regions = ['all', 'mexico', 'brazil', 'argentina', 'chile', 'colombia', 'peru'];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1">
+          <section className="py-12 bg-gradient-to-b from-primary/5 to-background">
+            <div className="container">
+              <Skeleton className="h-10 w-48 mb-4" />
+              <Skeleton className="h-6 w-96" />
+            </div>
+          </section>
+          <section className="py-8">
+            <div className="container">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                  <Card key={i} className="overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="text-center">
+                        <Skeleton className="w-24 h-24 rounded-full mx-auto mb-4" />
+                        <Skeleton className="h-5 w-32 mx-auto mb-2" />
+                        <Skeleton className="h-4 w-24 mx-auto mb-3" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4 mx-auto" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -130,8 +218,10 @@ export default function WritersPage() {
                         {getLocalizedContent(writer.bio, locale)}
                       </p>
 
-                      <Button variant="outline" className="w-full" size="sm">
-                        View Profile
+                      <Button variant="outline" className="w-full" size="sm" asChild>
+                        <Link href={usingCMS ? `/writers/${writer.slug || writer.id}` : `/writers/${writer.id}`}>
+                          View Profile
+                        </Link>
                       </Button>
                     </div>
                   </CardContent>

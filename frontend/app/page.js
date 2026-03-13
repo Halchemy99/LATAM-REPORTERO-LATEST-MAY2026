@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation, useUserRole, useContentMode } from '@/lib/providers';
 import { mockArticles, mockWriters, getLocalizedContent } from '@/lib/mock-data';
+import { getArticles } from '@/lib/supabase/cms';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Newsletter from '@/components/Newsletter';
@@ -21,20 +22,133 @@ export default function HomePage() {
   const { mode, setMode } = useContentMode();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usingCMS, setUsingCMS] = useState(false);
 
-  // Helper to get localized text
+  // Helper to get localized text for mock data
   const L = (content) => getLocalizedContent(content, locale);
+  
+  // Helper to get title from CMS or mock article
+  const getTitle = (article) => {
+    if (usingCMS) {
+      return article[`title_${locale}`] || article.title_en || 'Untitled';
+    }
+    return L(article.title);
+  };
+  
+  // Helper to get excerpt from CMS or mock article  
+  const getExcerpt = (article) => {
+    if (usingCMS) {
+      return article[`standfirst_${locale}`] || article.standfirst_en || '';
+    }
+    return L(article.excerpt);
+  };
+  
+  // Helper to get category name
+  const getCategoryName = (article) => {
+    if (usingCMS && article.category) {
+      return article.category[`name_${locale}`] || article.category.name_en || article.category.slug;
+    }
+    return t(`categories.${article.category}`) || article.category;
+  };
+  
+  // Helper to get region
+  const getRegion = (article) => {
+    if (usingCMS) {
+      return article.region || 'all-regions';
+    }
+    return article.region;
+  };
+  
+  // Helper to get author name
+  const getAuthorName = (article) => {
+    if (usingCMS && article.author) {
+      return article.author.name || 'Unknown Author';
+    }
+    return article.author?.name || 'Unknown Author';
+  };
+  
+  // Helper to get author avatar
+  const getAuthorAvatar = (article) => {
+    if (usingCMS && article.author) {
+      return article.author.avatar_url || '/placeholder-avatar.png';
+    }
+    return article.author?.avatar || '/placeholder-avatar.png';
+  };
+  
+  // Helper to get main image
+  const getMainImage = (article) => {
+    if (usingCMS) {
+      return article.featured_image || '/placeholder-article.jpg';
+    }
+    return article.mainImage || '/placeholder-article.jpg';
+  };
+  
+  // Helper to get article slug
+  const getSlug = (article) => {
+    return article.slug;
+  };
+  
+  // Helper to get read time
+  const getReadTime = (article) => {
+    if (usingCMS) {
+      return article.read_time || 5;
+    }
+    return article.readTime || 5;
+  };
+  
+  // Helper to check if featured
+  const isFeatured = (article) => {
+    if (usingCMS) {
+      return article.is_featured;
+    }
+    return article.featured;
+  };
+  
+  // Helper to check if reviewed
+  const isReviewed = (article) => {
+    if (usingCMS) {
+      return article.status === 'published';
+    }
+    return article.isEditoriallyReviewed;
+  };
+  
+  // Helper to get published date
+  const getPublishedAt = (article) => {
+    if (usingCMS) {
+      return article.published_at || article.created_at;
+    }
+    return article.publishedAt;
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setArticles(mockArticles);
-      setLoading(false);
-    }, 500);
+    const loadArticles = async () => {
+      try {
+        // Try to fetch from CMS first
+        const cmsArticles = await getArticles({ status: 'published', limit: 10 });
+        
+        if (cmsArticles && cmsArticles.length > 0) {
+          setArticles(cmsArticles);
+          setUsingCMS(true);
+        } else {
+          // Fallback to mock data
+          setArticles(mockArticles);
+          setUsingCMS(false);
+        }
+      } catch (error) {
+        console.log('CMS fetch failed, using mock data:', error.message);
+        setArticles(mockArticles);
+        setUsingCMS(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadArticles();
   }, []);
 
-  const featuredArticle = articles.find(a => a.featured) || articles[0];
-  const latestArticles = articles.filter(a => !a.featured).slice(0, 5);
-  const sideArticles = articles.filter(a => !a.featured).slice(0, 3);
+  const featuredArticle = articles.find(a => isFeatured(a)) || articles[0];
+  const latestArticles = articles.filter(a => !isFeatured(a)).slice(0, 5);
+  const sideArticles = articles.filter(a => !isFeatured(a)).slice(0, 3);
 
   if (loading) {
     return (
@@ -66,30 +180,30 @@ export default function HomePage() {
             {/* Featured Article - Large */}
             {featuredArticle && (
               <article className="editorial-grid-hero group" data-testid="featured-article">
-                <Link href={`/article/${featuredArticle.slug}`} className="block">
+                <Link href={`/article/${getSlug(featuredArticle)}`} className="block">
                   <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden mb-4 rounded-lg">
                     <img
-                      src={featuredArticle.mainImage}
-                      alt={L(featuredArticle.title)}
+                      src={getMainImage(featuredArticle)}
+                      alt={getTitle(featuredArticle)}
                       className="w-full h-full object-cover image-zoom"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
                       <Badge className="mb-3 bg-gradient-to-r from-[#8c52ff] to-[#6111ff] hover:from-[#9d6bff] hover:to-[#7a2fff] uppercase tracking-wider text-xs border-0">
-                        {t(`categories.${featuredArticle.category}`) || featuredArticle.category}
+                        {getCategoryName(featuredArticle)}
                       </Badge>
                       <h1 className="headline-hero text-white mb-3">
-                        {L(featuredArticle.title)}
+                        {getTitle(featuredArticle)}
                       </h1>
                       <p className="text-lg opacity-90 mb-4 max-w-2xl" style={{ fontFamily: 'Source Serif 4, serif' }}>
-                        {L(featuredArticle.excerpt)}
+                        {getExcerpt(featuredArticle)}
                       </p>
                       <div className="flex items-center gap-4 text-sm opacity-80" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                        <span>{locale === 'es' ? 'Por' : locale === 'pt' ? 'Por' : 'By'} {featuredArticle.author.name}</span>
+                        <span>{locale === 'es' ? 'Por' : locale === 'pt' ? 'Por' : 'By'} {getAuthorName(featuredArticle)}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
-                          {featuredArticle.readTime} {locale === 'es' ? 'min de lectura' : locale === 'pt' ? 'min de leitura' : 'min read'}
+                          {getReadTime(featuredArticle)} {locale === 'es' ? 'min de lectura' : locale === 'pt' ? 'min de leitura' : 'min read'}
                         </span>
                       </div>
                     </div>
@@ -106,20 +220,20 @@ export default function HomePage() {
                   className={`group ${index < sideArticles.length - 1 ? 'border-b border-[#8c52ff]/10 pb-4' : ''}`}
                   data-testid={`side-article-${index}`}
                 >
-                  <Link href={`/article/${article.slug}`} className="block">
+                  <Link href={`/article/${getSlug(article)}`} className="block">
                     <Badge className="mb-2 category-tag-beige text-xs uppercase tracking-wider">
-                      {t(`regions.${article.region}`) || article.region}
+                      {t(`regions.${getRegion(article)}`) || getRegion(article)}
                     </Badge>
                     <h3 className="headline-card mb-2 group-hover:text-[#8c52ff] transition-colors">
-                      {L(article.title)}
+                      {getTitle(article)}
                     </h3>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-2" style={{ fontFamily: 'Source Serif 4, serif' }}>
-                      {L(article.excerpt)}
+                      {getExcerpt(article)}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                      <span>{article.author.name}</span>
+                      <span>{getAuthorName(article)}</span>
                       <span>•</span>
-                      <span>{article.readTime} min</span>
+                      <span>{getReadTime(article)} min</span>
                     </div>
                   </Link>
                 </article>
@@ -148,39 +262,39 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             {latestArticles.slice(0, 3).map((article) => (
               <article key={article.id} className="group" data-testid={`latest-article-${article.id}`}>
-                <Link href={`/article/${article.slug}`}>
+                <Link href={`/article/${getSlug(article)}`}>
                   <div className="relative aspect-[16/10] overflow-hidden mb-4">
                     <img
-                      src={article.mainImage}
-                      alt={L(article.title)}
+                      src={getMainImage(article)}
+                      alt={getTitle(article)}
                       className="w-full h-full object-cover image-zoom"
                     />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs uppercase tracking-wider">
-                        {t(`categories.${article.category}`) || article.category}
+                        {getCategoryName(article)}
                       </Badge>
-                      {article.isEditoriallyReviewed && (
+                      {isReviewed(article) && (
                         <Badge className="badge-reviewed text-xs">{locale === 'es' ? 'Revisado' : locale === 'pt' ? 'Revisado' : 'Reviewed'}</Badge>
                       )}
                     </div>
                     <h3 className="headline-card group-hover:text-primary transition-colors">
-                      {L(article.title)}
+                      {getTitle(article)}
                     </h3>
                     <p className="text-muted-foreground line-clamp-2">
-                      {L(article.excerpt)}
+                      {getExcerpt(article)}
                     </p>
                     <div className="flex items-center gap-3 pt-2">
                       <img
-                        src={article.author.avatar}
-                        alt={article.author.name}
+                        src={getAuthorAvatar(article)}
+                        alt={getAuthorName(article)}
                         className="w-8 h-8 rounded-full"
                       />
                       <div className="text-sm">
-                        <div className="font-medium">{article.author.name}</div>
+                        <div className="font-medium">{getAuthorName(article)}</div>
                         <div className="text-muted-foreground text-xs">
-                          {new Date(article.publishedAt).toLocaleDateString(locale === 'es' ? 'es-ES' : locale === 'pt' ? 'pt-BR' : 'en-US', { 
+                          {new Date(getPublishedAt(article)).toLocaleDateString(locale === 'es' ? 'es-ES' : locale === 'pt' ? 'pt-BR' : 'en-US', { 
                             month: 'short', 
                             day: 'numeric' 
                           })}
@@ -199,147 +313,115 @@ export default function HomePage() {
           <div className="container text-white">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Podcast */}
-              <div className="flex gap-6 items-start">
-                <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Headphones className="h-12 w-12" />
-                </div>
-                <div>
-                  <Badge variant="outline" className="mb-2 border-white/30 text-white/70">
-                    Podcast
-                  </Badge>
-                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                    Voces de América Latina
-                  </h3>
-                  <p className="text-white/70 mb-4" style={{ fontFamily: 'Source Serif 4, serif' }}>
-                    {locale === 'es' ? 'Conversaciones semanales con periodistas, activistas y agentes de cambio de toda la región.' :
-                     locale === 'pt' ? 'Conversas semanais com jornalistas, ativistas e agentes de mudança de toda a região.' :
-                     'Weekly conversations with journalists, activists, and changemakers across the region.'}
+              <Card className="bg-white/10 border-white/20 backdrop-blur">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 rounded-full bg-white/20">
+                      <Headphones className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Raleway, sans-serif' }}>
+                      {locale === 'es' ? 'Podcast LATAM' : locale === 'pt' ? 'Podcast LATAM' : 'LATAM Podcast'}
+                    </h3>
+                  </div>
+                  <p className="text-white/80 mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
+                    {locale === 'es' 
+                      ? 'Entrevistas semanales con expertos y actores del cambio en América Latina.' 
+                      : locale === 'pt'
+                      ? 'Entrevistas semanais com especialistas e agentes de mudança na América Latina.'
+                      : 'Weekly interviews with experts and changemakers across Latin America.'}
                   </p>
-                  <Button className="bg-white text-[#6111ff] hover:bg-white/90" size="sm">
+                  <Button variant="secondary" className="bg-white text-[#6111ff] hover:bg-white/90">
                     {locale === 'es' ? 'Escuchar Ahora' : locale === 'pt' ? 'Ouvir Agora' : 'Listen Now'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
               {/* Video */}
-              <div className="flex gap-6 items-start">
-                <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Video className="h-12 w-12" />
-                </div>
-                <div>
-                  <Badge variant="outline" className="mb-2 border-white/30 text-white/70">
-                    Video
-                  </Badge>
-                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                    {locale === 'es' ? 'Serie Documental' : locale === 'pt' ? 'Série Documental' : 'Documentary Series'}
-                  </h3>
-                  <p className="text-white/70 mb-4" style={{ fontFamily: 'Source Serif 4, serif' }}>
-                    {locale === 'es' ? 'Narrativas visuales profundas de comunidades que impulsan el cambio en América Latina.' :
-                     locale === 'pt' ? 'Narrativas visuais profundas de comunidades que impulsionam mudanças na América Latina.' :
-                     'In-depth visual storytelling from communities driving change across Latin America.'}
+              <Card className="bg-white/10 border-white/20 backdrop-blur">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 rounded-full bg-white/20">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Raleway, sans-serif' }}>
+                      {locale === 'es' ? 'Documentales' : locale === 'pt' ? 'Documentários' : 'Documentaries'}
+                    </h3>
+                  </div>
+                  <p className="text-white/80 mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
+                    {locale === 'es'
+                      ? 'Historias en profundidad que capturan soluciones innovadoras en acción.'
+                      : locale === 'pt'
+                      ? 'Histórias aprofundadas que capturam soluções inovadoras em ação.'
+                      : 'In-depth stories capturing innovative solutions in action.'}
                   </p>
-                  <Button className="bg-white text-[#6111ff] hover:bg-white/90" size="sm">
-                    {locale === 'es' ? 'Ver Ahora' : locale === 'pt' ? 'Assistir Agora' : 'Watch Now'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button variant="secondary" className="bg-white text-[#6111ff] hover:bg-white/90">
+                    {locale === 'es' ? 'Ver Videos' : locale === 'pt' ? 'Ver Vídeos' : 'Watch Videos'}
                   </Button>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
-        {/* Contributors / Masthead Section */}
-        <section className="container py-16">
-          <div className="text-center mb-12">
-            <h2 className="headline-section mb-4">
-              {locale === 'es' ? 'Nuestros Colaboradores' : locale === 'pt' ? 'Nossos Colaboradores' : 'Our Contributors'}
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {locale === 'es' ? 'Periodistas experimentados y reporteros comunitarios que ofrecen cobertura orientada a soluciones desde toda América Latina.' :
-               locale === 'pt' ? 'Jornalistas experientes e repórteres comunitários trazendo cobertura orientada a soluções de toda a América Latina.' :
-               'Experienced journalists and community reporters bringing you solutions-oriented coverage from across Latin America.'}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockWriters.slice(0, 4).map((writer) => (
-              <Card key={writer.id} className="editorial-card" data-testid={`contributor-${writer.id}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <img
-                      src={writer.avatar}
-                      alt={writer.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">{writer.name}</h3>
-                      <p className="text-sm text-muted-foreground">{L(writer.specialty)}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <ContributorReputation contributor={writer} variant="default" />
-                  </div>
-                  <p className="mt-3 text-sm text-muted-foreground line-clamp-2">
-                    {L(writer.bio)}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
+        {/* Top Writers Section */}
+        <section className="container py-12">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="headline-section">{t('news.topWriters')}</h2>
             <Link href="/writers">
-              <Button variant="outline">
-                {locale === 'es' ? 'Ver Todos los Colaboradores' : locale === 'pt' ? 'Ver Todos os Colaboradores' : 'View All Contributors'}
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button variant="ghost" className="group">
+                {t('news.allWriters')}
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {mockWriters.slice(0, 4).map((writer) => (
+              <Link key={writer.id} href={`/writers/${writer.id}`} className="group">
+                <Card className="text-center p-6 hover:shadow-lg transition-all">
+                  <img
+                    src={writer.avatar}
+                    alt={writer.name}
+                    className="w-20 h-20 rounded-full mx-auto mb-4 ring-4 ring-[#8c52ff]/10 group-hover:ring-[#8c52ff]/30 transition-all"
+                  />
+                  <h3 className="font-semibold mb-1" style={{ fontFamily: 'Raleway, sans-serif' }}>
+                    {writer.name}
+                  </h3>
+                  <p className="text-sm text-[#8c52ff] mb-2">
+                    {L(writer.specialty)}
+                  </p>
+                  <div className="flex justify-center">
+                    <ContributorReputation score={writer.trustScore} size="sm" />
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </section>
 
-        {/* Stats Bar */}
-        <section className="border-y border-[#8c52ff]/10 bg-[#E7DAC4]/20">
-          <div className="container py-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  500+
-                </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  {locale === 'es' ? 'Artículos' : locale === 'pt' ? 'Artigos' : 'Articles'}
-                </div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  50+
-                </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  {locale === 'es' ? 'Colaboradores' : locale === 'pt' ? 'Colaboradores' : 'Contributors'}
-                </div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  12
-                </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  {locale === 'es' ? 'Países' : locale === 'pt' ? 'Países' : 'Countries'}
-                </div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-1 gradient-text" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  3
-                </div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider" style={{ fontFamily: 'Raleway, sans-serif' }}>
-                  {locale === 'es' ? 'Idiomas' : locale === 'pt' ? 'Idiomas' : 'Languages'}
-                </div>
-              </div>
+        {/* Trending Topics */}
+        <section className="bg-muted/30 py-12">
+          <div className="container">
+            <div className="flex items-center gap-2 mb-6">
+              <TrendingUp className="h-5 w-5 text-[#8c52ff]" />
+              <h2 className="headline-section">{t('news.trending')}</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {['Climate Action', 'Indigenous Rights', 'Urban Innovation', 'Renewable Energy', 'Food Security', 'Digital Inclusion'].map((topic, i) => (
+                <Badge 
+                  key={i} 
+                  variant="outline" 
+                  className="px-4 py-2 text-sm hover:bg-[#8c52ff] hover:text-white cursor-pointer transition-colors"
+                >
+                  {topic}
+                </Badge>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Newsletter */}
-        <Newsletter variant="hero" />
+        <Newsletter />
       </main>
 
       <Footer />

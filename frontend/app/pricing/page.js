@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
@@ -12,31 +13,69 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, X, Sparkles, Crown, Star, Zap, Wallet, CreditCard } from 'lucide-react';
+import { Check, X, Sparkles, Crown, Star, Zap, Wallet, CreditCard, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-
-// Pricing in USD
-const PRICES_USD = {
-  monthly: 1,
-  annual: 10,
-  lifetime: 250
-};
-
-// Pricing in MXN (approximate conversion)
-const PRICES_MXN = {
-  monthly: 20,
-  annual: 200,
-  lifetime: 5000
-};
 
 export default function PricingPage() {
   const { t } = useTranslation();
   const { role, user } = useUserRole();
-  const [currency, setCurrency] = useState('usd');
+  const searchParams = useSearchParams();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkingPayment, setCheckingPayment] = useState(false);
 
-  const prices = currency === 'usd' ? PRICES_USD : PRICES_MXN;
-  const currencySymbol = currency === 'usd' ? '$' : '$';
-  const currencyLabel = currency === 'usd' ? 'USD' : 'MXN';
+  // Check for payment status from URL params
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const status = searchParams.get('status');
+
+    if (sessionId && status === 'success') {
+      setCheckingPayment(true);
+      pollPaymentStatus(sessionId);
+    } else if (status === 'cancelled') {
+      toast.info('Payment was cancelled');
+    }
+  }, [searchParams]);
+
+  // Poll payment status
+  const pollPaymentStatus = async (sessionId, attempts = 0) => {
+    const maxAttempts = 5;
+    const pollInterval = 2000;
+
+    if (attempts >= maxAttempts) {
+      setCheckingPayment(false);
+      toast.info('Payment status check timed out. Please check your email for confirmation.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL ? '' : ''}/api/payments/status/${sessionId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to check payment status');
+      }
+
+      const data = await response.json();
+
+      if (data.payment_status === 'paid') {
+        setCheckingPayment(false);
+        toast.success('Payment successful! Thank you for subscribing.');
+        // Clean up URL
+        window.history.replaceState({}, '', '/pricing');
+        return;
+      } else if (data.status === 'expired') {
+        setCheckingPayment(false);
+        toast.error('Payment session expired. Please try again.');
+        return;
+      }
+
+      // Continue polling
+      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      setCheckingPayment(false);
+      toast.error('Error checking payment status');
+    }
+  };
 
   const plans = [
     {
@@ -60,13 +99,12 @@ export default function PricingPage() {
       highlighted: false
     },
     {
-      id: 'monthly',
-      name: 'Monthly',
-      description: 'Full access, billed monthly',
-      price: prices.monthly,
+      id: 'standard',
+      name: 'Standard',
+      description: 'Full access to all content',
+      price: 9.99,
       period: '/month',
       icon: <Zap className="h-6 w-6" />,
-      stripePrice: currency === 'usd' ? 'price_monthly_usd' : 'price_monthly_mxn',
       features: [
         { text: 'AI-verified news articles', included: true },
         { text: 'Human-written journalism', included: true },
@@ -81,13 +119,12 @@ export default function PricingPage() {
       highlighted: false
     },
     {
-      id: 'annual',
-      name: 'Annual',
-      description: 'Best value, billed yearly',
-      price: prices.annual,
-      period: '/year',
+      id: 'premium',
+      name: 'Premium',
+      description: 'Premium access with exclusive content',
+      price: 19.99,
+      period: '/month',
       icon: <Crown className="h-6 w-6" />,
-      stripePrice: currency === 'usd' ? 'price_annual_usd' : 'price_annual_mxn',
       features: [
         { text: 'AI-verified news articles', included: true },
         { text: 'Human-written journalism', included: true },
@@ -100,29 +137,7 @@ export default function PricingPage() {
       buttonText: 'Subscribe',
       current: false,
       highlighted: true,
-      savings: currency === 'usd' ? 'Save 17%' : 'Ahorra 17%'
-    },
-    {
-      id: 'lifetime',
-      name: 'Lifetime',
-      description: 'One-time payment, forever access',
-      price: prices.lifetime,
-      period: ' one-time',
-      icon: <Sparkles className="h-6 w-6" />,
-      stripePrice: currency === 'usd' ? 'price_lifetime_usd' : 'price_lifetime_mxn',
-      features: [
-        { text: 'AI-verified news articles', included: true },
-        { text: 'Human-written journalism', included: true },
-        { text: 'Community access', included: true },
-        { text: 'Bookmark articles', included: true },
-        { text: 'Contributor reputation view', included: true },
-        { text: 'Support journalists directly', included: true },
-        { text: 'Early access to features', included: true }
-      ],
-      buttonText: 'Purchase',
-      current: false,
-      highlighted: false,
-      badge: 'Best for supporters'
+      badge: 'Most Popular'
     }
   ];
 
@@ -130,10 +145,6 @@ export default function PricingPage() {
     {
       question: 'What payment methods do you accept?',
       answer: 'We accept all major credit cards (Visa, MasterCard, American Express) through Stripe. We also accept cryptocurrency donations (ETH, BTC, USDC, ADA) via MetaMask.'
-    },
-    {
-      question: 'Can I pay in Mexican Pesos (MXN)?',
-      answer: 'Yes! We support both USD and MXN payments. Switch currencies using the toggle above the pricing cards.'
     },
     {
       question: 'Can I cancel my subscription anytime?',
@@ -149,7 +160,7 @@ export default function PricingPage() {
     },
     {
       question: 'Is there a refund policy?',
-      answer: 'We offer a 30-day money-back guarantee for annual and lifetime plans. Monthly subscriptions can be cancelled anytime.'
+      answer: 'We offer a 30-day money-back guarantee for all paid plans. Contact support for assistance.'
     },
     {
       question: 'Can I donate cryptocurrency?',
@@ -157,7 +168,7 @@ export default function PricingPage() {
     }
   ];
 
-  const handleSubscribe = async (planId, stripePrice) => {
+  const handleSubscribe = async (planId) => {
     if (planId === 'free') {
       toast.info('Free access is available without signing up!');
       return;
@@ -169,29 +180,32 @@ export default function PricingPage() {
       return;
     }
 
-    // TODO: Integrate with Stripe when keys are available
-    // This will redirect to Stripe Checkout
-    toast.info(`Stripe integration pending. Plan: ${planId}, Price ID: ${stripePrice}`);
-    
-    /* 
-    // Stripe integration code - ready for when keys are available:
+    setIsProcessing(true);
+
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch('/api/payments/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId: stripePrice,
-          successUrl: `${window.location.origin}/dashboard?success=true`,
-          cancelUrl: `${window.location.origin}/pricing?canceled=true`
+          plan_id: planId,
+          origin_url: window.location.origin
         })
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to create checkout session');
+      }
+
+      const data = await response.json();
       
-      const { url } = await response.json();
-      window.location.href = url;
+      // Redirect to Stripe Checkout
+      window.location.href = data.checkout_url;
     } catch (error) {
-      toast.error('Failed to start checkout');
+      console.error('Checkout error:', error);
+      toast.error(error.message || 'Failed to start checkout');
+      setIsProcessing(false);
     }
-    */
   };
 
   return (
@@ -199,6 +213,17 @@ export default function PricingPage() {
       <Header />
       
       <main className="flex-1">
+        {/* Payment Processing Overlay */}
+        {checkingPayment && (
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+            <Card className="w-96 text-center p-6">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Processing Payment</h3>
+              <p className="text-muted-foreground">Please wait while we confirm your payment...</p>
+            </Card>
+          </div>
+        )}
+
         {/* Hero */}
         <section className="py-16 bg-foreground text-background">
           <div className="container text-center">
@@ -215,21 +240,11 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Currency Toggle */}
-        <section className="py-8 border-b">
+        {/* Crypto Donation Option */}
+        <section className="py-6 border-b">
           <div className="container">
             <div className="flex items-center justify-center gap-4">
-              <span className="text-sm text-muted-foreground">Select currency:</span>
-              <Tabs value={currency} onValueChange={setCurrency} className="w-auto">
-                <TabsList>
-                  <TabsTrigger value="usd" className="gap-2">
-                    <span>🇺🇸</span> USD
-                  </TabsTrigger>
-                  <TabsTrigger value="mxn" className="gap-2">
-                    <span>🇲🇽</span> MXN
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <span className="text-sm text-muted-foreground">Prefer to donate?</span>
               <CryptoDonation variant="button" />
             </div>
           </div>
@@ -238,25 +253,15 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <section className="py-12">
           <div className="container">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {plans.map((plan) => (
                 <Card 
                   key={plan.id} 
                   className={`relative editorial-card ${plan.highlighted ? 'border-2 border-primary shadow-lg' : ''} ${plan.current ? 'border-green-600' : ''}`}
                   data-testid={`plan-${plan.id}`}
                 >
-                  {plan.highlighted && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary">
-                      Most Popular
-                    </Badge>
-                  )}
-                  {plan.savings && (
-                    <Badge className="absolute -top-3 right-4 bg-green-600">
-                      {plan.savings}
-                    </Badge>
-                  )}
                   {plan.badge && (
-                    <Badge className="absolute -top-3 right-4 bg-amber-600">
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary">
                       {plan.badge}
                     </Badge>
                   )}
@@ -270,10 +275,10 @@ export default function PricingPage() {
                   <CardContent className="text-center">
                     <div className="mb-6">
                       <span className="text-4xl font-bold" style={{ fontFamily: 'Playfair Display, Georgia, serif' }}>
-                        {currencySymbol}{plan.price}
+                        ${plan.price}
                       </span>
                       {plan.period && (
-                        <span className="text-muted-foreground text-sm"> {currencyLabel}{plan.period}</span>
+                        <span className="text-muted-foreground text-sm"> USD{plan.period}</span>
                       )}
                     </div>
                     <ul className="space-y-3 text-sm text-left">
@@ -295,12 +300,21 @@ export default function PricingPage() {
                     <Button 
                       className={`w-full ${plan.highlighted ? 'bg-primary' : ''}`}
                       variant={plan.highlighted ? 'default' : plan.current ? 'outline' : 'secondary'}
-                      disabled={plan.current}
-                      onClick={() => handleSubscribe(plan.id, plan.stripePrice)}
+                      disabled={plan.current || isProcessing}
+                      onClick={() => handleSubscribe(plan.id)}
                       data-testid={`subscribe-${plan.id}`}
                     >
-                      {plan.current && <Check className="h-4 w-4 mr-2" />}
-                      {plan.buttonText}
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          {plan.current && <Check className="h-4 w-4 mr-2" />}
+                          {plan.buttonText}
+                        </>
+                      )}
                     </Button>
                   </CardFooter>
                 </Card>
