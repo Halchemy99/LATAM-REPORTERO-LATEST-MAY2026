@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 
 # Base URL from environment - Use the correct URL from frontend .env
-BASE_URL = "https://news-draft-hub.preview.emergentagent.com"
+BASE_URL = "https://investigative-news.preview.emergentagent.com"
 
 def print_test_result(test_name, success, message=""):
     """Print formatted test results"""

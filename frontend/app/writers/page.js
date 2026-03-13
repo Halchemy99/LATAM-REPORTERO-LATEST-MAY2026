@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/providers';
-import { mockWriters } from '@/lib/mock-data';
+import { mockWriters, getLocalizedContent } from '@/lib/mock-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TrustScoreRating from '@/components/TrustScoreRating';
@@ -21,7 +21,7 @@ import {
 import { Search, CheckCircle, FileText, MapPin, Users } from 'lucide-react';
 
 export default function WritersPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('all');
 
@@ -29,9 +29,10 @@ export default function WritersPage() {
     if (region !== 'all' && writer.region?.toLowerCase() !== region) return false;
     if (search) {
       const searchLower = search.toLowerCase();
+      const specialty = getLocalizedContent(writer.specialty, locale);
       return (
         writer.name.toLowerCase().includes(searchLower) ||
-        writer.specialty.toLowerCase().includes(searchLower)
+        (typeof specialty === 'string' && specialty.toLowerCase().includes(searchLower))
       );
     }
     return true;
@@ -102,7 +103,7 @@ export default function WritersPage() {
                         />
                       </div>
                       <h3 className="font-semibold text-lg mb-1">{writer.name}</h3>
-                      <p className="text-sm text-primary mb-2">{writer.specialty}</p>
+                      <p className="text-sm text-primary mb-2">{getLocalizedContent(writer.specialty, locale)}</p>
                       
                       <div className="flex justify-center mb-3">
                         <TrustScoreRating score={writer.trustScore} />
@@ -126,7 +127,7 @@ export default function WritersPage() {
                       </div>
 
                       <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                        {writer.bio}
+                        {getLocalizedContent(writer.bio, locale)}
                       </p>
 
                       <Button variant="outline" className="w-full" size="sm">

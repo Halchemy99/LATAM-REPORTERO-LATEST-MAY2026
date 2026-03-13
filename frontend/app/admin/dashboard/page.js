@@ -238,14 +238,14 @@ export default function AdminDashboardPage() {
             <div className="flex items-center gap-3">
               <Shield className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                <p className="text-muted-foreground">System overview and user management</p>
+                <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
+                <p className="text-muted-foreground">{t('admin.systemOverview')}</p>
               </div>
             </div>
             <Link href="/admin/drafts">
               <Button variant="outline">
                 <Bot className="h-4 w-4 mr-2" />
-                AI Draft Inbox
+                {t('admin.aiDraftInbox')}
               </Button>
             </Link>
           </div>
@@ -267,7 +267,7 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Subscribers</p>
+                    <p className="text-sm text-muted-foreground">{t('admin.subscribers')}</p>
                     <p className="text-3xl font-bold">{stats.activeSubscribers}</p>
                   </div>
                   <CheckCircle className="h-8 w-8 text-green-500/20" />
@@ -291,7 +291,7 @@ export default function AdminDashboardPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">{t('admin.revenue')}</p>
                     <p className="text-3xl font-bold text-muted-foreground">$0</p>
-                    <p className="text-xs text-muted-foreground">Stripe pending</p>
+                    <p className="text-xs text-muted-foreground">{t('admin.stripePending')}</p>
                   </div>
                   <DollarSign className="h-8 w-8 text-green-500/20" />
                 </div>
@@ -301,9 +301,9 @@ export default function AdminDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Growth</p>
+                    <p className="text-sm text-muted-foreground">{t('admin.growth')}</p>
                     <p className="text-3xl font-bold text-muted-foreground">--</p>
-                    <p className="text-xs text-muted-foreground">No data yet</p>
+                    <p className="text-xs text-muted-foreground">{t('admin.noDataYet')}</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-green-500/20" />
                 </div>
@@ -325,7 +325,7 @@ export default function AdminDashboardPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search users..."
+                    placeholder={t('admin.searchUsers')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-10"
@@ -333,20 +333,20 @@ export default function AdminDashboardPage() {
                 </div>
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by role" />
+                    <SelectValue placeholder={t('admin.filterByRole')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="all">{t('admin.allRoles')}</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="editor">Editor</SelectItem>
-                    <SelectItem value="contributor">Contributor</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="free">Free</SelectItem>
+                    <SelectItem value="contributor">{t('admin.contributors')}</SelectItem>
+                    <SelectItem value="paid">{t('admin.paidUsers')}</SelectItem>
+                    <SelectItem value="free">{t('admin.freeUsers')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button variant="outline" onClick={fetchUsers} disabled={usersLoading}>
                   <RefreshCw className={`h-4 w-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
-                  Refresh
+                  {t('admin.refresh')}
                 </Button>
               </div>
 
@@ -355,24 +355,24 @@ export default function AdminDashboardPage() {
                 {usersLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <span className="ml-2 text-muted-foreground">Loading users...</span>
+                    <span className="ml-2 text-muted-foreground">{t('admin.loadingUsers')}</span>
                   </div>
                 ) : filteredUsers.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12">
                     <Users className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">No users found</p>
-                    {search && <p className="text-sm text-muted-foreground">Try a different search term</p>}
+                    <p className="text-muted-foreground">{t('admin.noUsersFound')}</p>
+                    {search && <p className="text-sm text-muted-foreground">{t('admin.tryDifferentSearch')}</p>}
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>User</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Subscription</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>{t('admin.user')}</TableHead>
+                        <TableHead>{t('admin.role')}</TableHead>
+                        <TableHead>{t('admin.status')}</TableHead>
+                        <TableHead>{t('admin.subscription')}</TableHead>
+                        <TableHead>{t('admin.joined')}</TableHead>
+                        <TableHead className="text-right">{t('admin.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -396,9 +396,9 @@ export default function AdminDashboardPage() {
                           </TableCell>
                           <TableCell>
                             {u.subscription === 'active' ? (
-                              <Badge variant="outline" className="bg-green-50">Active</Badge>
+                              <Badge variant="outline" className="bg-green-50">{t('admin.active')}</Badge>
                             ) : (
-                              <span className="text-muted-foreground">None</span>
+                              <span className="text-muted-foreground">{t('admin.none')}</span>
                             )}
                           </TableCell>
                           <TableCell>{u.joinedAt}</TableCell>
@@ -412,17 +412,17 @@ export default function AdminDashboardPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => router.push(`/admin/users/${u.id}`)}>
                                   <Edit className="h-4 w-4 mr-2" />
-                                  Edit User
+                                  {t('admin.editUser')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => handleRoleChange(u.id, 'paid')}>
-                                  Set as Paid
+                                  {t('admin.paidUsers')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleRoleChange(u.id, 'contributor')}>
-                                  Set as Contributor
+                                  {t('admin.contributors')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleRoleChange(u.id, 'editor')}>
-                                  Set as Editor
+                                  Editor
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem 
@@ -430,7 +430,7 @@ export default function AdminDashboardPage() {
                                   className="text-destructive"
                                 >
                                   <Ban className="h-4 w-4 mr-2" />
-                                  {u.status === 'active' ? 'Suspend' : 'Unsuspend'}
+                                  {u.status === 'active' ? t('admin.suspend') : t('admin.unsuspend')}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -450,7 +450,7 @@ export default function AdminDashboardPage() {
                     <CardContent className="p-6 text-center">
                       <Badge className={`${roleColors[role]} mb-2`}>{role}</Badge>
                       <p className="text-3xl font-bold">{count}</p>
-                      <p className="text-sm text-muted-foreground">users</p>
+                      <p className="text-sm text-muted-foreground">{t('admin.totalUsers').toLowerCase()}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -461,48 +461,48 @@ export default function AdminDashboardPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Content Statistics</CardTitle>
-                    <CardDescription>Real data from database</CardDescription>
+                    <CardTitle>{t('admin.contentStatistics')}</CardTitle>
+                    <CardDescription>{t('admin.realDataFromDatabase')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
-                      <span>Total Articles</span>
+                      <span>{t('admin.totalArticles')}</span>
                       <span className="font-semibold">{articlesCount}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total Users</span>
+                      <span>{t('admin.totalUsers')}</span>
                       <span className="font-semibold">{users.length}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Admin Users</span>
+                      <span>{t('admin.adminUsers')}</span>
                       <span className="font-semibold">{roleStats.admin || 0}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Contributors</span>
+                      <span>{t('admin.contributors')}</span>
                       <span className="font-semibold">{roleStats.contributor || 0}</span>
                     </div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Revenue Breakdown</CardTitle>
-                    <CardDescription>Stripe integration pending</CardDescription>
+                    <CardTitle>{t('admin.revenueBreakdown')}</CardTitle>
+                    <CardDescription>{t('admin.stripeIntegrationPending')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
-                      <span>Monthly Subscriptions</span>
+                      <span>{t('admin.monthlySubscriptions')}</span>
                       <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Annual Subscriptions</span>
+                      <span>{t('admin.annualSubscriptions')}</span>
                       <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Lifetime Purchases</span>
+                      <span>{t('admin.lifetimePurchases')}</span>
                       <span className="font-semibold text-muted-foreground">$0</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground italic">
-                      <span colSpan="2">Connect Stripe to see real revenue data</span>
+                      <span colSpan="2">{t('admin.connectStripe')}</span>
                     </div>
                   </CardContent>
                 </Card>

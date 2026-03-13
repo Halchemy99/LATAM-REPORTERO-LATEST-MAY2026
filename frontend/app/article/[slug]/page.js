@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
-import { mockArticles } from '@/lib/mock-data';
+import { mockArticles, getLocalizedContent } from '@/lib/mock-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ArticleVoiceBot from '@/components/ArticleVoiceBot';
@@ -38,7 +38,7 @@ import { toast } from 'sonner';
 
 export default function ArticlePage() {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { user, role, canAccessHumanContent } = useUserRole();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -141,7 +141,7 @@ export default function ArticlePage() {
         <div className="relative h-[400px] md:h-[500px]">
           <img
             src={article.mainImage}
-            alt={article.title}
+            alt={getLocalizedContent(article.title, locale)}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -168,10 +168,10 @@ export default function ArticlePage() {
                 </Badge>
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 max-w-4xl">
-                {article.title}
+                {getLocalizedContent(article.title, locale)}
               </h1>
               <p className="text-lg text-white/80 max-w-2xl">
-                {article.excerpt}
+                {getLocalizedContent(article.excerpt, locale)}
               </p>
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function ArticlePage() {
                       </h2>
                       <div 
                         className="article-content text-red-900/80 dark:text-red-200/80"
-                        dangerouslySetInnerHTML={{ __html: article.problem }}
+                        dangerouslySetInnerHTML={{ __html: getLocalizedContent(article.problem, locale) }}
                       />
                     </div>
                   </section>
@@ -257,7 +257,7 @@ export default function ArticlePage() {
                       </h2>
                       <div 
                         className="article-content text-blue-900/80 dark:text-blue-200/80"
-                        dangerouslySetInnerHTML={{ __html: article.solutions }}
+                        dangerouslySetInnerHTML={{ __html: getLocalizedContent(article.solutions, locale) }}
                       />
                     </div>
                   </section>
@@ -271,7 +271,7 @@ export default function ArticlePage() {
                       </h2>
                       <div 
                         className="article-content text-green-900/80 dark:text-green-200/80"
-                        dangerouslySetInnerHTML={{ __html: article.impact }}
+                        dangerouslySetInnerHTML={{ __html: getLocalizedContent(article.impact, locale) }}
                       />
                     </div>
                   </section>
@@ -377,11 +377,11 @@ export default function ArticlePage() {
                         <div className="flex gap-3 hover:bg-muted/50 p-2 rounded-lg transition-colors">
                           <img
                             src={related.mainImage}
-                            alt={related.title}
+                            alt={getLocalizedContent(related.title, locale)}
                             className="w-20 h-16 object-cover rounded"
                           />
                           <div>
-                            <h4 className="text-sm font-medium line-clamp-2">{related.title}</h4>
+                            <h4 className="text-sm font-medium line-clamp-2">{getLocalizedContent(related.title, locale)}</h4>
                             <p className="text-xs text-muted-foreground mt-1">
                               {related.readTime} {t('news.minuteRead')}
                             </p>

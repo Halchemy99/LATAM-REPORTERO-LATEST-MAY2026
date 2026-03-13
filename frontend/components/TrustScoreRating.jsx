@@ -3,6 +3,11 @@
 import { Star, StarHalf } from 'lucide-react';
 
 export default function TrustScoreRating({ score, showNumber = true, size = 'default' }) {
+  // Return null if no score is provided (articles using reputation system instead)
+  if (score === undefined || score === null) {
+    return null;
+  }
+  
   const sizeClass = size === 'large' ? 'h-5 w-5' : size === 'small' ? 'h-3 w-3' : 'h-4 w-4';
   
   const fullStars = Math.floor(score);
