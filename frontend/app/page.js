@@ -96,9 +96,17 @@ export default function HomePage() {
   // Helper to get main image
   const getMainImage = (article) => {
     if (usingCMS) {
-      return article.featured_image || '/placeholder-article.jpg';
+      return article.featured_image || null;
     }
-    return article.mainImage || '/placeholder-article.jpg';
+    return article.mainImage || null;
+  };
+  
+  // Helper to check if article has image
+  const hasImage = (article) => {
+    if (usingCMS) {
+      return !!article.featured_image;
+    }
+    return !!article.mainImage;
   };
   
   // Helper to get article slug
@@ -200,11 +208,23 @@ export default function HomePage() {
               <article className="editorial-grid-hero group" data-testid="featured-article">
                 <Link href={`/article/${getSlug(featuredArticle)}`} className="block">
                   <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden mb-4 rounded-lg">
-                    <img
-                      src={getMainImage(featuredArticle)}
-                      alt={getTitle(featuredArticle)}
-                      className="w-full h-full object-cover image-zoom"
-                    />
+                    {hasImage(featuredArticle) ? (
+                      <img
+                        src={getMainImage(featuredArticle)}
+                        alt={getTitle(featuredArticle)}
+                        className="w-full h-full object-cover image-zoom"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center">
+                        <div className="text-center px-8">
+                          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
+                            <span className="text-4xl font-bold text-white/80" style={{ fontFamily: 'Playfair Display, serif' }}>
+                              {getTitle(featuredArticle).charAt(0)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
                       <Badge className="mb-3 bg-gradient-to-r from-[#8c52ff] to-[#6111ff] hover:from-[#9d6bff] hover:to-[#7a2fff] uppercase tracking-wider text-xs border-0">
@@ -281,12 +301,22 @@ export default function HomePage() {
             {latestArticles.slice(0, 3).map((article) => (
               <article key={article.id} className="group" data-testid={`latest-article-${article.id}`}>
                 <Link href={`/article/${getSlug(article)}`}>
-                  <div className="relative aspect-[16/10] overflow-hidden mb-4">
-                    <img
-                      src={getMainImage(article)}
-                      alt={getTitle(article)}
-                      className="w-full h-full object-cover image-zoom"
-                    />
+                  <div className="relative aspect-[16/10] overflow-hidden mb-4 rounded-lg">
+                    {hasImage(article) ? (
+                      <img
+                        src={getMainImage(article)}
+                        alt={getTitle(article)}
+                        className="w-full h-full object-cover image-zoom"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#8c52ff]/20 via-[#6111ff]/30 to-[#1a1a2e] flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-[#8c52ff]/20 flex items-center justify-center">
+                          <span className="text-2xl font-bold text-[#8c52ff]" style={{ fontFamily: 'Playfair Display, serif' }}>
+                            {getTitle(article).charAt(0)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
@@ -304,11 +334,11 @@ export default function HomePage() {
                       {getExcerpt(article)}
                     </p>
                     <div className="flex items-center gap-3 pt-2">
-                      <img
-                        src={getAuthorAvatar(article)}
-                        alt={getAuthorName(article)}
-                        className="w-8 h-8 rounded-full"
-                      />
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8c52ff] to-[#6111ff] flex items-center justify-center">
+                        <span className="text-xs font-semibold text-white">
+                          {getAuthorName(article).split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        </span>
+                      </div>
                       <div className="text-sm">
                         <div className="font-medium">{getAuthorName(article)}</div>
                         <div className="text-muted-foreground text-xs">
