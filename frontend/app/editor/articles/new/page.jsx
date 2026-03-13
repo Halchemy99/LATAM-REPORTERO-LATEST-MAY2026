@@ -72,6 +72,8 @@ export default function NewArticlePage() {
     title_es: '',
     title_pt: '',
     slug: '',
+    custom_slug: '',
+    use_custom_slug: false,
     standfirst_en: '',
     standfirst_es: '',
     standfirst_pt: '',
@@ -121,13 +123,47 @@ export default function NewArticlePage() {
       [`title_${locale}`]: value
     }));
     
-    // Auto-generate slug from English title
-    if (locale === 'en' && !article.slug) {
+    // Auto-generate slug from English title with date (if not using custom slug)
+    if (locale === 'en' && !article.use_custom_slug) {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const baseSlug = generateSlug(value);
       setArticle(prev => ({
         ...prev,
-        slug: generateSlug(value)
+        slug: `${baseSlug}-${today}`
       }));
     }
+  };
+  
+  const handleCustomSlugToggle = (useCustom) => {
+    setArticle(prev => {
+      if (useCustom) {
+        // Switch to custom - keep current slug as starting point for custom
+        return {
+          ...prev,
+          use_custom_slug: true,
+          custom_slug: prev.custom_slug || prev.slug
+        };
+      } else {
+        // Switch back to auto - regenerate slug from title
+        const today = new Date().toISOString().split('T')[0];
+        const baseSlug = generateSlug(prev.title_en);
+        return {
+          ...prev,
+          use_custom_slug: false,
+          slug: baseSlug ? `${baseSlug}-${today}` : ''
+        };
+      }
+    });
+  };
+  
+  const handleCustomSlugChange = (value) => {
+    // Clean the custom slug
+    const cleanedSlug = value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
+    setArticle(prev => ({
+      ...prev,
+      custom_slug: cleanedSlug,
+      slug: cleanedSlug
+    }));
   };
 
   const handleSave = async (status = 'draft') => {
@@ -303,16 +339,46 @@ export default function NewArticlePage() {
                     ))}
                   </Tabs>
                   
-                  <div className="space-y-2">
-                    <Label>Slug</Label>
-                    <div className="flex gap-2">
-                      <span className="flex items-center text-muted-foreground">/article/</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>Article URL</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="custom-slug-toggle" className="text-sm text-muted-foreground">
+                          Custom URL
+                        </Label>
+                        <Switch
+                          id="custom-slug-toggle"
+                          checked={article.use_custom_slug}
+                          onCheckedChange={handleCustomSlugToggle}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 items-center">
+                      <span className="flex items-center text-muted-foreground text-sm">/article/</span>
                       <Input
-                        value={article.slug}
-                        onChange={(e) => setArticle(prev => ({ ...prev, slug: generateSlug(e.target.value) }))}
-                        placeholder="article-url-slug"
+                        value={article.use_custom_slug ? article.custom_slug : article.slug}
+                        onChange={(e) => {
+                          if (article.use_custom_slug) {
+                            handleCustomSlugChange(e.target.value);
+                          }
+                        }}
+                        placeholder={article.use_custom_slug ? "your-custom-url" : "auto-generated-slug-YYYY-MM-DD"}
+                        disabled={!article.use_custom_slug}
+                        className={!article.use_custom_slug ? "bg-muted" : ""}
                       />
                     </div>
+                    
+                    {!article.use_custom_slug && (
+                      <p className="text-xs text-muted-foreground">
+                        URL auto-generated from title + date (e.g., my-article-title-2026-03-13)
+                      </p>
+                    )}
+                    {article.use_custom_slug && (
+                      <p className="text-xs text-muted-foreground">
+                        Enter your custom URL slug (only lowercase letters, numbers, and hyphens)
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

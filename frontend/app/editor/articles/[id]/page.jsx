@@ -125,6 +125,36 @@ export default function EditArticlePage() {
       [`title_${locale}`]: value
     }));
   };
+  
+  const handleCustomSlugToggle = (useCustom) => {
+    setArticle(prev => {
+      if (useCustom) {
+        return {
+          ...prev,
+          use_custom_slug: true,
+          custom_slug: prev.custom_slug || prev.slug
+        };
+      } else {
+        // Regenerate from title + date
+        const dateStr = prev.created_at ? prev.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
+        const baseSlug = prev.title_en?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || '';
+        return {
+          ...prev,
+          use_custom_slug: false,
+          slug: baseSlug ? `${baseSlug}-${dateStr}` : prev.slug
+        };
+      }
+    });
+  };
+  
+  const handleCustomSlugChange = (value) => {
+    const cleanedSlug = value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
+    setArticle(prev => ({
+      ...prev,
+      custom_slug: cleanedSlug,
+      slug: cleanedSlug
+    }));
+  };
 
   const handleSave = async () => {
     try {
@@ -389,16 +419,46 @@ export default function EditArticlePage() {
                     ))}
                   </Tabs>
                   
-                  <div className="space-y-2">
-                    <Label>Slug</Label>
-                    <div className="flex gap-2">
-                      <span className="flex items-center text-muted-foreground">/article/</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>Article URL</Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="custom-slug-toggle" className="text-sm text-muted-foreground">
+                          Custom URL
+                        </Label>
+                        <Switch
+                          id="custom-slug-toggle"
+                          checked={article.use_custom_slug || false}
+                          onCheckedChange={handleCustomSlugToggle}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 items-center">
+                      <span className="flex items-center text-muted-foreground text-sm">/article/</span>
                       <Input
-                        value={article.slug || ''}
-                        onChange={(e) => setArticle(prev => ({ ...prev, slug: generateSlug(e.target.value) }))}
-                        placeholder="article-url-slug"
+                        value={article.use_custom_slug ? (article.custom_slug || '') : (article.slug || '')}
+                        onChange={(e) => {
+                          if (article.use_custom_slug) {
+                            handleCustomSlugChange(e.target.value);
+                          }
+                        }}
+                        placeholder={article.use_custom_slug ? "your-custom-url" : "auto-generated-slug-YYYY-MM-DD"}
+                        disabled={!article.use_custom_slug}
+                        className={!article.use_custom_slug ? "bg-muted" : ""}
                       />
                     </div>
+                    
+                    {!article.use_custom_slug && (
+                      <p className="text-xs text-muted-foreground">
+                        URL format: title-YYYY-MM-DD (toggle Custom URL to change)
+                      </p>
+                    )}
+                    {article.use_custom_slug && (
+                      <p className="text-xs text-muted-foreground">
+                        Enter your custom URL slug (only lowercase letters, numbers, and hyphens)
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
