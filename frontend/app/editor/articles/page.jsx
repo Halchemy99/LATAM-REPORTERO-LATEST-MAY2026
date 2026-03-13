@@ -253,23 +253,25 @@ export default function ArticlesListPage() {
                 {filteredArticles.map((article) => (
                   <TableRow key={article.id} className="group">
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        {article.featured_image && (
-                          <img
-                            src={article.featured_image}
-                            alt=""
-                            className="w-12 h-8 object-cover rounded"
-                          />
-                        )}
-                        <div>
-                          <div className="font-medium line-clamp-1">
-                            {getLocalizedTitle(article)}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            /{article.slug}
+                      <Link href={`/editor/articles/${article.id}`} className="block">
+                        <div className="flex items-center gap-3 hover:opacity-80 cursor-pointer">
+                          {article.featured_image && (
+                            <img
+                              src={article.featured_image}
+                              alt=""
+                              className="w-12 h-8 object-cover rounded"
+                            />
+                          )}
+                          <div>
+                            <div className="font-medium line-clamp-1">
+                              {getLocalizedTitle(article)}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              /{article.slug}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       {article.category && (

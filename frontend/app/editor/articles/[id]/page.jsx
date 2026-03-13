@@ -11,7 +11,12 @@ import {
   getTags, 
   getAuthors,
   generateSlug,
-  updateArticleStatus
+  updateArticleStatus,
+  saveArticleVersion,
+  getArticleVersions,
+  restoreArticleVersion,
+  scheduleArticle,
+  unscheduleArticle
 } from '@/lib/supabase/cms';
 import Header from '@/components/Header';
 import BlockEditor from '@/components/cms/BlockEditor';
@@ -31,6 +36,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { 
   ArrowLeft, 
   Save, 
@@ -43,8 +67,13 @@ import {
   Globe,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  History,
+  Calendar,
+  RotateCcw,
+  ExternalLink
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const REGIONS = [
   { value: 'mexico', label: 'Mexico' },
@@ -88,6 +117,21 @@ export default function EditArticlePage() {
   const [contentBlocks, setContentBlocks] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [contentLocale, setContentLocale] = useState('en');
+  
+  // Version history state
+  const [versions, setVersions] = useState([]);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+  const [selectedVersion, setSelectedVersion] = useState(null);
+  
+  // Scheduling state
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+  
+  // Live preview state
+  const [showLivePreview, setShowLivePreview] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -172,11 +216,88 @@ export default function EditArticlePage() {
       delete articleData.id;
       delete articleData.created_at;
       
+      // Save version before updating
+      try {
+        await saveArticleVersion(params.id, article, contentBlocks, user?.id, 'Auto-save');
+      } catch (versionError) {
+        console.log('Version save skipped:', versionError.message);
+      }
+      
       await updateArticle(params.id, articleData);
+      toast.success('Article saved successfully');
       
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Error saving article. Please try again.');
+      toast.error('Error saving article. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+  // Version history handlers
+  const loadVersions = async () => {
+    try {
+      setLoadingVersions(true);
+      const versionsData = await getArticleVersions(params.id);
+      setVersions(versionsData);
+    } catch (error) {
+      console.error('Error loading versions:', error);
+      toast.error('Failed to load version history');
+    } finally {
+      setLoadingVersions(false);
+    }
+  };
+  
+  const handleRestoreVersion = async () => {
+    if (!selectedVersion) return;
+    
+    try {
+      setSaving(true);
+      await restoreArticleVersion(params.id, selectedVersion.id);
+      toast.success('Version restored successfully');
+      setRestoreDialogOpen(false);
+      setShowVersionHistory(false);
+      // Reload article data
+      loadData();
+    } catch (error) {
+      console.error('Error restoring version:', error);
+      toast.error('Failed to restore version');
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+  // Scheduling handlers
+  const handleSchedule = async () => {
+    if (!scheduleDate || !scheduleTime) {
+      toast.error('Please select both date and time');
+      return;
+    }
+    
+    try {
+      setSaving(true);
+      const scheduledAt = new Date(`${scheduleDate}T${scheduleTime}`).toISOString();
+      await scheduleArticle(params.id, scheduledAt);
+      setArticle(prev => ({ ...prev, status: 'scheduled', scheduled_at: scheduledAt }));
+      toast.success('Article scheduled for publishing');
+      setShowScheduleDialog(false);
+    } catch (error) {
+      console.error('Error scheduling article:', error);
+      toast.error('Failed to schedule article');
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+  const handleUnschedule = async () => {
+    try {
+      setSaving(true);
+      await unscheduleArticle(params.id);
+      setArticle(prev => ({ ...prev, status: 'draft', scheduled_at: null }));
+      toast.success('Article unscheduled');
+    } catch (error) {
+      console.error('Error unscheduling article:', error);
+      toast.error('Failed to unschedule article');
     } finally {
       setSaving(false);
     }
@@ -265,6 +386,54 @@ export default function EditArticlePage() {
               </Badge>
             </div>
             <div className="flex items-center gap-2">
+              {/* Version History Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowVersionHistory(true);
+                  loadVersions();
+                }}
+              >
+                <History className="h-4 w-4 mr-2" />
+                History
+              </Button>
+              
+              {/* Schedule Button */}
+              {(article.status === 'draft' || article.status === 'approved') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowScheduleDialog(true)}
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule
+                </Button>
+              )}
+              
+              {/* Unschedule Button */}
+              {article.status === 'scheduled' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUnschedule}
+                  disabled={saving}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Unschedule
+                </Button>
+              )}
+              
+              {/* Live Preview Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLivePreview(true)}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Live Preview
+              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -708,6 +877,201 @@ export default function EditArticlePage() {
           </div>
         )}
       </main>
+      
+      {/* Version History Dialog */}
+      <Dialog open={showVersionHistory} onOpenChange={setShowVersionHistory}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Version History
+            </DialogTitle>
+            <DialogDescription>
+              View and restore previous versions of this article
+            </DialogDescription>
+          </DialogHeader>
+          
+          {loadingVersions ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : versions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No previous versions found</p>
+              <p className="text-sm">Versions are saved automatically when you save the article</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {versions.map((version, index) => (
+                <div 
+                  key={version.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Version {versions.length - index}</span>
+                      {index === 0 && (
+                        <Badge variant="outline" className="text-xs">Latest</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(version.created_at).toLocaleString()}
+                    </p>
+                    {version.change_note && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {version.change_note}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedVersion(version);
+                      setRestoreDialogOpen(true);
+                    }}
+                    disabled={index === 0}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Restore
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Restore Version Confirmation Dialog */}
+      <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restore this version?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will replace the current article content with the selected version. 
+              The current version will be saved to history before restoring.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRestoreVersion} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+              Restore Version
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Schedule Publishing Dialog */}
+      <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Schedule Publishing
+            </DialogTitle>
+            <DialogDescription>
+              Set a date and time for this article to be automatically published
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Date</Label>
+              <Input
+                type="date"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Time</Label>
+              <Input
+                type="time"
+                value={scheduleTime}
+                onChange={(e) => setScheduleTime(e.target.value)}
+              />
+            </div>
+            
+            {scheduleDate && scheduleTime && (
+              <div className="p-3 bg-muted rounded-lg">
+                <p className="text-sm">
+                  <span className="font-medium">Scheduled for: </span>
+                  {new Date(`${scheduleDate}T${scheduleTime}`).toLocaleString()}
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSchedule} disabled={saving || !scheduleDate || !scheduleTime}>
+              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Calendar className="h-4 w-4 mr-2" />}
+              Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Live Preview Dialog */}
+      <Dialog open={showLivePreview} onOpenChange={setShowLivePreview}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ExternalLink className="h-5 w-5" />
+              Live Preview
+            </DialogTitle>
+            <DialogDescription>
+              See how your article will appear to readers
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="border rounded-lg p-6 bg-white">
+            {/* Article Header */}
+            <div className="mb-8">
+              {article.category && (
+                <Badge className="mb-4">{article.category.name_en}</Badge>
+              )}
+              <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+                {article[`title_${contentLocale}`] || article.title_en}
+              </h1>
+              <p className="text-xl text-muted-foreground mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
+                {article[`standfirst_${contentLocale}`] || article.standfirst_en}
+              </p>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>By {article.author?.name || 'Staff Writer'}</span>
+                <span>•</span>
+                <span>{new Date().toLocaleDateString()}</span>
+              </div>
+            </div>
+            
+            {/* Featured Image */}
+            {article.featured_image && (
+              <div className="mb-8">
+                <img 
+                  src={article.featured_image} 
+                  alt={article.featured_image_alt || ''} 
+                  className="w-full rounded-lg"
+                />
+                {article.featured_image_caption && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {article.featured_image_caption}
+                  </p>
+                )}
+              </div>
+            )}
+            
+            {/* Content Blocks */}
+            <div className="prose max-w-none">
+              <ArticleContent blocks={contentBlocks} locale={contentLocale} />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
