@@ -197,6 +197,6 @@ LATAM Reportero is a solutions-oriented journalism publishing platform for Latin
 - [ ] Mobile app consideration
 
 ## URLs & Credentials
-- **Preview URL:** https://investigative-news.preview.emergentagent.com
+- **Preview URL:** https://cms-testing-flow.preview.emergentagent.com
 - **Admin Login:** oket.hoxha@gmail.com / emergent2026
 - **Supabase:** https://yrvrpmoidlvrtukvrvnv.supabase.co
