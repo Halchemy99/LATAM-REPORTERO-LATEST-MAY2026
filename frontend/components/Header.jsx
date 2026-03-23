@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
+import AISearchBar from '@/components/AISearchBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut, LayoutDashboard, Bookmark, FileText, Settings, Shield, Edit, Users } from 'lucide-react';
 
 export default function Header() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { user, role, logout, canSubmitStories, canEditStories, canAccessAdminDashboard } = useUserRole();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -62,6 +63,9 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center space-x-3">
+          {/* AI Search */}
+          <AISearchBar locale={locale} />
+          
           {/* Language Selector */}
           <LanguageSelector />
 

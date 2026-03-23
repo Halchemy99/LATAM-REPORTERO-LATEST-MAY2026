@@ -82,6 +82,18 @@ class CreateCheckoutRequest(BaseModel):
 class CheckoutStatusRequest(BaseModel):
     session_id: str
 
+# AI Search Models
+class AISearchRequest(BaseModel):
+    query: str
+    session_id: Optional[str] = None
+    history: Optional[List[Dict[str, str]]] = None
+
+class AISearchResponse(BaseModel):
+    answer: str
+    articles: List[Dict[str, Any]]
+    session_id: str
+    follow_up_suggestions: List[str]
+
 # Define subscription plans (server-side only)
 SUBSCRIPTION_PLANS = {
     "standard": {
@@ -343,6 +355,175 @@ async def get_payment_status(session_id: str, http_request: Request):
     except Exception as e:
         logger.error(f"Error getting payment status: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get payment status: {str(e)}")
+
+# ============================================
+# AI SEARCH ENDPOINT
+# ============================================
+
+@api_router.post("/ai-search", response_model=AISearchResponse)
+async def ai_search(request: AISearchRequest):
+    """AI-powered article search with conversational follow-ups"""
+    try:
+        if not EMERGENT_LLM_KEY:
+            raise HTTPException(status_code=500, detail="LLM API key not configured")
+        
+        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
+            raise HTTPException(status_code=500, detail="Supabase not configured")
+        
+        # Create Supabase client to fetch articles
+        supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        
+        # Fetch all published articles from CMS
+        articles_response = supabase.table('cms_articles').select(
+            'id, title_en, title_es, title_pt, slug, standfirst_en, standfirst_es, standfirst_pt, '
+            'featured_image, region, read_time, published_at, is_featured, '
+            'category:categories(name_en, slug), author:authors(name)'
+        ).eq('status', 'published').execute()
+        
+        articles = articles_response.data or []
+        
+        # Build article summaries for the LLM
+        article_summaries = []
+        for i, art in enumerate(articles):
+            summary = f"""
+Article {i+1}:
+- Title: {art.get('title_en', 'Untitled')}
+- Summary: {art.get('standfirst_en', 'No summary')}
+- Category: {art.get('category', {}).get('name_en', 'General') if art.get('category') else 'General'}
+- Region: {art.get('region', 'Unknown')}
+- Slug: {art.get('slug', '')}
+"""
+            article_summaries.append(summary)
+        
+        articles_context = "\n".join(article_summaries)
+        
+        # System message for the search assistant
+        system_message = f"""You are an intelligent search assistant for LATAM Reportero, a solutions-oriented journalism platform focused on Latin America.
+
+AVAILABLE ARTICLES:
+{articles_context}
+
+YOUR ROLE:
+1. Understand the user's search query (they may ask in natural language)
+2. Find the most relevant articles from the list above
+3. Explain WHY these articles match their search
+4. Be conversational and helpful
+5. If the user asks follow-up questions, remember the context
+
+RESPONSE FORMAT:
+- Start with a brief, friendly response addressing their query
+- Mention the relevant articles by their titles
+- At the end, include a JSON block with the article slugs like this:
+MATCHED_ARTICLES: ["slug1", "slug2", "slug3"]
+
+Keep responses concise but helpful. You can suggest related topics they might be interested in."""
+
+        # Generate or use existing session ID
+        session_id = request.session_id or f"search-{uuid.uuid4()}"
+        
+        # Initialize the chat
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=session_id,
+            system_message=system_message
+        )
+        
+        # Use GPT-5.2 for best understanding
+        chat.with_model("openai", "gpt-5.2")
+        
+        # Build conversation history if provided
+        if request.history:
+            for msg in request.history:
+                if msg.get('role') == 'user':
+                    user_msg = UserMessage(text=msg.get('content', ''))
+                    await chat.send_message(user_msg)
+        
+        # Send the search query
+        user_message = UserMessage(text=request.query)
+        response = await chat.send_message(user_message)
+        
+        # Parse matched articles from response
+        matched_slugs = []
+        if "MATCHED_ARTICLES:" in response:
+            try:
+                import json
+                json_part = response.split("MATCHED_ARTICLES:")[1].strip()
+                # Find the JSON array
+                start = json_part.find('[')
+                end = json_part.find(']') + 1
+                if start >= 0 and end > start:
+                    matched_slugs = json.loads(json_part[start:end])
+            except:
+                pass
+        
+        # Clean the response (remove the JSON part for display)
+        clean_response = response.split("MATCHED_ARTICLES:")[0].strip()
+        
+        # Get full article data for matched slugs
+        matched_articles = []
+        for art in articles:
+            if art.get('slug') in matched_slugs:
+                matched_articles.append({
+                    'id': art.get('id'),
+                    'title': art.get('title_en'),
+                    'excerpt': art.get('standfirst_en'),
+                    'slug': art.get('slug'),
+                    'image': art.get('featured_image'),
+                    'category': art.get('category', {}).get('name_en') if art.get('category') else 'General',
+                    'region': art.get('region'),
+                    'read_time': art.get('read_time'),
+                    'author': art.get('author', {}).get('name') if art.get('author') else 'Staff Writer'
+                })
+        
+        # If no matches found via JSON, try to find articles mentioned in text
+        if not matched_articles:
+            response_lower = clean_response.lower()
+            for art in articles:
+                title = art.get('title_en', '').lower()
+                # Check if significant part of title is mentioned
+                title_words = [w for w in title.split() if len(w) > 4]
+                matches = sum(1 for w in title_words if w in response_lower)
+                if matches >= 2 or art.get('slug', '') in response_lower:
+                    matched_articles.append({
+                        'id': art.get('id'),
+                        'title': art.get('title_en'),
+                        'excerpt': art.get('standfirst_en'),
+                        'slug': art.get('slug'),
+                        'image': art.get('featured_image'),
+                        'category': art.get('category', {}).get('name_en') if art.get('category') else 'General',
+                        'region': art.get('region'),
+                        'read_time': art.get('read_time'),
+                        'author': art.get('author', {}).get('name') if art.get('author') else 'Staff Writer'
+                    })
+        
+        # Generate follow-up suggestions
+        follow_ups = [
+            "Show me more articles about this topic",
+            "What other regions have similar stories?",
+            "Find articles about different solutions"
+        ]
+        
+        # Store search in MongoDB for analytics
+        search_doc = {
+            "id": str(uuid.uuid4()),
+            "session_id": session_id,
+            "query": request.query,
+            "matched_count": len(matched_articles),
+            "matched_slugs": [a.get('slug') for a in matched_articles],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.ai_searches.insert_one(search_doc)
+        
+        return AISearchResponse(
+            answer=clean_response,
+            articles=matched_articles[:5],  # Return top 5 matches
+            session_id=session_id,
+            follow_up_suggestions=follow_ups
+        )
+        
+    except Exception as e:
+        logger.error(f"AI Search error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
