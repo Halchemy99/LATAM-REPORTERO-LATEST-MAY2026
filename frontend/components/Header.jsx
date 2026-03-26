@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '@/components/LanguageSelector';
 import AISearchBar from '@/components/AISearchBar';
+import ContentModeToggle from '@/components/ContentModeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +20,7 @@ import { Menu, User, LogOut, LayoutDashboard, Bookmark, FileText, Settings, Shie
 
 export default function Header() {
   const { t, locale } = useTranslation();
-  const { user, role, logout, canSubmitStories, canEditStories, canAccessAdminDashboard } = useUserRole();
+  const { user, role, logout, canSubmitStories, canEditStories, canAccessAdminDashboard, isSubscribed } = useUserRole();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -37,15 +39,15 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 group">
-          <div className="flex items-center">
-            <div className="w-9 h-9 bg-gradient-to-br from-[#8c52ff] to-[#6111ff] flex items-center justify-center rounded-sm group-hover:shadow-lg group-hover:shadow-[#8c52ff]/30 transition-shadow duration-300">
-              <span className="text-white font-bold text-lg" style={{ fontFamily: 'Raleway, sans-serif' }}>L</span>
-            </div>
-            <span className="ml-2.5 text-xl font-bold tracking-tight" style={{ fontFamily: 'Raleway, sans-serif' }}>
-              LATAM <span className="text-[#8c52ff]">Reportero</span>
-            </span>
-          </div>
+        <Link href="/" className="flex items-center group">
+          <Image
+            src="/logo.png"
+            alt="LATAM Reportero"
+            width={140}
+            height={40}
+            className="h-10 w-auto group-hover:opacity-90 transition-opacity"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -63,6 +65,9 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center space-x-3">
+          {/* Human/AI Content Toggle */}
+          <ContentModeToggle isSubscribed={isSubscribed} userRole={role} />
+          
           {/* AI Search */}
           <AISearchBar locale={locale} />
           

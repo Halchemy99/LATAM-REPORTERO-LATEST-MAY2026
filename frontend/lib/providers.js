@@ -412,7 +412,8 @@ export function UserRoleProvider({ children }) {
   }, [authMode]);
 
   // Permission checks based on role hierarchy
-  const canAccessHumanContent = role && ['paid', 'contributor', 'editor', 'admin'].includes(role);
+  const isSubscribed = role && ['paid', 'subscriber', 'contributor', 'editor', 'admin'].includes(role);
+  const canAccessHumanContent = role && ['paid', 'subscriber', 'contributor', 'editor', 'admin'].includes(role);
   const canSubmitStories = role && ['contributor', 'editor', 'admin'].includes(role);
   const canEditStories = role && ['editor', 'admin'].includes(role);
   const canAccessAdminDashboard = role === 'admin';
@@ -427,6 +428,7 @@ export function UserRoleProvider({ children }) {
       login,
       signup,
       logout,
+      isSubscribed,
       canAccessHumanContent,
       canSubmitStories,
       canEditStories,

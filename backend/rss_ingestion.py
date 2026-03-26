@@ -227,6 +227,7 @@ Please analyze this article and rewrite it in our solutions journalism format. I
         try:
             chat = LlmChat(
                 api_key=self.api_key,
+                session_id=f"rss-process-{article.external_id}",
                 system_message=system_prompt
             )
             chat.with_model("openai", "gpt-5.2")

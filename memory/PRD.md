@@ -5,102 +5,119 @@ A solutions-oriented journalism platform for Latin America with:
 - Credibility system for contributors
 - Multilingual support (EN, ES, PT)
 - Flexible CMS for modular content
-- Crypto donations (MetaMask)
+- Crypto donations (ETH + BTC)
 - Stripe subscriptions
+- AI-powered content generation from RSS feeds
 
 ## Tech Stack
 - **Frontend**: Next.js 15, React, Tailwind CSS, shadcn/ui
 - **Backend**: FastAPI
 - **Database & Auth**: Supabase (PostgreSQL, Storage, Auth)
-- **CMS**: Custom Supabase-native block editor with drag-and-drop (@dnd-kit/core)
+- **CMS**: Sanity.io (NEW - replacing custom Supabase CMS)
+- **AI**: GPT-5.2 (via Emergent LLM Key) for content processing
+- **Translation**: DeepL API
 - **Payments**: Stripe (implemented), MetaMask (pending)
 
 ## What's Been Implemented
 
 ### Core Features (DONE)
 - [x] Full design overhaul with brand identity
+- [x] New logo integrated
 - [x] Supabase authentication (login/signup)
-- [x] Custom CMS with 11-table schema
-- [x] Block editor with drag-and-drop
-- [x] Version history with rollbacks
-- [x] Scheduled publishing
-- [x] Live preview
-- [x] Editorial notes/comments system
-- [x] Inline editing for text blocks
+- [x] Human/AI content toggle with paywall
+- [x] AI Search (GPT-5.2 powered natural language search)
 - [x] Stripe integration for subscriptions
-- [x] Homepage connected to CMS
-- [x] Article pages rendering CMS content
-- [x] Media Library with file upload (TESTED ✅)
-- [x] Mock data migrated to CMS database (6 articles, 7 categories)
+- [x] Crypto donation component (ETH + BTC wallets)
 
-### Pages Implemented
-- `/` - Homepage (CMS-connected)
-- `/auth/login`, `/auth/signup` - Authentication
-- `/dashboard` - User dashboard
-- `/editor/articles` - Article list
-- `/editor/articles/new` - Create article
-- `/editor/articles/[id]` - Edit article (with versions, scheduling, comments)
-- `/editor/media` - Media library
-- `/article/[slug]` - Article view page
-- `/writers` - Writers listing
-- `/pricing` - Subscription plans
-- `/solutions` - Solutions page
+### RSS → Sanity Pipeline (DONE)
+- [x] 22 RSS feeds configured (Reuters, AP, NYT, Guardian, BBC, LATAM outlets)
+- [x] RSS feed fetching service
+- [x] AI processing with GPT-5.2 (solutions journalism format)
+- [x] DeepL translation to EN/ES/PT
+- [x] Sanity CMS integration for draft creation
+- [x] Articles tagged as "AI Generated"
+- [x] Categories created in Sanity
 
-### Database Schema
-- `cms_articles` - Core article data
-- `content_blocks` - Modular content blocks
-- `article_versions` - Version history
-- `article_comments` - Editorial notes
-- `categories` - Article categories
-- `authors` - Writer profiles
-- `tags`, `article_tags` - Tagging system
-- `media_assets` - Media library
-- `editorial_notes` - Workflow notes
-- `users` - User profiles
+### API Endpoints
+- `GET /api/rss/feeds` - List all configured RSS feeds
+- `GET /api/rss/test-feed/{key}` - Test single feed
+- `POST /api/rss/ingest` - Trigger full ingestion pipeline
+- `GET /api/rss/ingestion-logs` - View ingestion history
+- `POST /api/ai-search` - AI-powered article search
+- `POST /api/create-checkout-session` - Stripe checkout
+
+### Crypto Wallets Configured
+- **ETH**: `0xb5CDD659a06a6c89a69a8427e1A962A1AbDfF5ca`
+- **BTC**: `bc1qaw8j4t8593hmtt5y9uzs4fkl2fmuh5lue40m8v`
+
+## Sanity CMS Configuration
+- **Project ID**: `s5taeh5v`
+- **Dataset**: `production`
+- **Categories**: Environment, Economy, Health, Education, Politics, Technology, Human Rights, Infrastructure, Agriculture, Energy
+- **Article Schema**: title, slug, language, standfirst, body, category, region, isAiGenerated, status, sourceUrl, sourceFeed
+
+## User Roles & Permissions
+| Role | AI Content | Human Content | Submit Stories | Edit Stories | Admin |
+|------|-----------|---------------|----------------|--------------|-------|
+| Guest | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Free | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Subscriber | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Contributor | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Editor | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Admin | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ## Admin Credentials
 - Email: `oket.hoxha@gmail.com`
 - Password: `emergent2030`
 
-## Current State (Dec 2025)
-- Application is FULLY FUNCTIONAL
-- CMS has real content (6 migrated articles)
-- Media upload tested and working
-- All CMS enhancement features (Option A) complete
-
 ## Prioritized Backlog
 
-### P1 - High Priority
-1. **MetaMask Crypto Donations** - Web3 integration pending
-   - Location: `/app/frontend/components/CryptoDonationButton.jsx`
-   - Needs: Web3 library (wagmi/ethers.js)
+### P0 - Complete ✅
+1. Sanity CMS setup
+2. RSS ingestion pipeline
+3. AI content processing
+4. DeepL translation
+5. Human/AI toggle with paywall
+
+### P1 - Next Steps
+1. **Connect Frontend to Sanity** - Replace Supabase CMS with Sanity for article display
+2. **Sanity Studio UI** - Set up hosted studio for editors
+3. **MetaMask Integration** - Web3 wallet connection for donations
 
 ### P2 - Medium Priority
-2. **DeepL Auto-Translation** - Requires user API key
-3. **Deprecate Mock Data Fallback** - Remove fallback logic after confirming CMS stability
+1. Scheduled ingestion (production cron job)
+2. Editorial workflow dashboard
+3. Article approval/rejection flow
 
 ### P3 - Future
-4. **"Coming Soon" Pages** - For indigenous language links
-5. **Complex Block Components** - chart, map_embed, etc.
-6. **Author Avatar Migration** - Fix authors table schema for avatar_url
-
-## Technical Notes
-- Valid content block types: `paragraph`, `heading`, `image`, `divider`
-- RLS policies are critical - any new data access patterns need policy review
-- Multilingual data pattern: `{field}_en`, `{field}_es`, `{field}_pt`
+1. Real-time collaboration in Sanity
+2. Advanced analytics dashboard
+3. Push notifications for new articles
 
 ## Files of Reference
-- `/app/frontend/lib/supabase/cms.js` - CMS API functions
-- `/app/frontend/app/editor/articles/[id]/page.jsx` - Article editor
-- `/app/frontend/components/BlockEditor.jsx` - DND block editor
-- `/app/frontend/scripts/migrate-mock-data.js` - Migration script
-- `/app/backend/server.py` - Stripe endpoint
+- `/app/backend/rss_config.py` - RSS feed configuration
+- `/app/backend/rss_ingestion.py` - Main ingestion pipeline
+- `/app/backend/setup_sanity.py` - Sanity schema setup
+- `/app/backend/run_scheduled_ingestion.py` - Cron job script
+- `/app/frontend/components/ContentModeToggle.jsx` - Human/AI toggle
+- `/app/frontend/components/CryptoDonationButton.jsx` - Crypto donations
+- `/app/frontend/components/AISearchBar.jsx` - AI search
 
 ## Environment Variables
-- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
-- `SUPABASE_SERVICE_ROLE_KEY` - For migrations/admin ops
-- `STRIPE_SECRET_KEY` - Stripe payments
+```
+# Backend
+SANITY_PROJECT_ID=s5taeh5v
+SANITY_DATASET=production
+SANITY_API_TOKEN=sk3uAraMF...
+DEEPL_API_KEY=09d2abac-51e7-479c-8fa7-6964fd6117a3:fx
+EMERGENT_LLM_KEY=sk-emergent-...
+SUPABASE_URL=https://yrvrpmoidlvrtukvrvnv.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+STRIPE_API_KEY=sk_test_...
+```
 
 ## Preview URL
 https://reportero-cms.preview.emergentagent.com
+
+## Sanity Dashboard
+https://www.sanity.io/manage/project/s5taeh5v
