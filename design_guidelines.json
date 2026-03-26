@@ -1,154 +1,154 @@
 {
-  "design_system": {
-    "identity": {
-      "name": "LATAM Reportero",
-      "tone": "Investigative, Authoritative, Unfiltered, Human",
-      "archetype": "The Truth Teller (Swiss & High-Contrast)",
-      "keywords": ["Credibility", "Depth", "Contrast", "Impact", "Clarity"]
+  "theme": "LIGHT",
+  "archetype": "4 (Swiss & High-Contrast) + Editorial Archival",
+  "reasoning": "A journalism platform requires authority, credibility, and high readability. Moving away from the 'childish' #8c52ff, we adopt a 'Modern Editorial' aesthetic. The color palette shifts to a deep, authoritative Plum/Indigo (#23103A) and Newspaper Off-White (#F7F5F2) for a mature Guardian/Financial Times feel. Terracotta accents provide LATAM warmth. Typography pairs a majestic Serif with a clean Sans for high-density reading. Layouts rely on strict grids, 1px borders, and flat surfaces instead of soft shadows.",
+  "colors": {
+    "background": {
+      "primary": "#F7F5F2",
+      "secondary": "#FFFFFF",
+      "tertiary": "#EAE7E1",
+      "crypto_banner": "#1A1A1A"
     },
-    "typography": {
-      "font_family": {
-        "headings": "Playfair Display, serif",
-        "body": "Merriweather, serif",
-        "ui": "Inter, sans-serif"
-      },
-      "scale": {
-        "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-none",
-        "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
-        "h3": "text-2xl md:text-3xl font-medium",
-        "body_large": "text-lg md:text-xl leading-relaxed",
-        "body_default": "text-base leading-relaxed",
-        "caption": "text-sm text-muted-foreground uppercase tracking-widest"
-      },
-      "imports": [
-        "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@400;500;600&display=swap"
-      ]
+    "text": {
+      "primary": "#23103A",
+      "secondary": "#5C5566",
+      "tertiary": "#8A8493",
+      "inverse": "#FFFFFF",
+      "accent": "#D35A3D"
     },
-    "colors": {
-      "light": {
-        "background": "#ffffff",
-        "foreground": "#09090b",
-        "card": "#ffffff",
-        "card_foreground": "#09090b",
-        "popover": "#ffffff",
-        "popover_foreground": "#09090b",
-        "primary": "#09090b",
-        "primary_foreground": "#fafafa",
-        "secondary": "#f4f4f5",
-        "secondary_foreground": "#18181b",
-        "muted": "#f4f4f5",
-        "muted_foreground": "#71717a",
-        "accent": "#f4f4f5",
-        "accent_foreground": "#18181b",
-        "destructive": "#ef4444",
-        "destructive_foreground": "#fafafa",
-        "border": "#e4e4e7",
-        "input": "#e4e4e7",
-        "ring": "#09090b"
-      },
-      "dark": {
-        "background": "#020617",
-        "foreground": "#fafafa",
-        "card": "#020617",
-        "card_foreground": "#fafafa",
-        "popover": "#020617",
-        "popover_foreground": "#fafafa",
-        "primary": "#fafafa",
-        "primary_foreground": "#18181b",
-        "secondary": "#27272a",
-        "secondary_foreground": "#fafafa",
-        "muted": "#27272a",
-        "muted_foreground": "#a1a1aa",
-        "accent": "#27272a",
-        "accent_foreground": "#fafafa",
-        "destructive": "#7f1d1d",
-        "destructive_foreground": "#fafafa",
-        "border": "#27272a",
-        "input": "#27272a",
-        "ring": "#d4d4d8"
-      },
-      "brand": {
-        "journalism_red": "#dc2626",
-        "trust_blue": "#1e3a8a",
-        "paper_off_white": "#f9f9f9"
-      }
+    "brand": {
+      "primary": "#23103A",
+      "primary_hover": "#160A26",
+      "accent": "#D35A3D",
+      "accent_hover": "#B1432A",
+      "crypto": "#F3BA2F",
+      "ai_indicator": "#6B38D6"
     },
-    "layout": {
-      "spacing_scale": {
-        "section_padding": "py-24 md:py-32",
-        "container_padding": "px-6 md:px-12",
-        "element_gap": "gap-8"
-      },
-      "grid_systems": {
-        "editorial_hero": "grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(200px,auto)]",
-        "article_list": "grid grid-cols-1 md:grid-cols-3 gap-8",
-        "sidebar_layout": "grid grid-cols-1 lg:grid-cols-12 gap-12"
-      },
-      "container_width": "max-w-7xl mx-auto"
-    },
-    "components": {
-      "buttons": {
-        "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-none h-12 px-8 font-serif uppercase tracking-wider text-sm transition-all",
-        "outline": "border-2 border-primary bg-transparent hover:bg-accent text-primary rounded-none h-12 px-8 font-serif uppercase tracking-wider text-sm transition-all",
-        "ghost": "hover:bg-accent hover:text-accent-foreground rounded-none h-12 px-6 font-medium transition-all"
-      },
-      "cards": {
-        "editorial": "group relative overflow-hidden bg-background border border-border/40 hover:border-primary/20 transition-colors duration-300",
-        "feature": "col-span-1 md:col-span-8 row-span-2 relative min-h-[500px] flex items-end p-8 text-white",
-        "compact": "flex gap-4 items-start border-b border-border/40 pb-6 last:border-0"
-      },
-      "inputs": {
-        "style": "flex h-12 w-full border-b-2 border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 rounded-none transition-colors"
-      }
-    },
-    "motion": {
-      "micro_interactions": {
-        "hover_lift": "hover:-translate-y-1 transition-transform duration-300",
-        "image_zoom": "group-hover:scale-105 transition-transform duration-700 ease-out",
-        "link_underline": "relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
-      },
-      "page_transitions": {
-        "initial": { "opacity": 0, "y": 20 },
-        "animate": { "opacity": 1, "y": 0 },
-        "exit": { "opacity": 0, "y": -20 },
-        "transition": { "duration": 0.4, "ease": "easeOut" }
-      }
-    },
-    "assets": {
-      "images": {
-        "hero_protest": "https://images.unsplash.com/photo-1577769893049-6f59780ef61f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHw0fHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85",
-        "community_crowd": "https://images.unsplash.com/photo-1727782376164-ceec7232a10d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwzfHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85",
-        "podcast_mic": "https://images.unsplash.com/photo-1709846487080-757b0c1af794?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwzfHxtaWNyb3Bob25lJTIwc3R1ZGlvJTIwcG9kY2FzdHxlbnwwfHx8fDE3NzMzNDU0Mjl8MA&ixlib=rb-4.1.0&q=85",
-        "studio_dark": "https://images.unsplash.com/photo-1709846486154-f9172678be6f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwyfHxtaWNyb3Bob25lJTIwc3R1ZGlvJTIwcG9kY2FzdHxlbnwwfHx8fDE3NzMzNDU0Mjl8MA&ixlib=rb-4.1.0&q=85",
-        "placeholder_news": "https://images.unsplash.com/photo-1605648933008-c8afe8772106?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwyfHxsYXRpbiUyMGFtZXJpY2ElMjBjaXR5JTIwc3RyZWV0JTIwY3Jvd2QlMjBwcm90ZXN0JTIwZWRpdG9yaWFsfGVufDB8fHx8MTc3MzM0NTQxNnww&ixlib=rb-4.1.0&q=85"
-      },
-      "icons": {
-        "library": "lucide-react",
-        "style": "stroke-[1.5px] w-5 h-5"
-      }
-    },
-    "accessibility": {
-      "contrast_check": "Ensure all text meets WCAG AA (4.5:1) minimum. Use APCA for large text.",
-      "reduced_motion": "Respect 'prefers-reduced-motion'. disable parallax and heavy transitions.",
-      "focus_states": "Visible focus ring (2px solid primary) on all interactive elements."
+    "border": {
+      "default": "rgba(35, 16, 58, 0.15)",
+      "strong": "rgba(35, 16, 58, 0.4)",
+      "inverse": "rgba(255, 255, 255, 0.2)"
     }
   },
+  "typography": {
+    "font_families": {
+      "headings": "Cormorant Garamond, Playfair Display, serif",
+      "body": "Inter, Public Sans, sans-serif",
+      "mono": "IBM Plex Mono, JetBrains Mono, monospace"
+    },
+    "sizes": {
+      "h1": "text-5xl md:text-6xl tracking-tighter leading-none font-bold",
+      "h2": "text-3xl md:text-4xl tracking-tight leading-tight font-semibold",
+      "h3": "text-xl md:text-2xl tracking-tight leading-snug font-medium",
+      "h4": "text-lg md:text-xl leading-snug font-medium",
+      "body_large": "text-lg leading-relaxed",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm leading-normal",
+      "overline": "text-xs uppercase tracking-[0.2em] font-mono"
+    },
+    "rules": {
+      "headings": "Always use tight letter spacing. Never center headings unless for a specific visual centerpiece (like a pull quote).",
+      "body": "Max width for article reading should be 65ch (max-w-prose). Align left.",
+      "labels": "Use mono font for bylines, datelines, and crypto elements. Uppercase with wide tracking."
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Archival and dense. Rely on strict column grids with explicit 1px borders between content blocks instead of white space alone.",
+    "scale": {
+      "section_y": "py-16 md:py-24",
+      "container_px": "px-4 md:px-8 lg:px-12",
+      "gap_standard": "gap-6 md:gap-8",
+      "gap_dense": "gap-3 md:gap-4"
+    },
+    "grid_patterns": {
+      "homepage_hero": "grid-cols-1 md:grid-cols-12 gap-6 with a 8-col dominant lead story and 4-col stacked sidebar for latest news.",
+      "article_layout": "grid-cols-1 lg:grid-cols-12 with 2-col left rail (metadata/sharing), 7-col main content, 3-col right rail (related)."
+    }
+  },
+  "components": {
+    "cards": {
+      "style": "Flat, no box-shadows. 1px solid border (border-border).",
+      "radius": "rounded-none or rounded-sm (2px). Never use large radiuses.",
+      "hover": "Image zoom on hover within hidden overflow, subtle background shift for the text container."
+    },
+    "buttons": {
+      "primary": "Solid dark plum (#23103A), white text, sharp corners. Hover: slightly darker plum.",
+      "secondary": "Transparent background, 1px solid plum border, plum text. Hover: light gray background.",
+      "crypto": "Black background, mono font, subtle yellow/gold accent (e.g. Ethereum/Bitcoin icon).",
+      "radius": "rounded-none"
+    },
+    "navigation": {
+      "header": "Solid #F7F5F2 background, hard bottom border. Sticky top. Prominent logo, clean text links, no hamburger on desktop.",
+      "footer": "Dark background (#23103A), light text. Massive typography for the brand name at the bottom."
+    },
+    "ai_human_toggle": {
+      "style": "Pill-shaped toggle (rounded-full) placed at the top of the article. Smooth slide animation.",
+      "active_state": "Solid purple/plum background for the active pill.",
+      "inactive_state": "Transparent with text-muted."
+    },
+    "ai_search": {
+      "style": "Command-palette style search bar. Large, expansive, 1px border. Placeholder text: 'Ask LATAM Reportero...'"
+    },
+    "writers_directory": {
+      "style": "Strict bento grid of black and white portraits. Mono-font names and beats underneath."
+    }
+  },
+  "visual_enhancers": {
+    "borders": "Expose the grid. Use 1px borders (border-[#23103A]/15) to separate columns and rows on the homepage to mimic a physical newspaper.",
+    "textures": "Subtle noise/grain overlay can be applied to the background to give a physical paper feel, but keep it at 2-3% opacity.",
+    "icons": "Use Phosphor Icons (duotone or regular) or Lucide. Keep stroke width thin (1.5px) to match the elegant serif typography."
+  },
+  "motion_and_interactions": {
+    "hover": "Links in body text should have a solid 1px underline that grows or changes color on hover. Article cards should feature a gentle image scale (1.05) on hover.",
+    "page_load": "Fade in content smoothly. Use staggered entrance for lists of articles.",
+    "ai_toggle": "Use framer-motion for a smooth layoutId sliding background on the active state of the Human/AI toggle."
+  },
+  "accessibility": {
+    "contrast": "Ensure all text against the #F7F5F2 background meets 4.5:1 ratio. The primary #23103A provides excellent contrast.",
+    "focus": "Focus rings should be sharp and use the accent color (#D35A3D). ring-2 ring-offset-2 ring-[#D35A3D]."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "hero_abstract_printing",
+        "url": "https://images.unsplash.com/photo-1634571768025-2494f42f5dfa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxuZXdzcGFwZXIlMjBwcmludGluZyUyMHByZXNzfGVufDB8fHx8MTc3NDU2OTAwMXww&ixlib=rb-4.1.0&q=85",
+        "description": "Macro shot of metallic letters/typeset. Use for 'About Us' or high-end editorial conceptual headers."
+      },
+      {
+        "category": "hero_newsroom",
+        "url": "https://images.pexels.com/photos/3778622/pexels-photo-3778622.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Bright modern office/newsroom. Use for general news homepage placeholders."
+      },
+      {
+        "category": "landscape_latam_1",
+        "url": "https://images.unsplash.com/photo-1658778176935-019b942a6b08?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHw0fHxsYXRpbiUyMGFtZXJpY2ElMjBsYW5kc2NhcGUlMjBwaG90b2dyYXBoeXxlbnwwfHx8fDE3NzQ1Njg5OTR8MA&ixlib=rb-4.1.0&q=85",
+        "description": "City and mountains. Use as placeholder for environmental or regional news."
+      },
+      {
+        "category": "landscape_latam_2",
+        "url": "https://images.pexels.com/photos/4265209/pexels-photo-4265209.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Medellin aerial. Use as placeholder for economy or urban politics news."
+      },
+      {
+        "category": "writer_portrait_1",
+        "url": "https://images.unsplash.com/photo-1701286732006-432405962a00?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzJ8MHwxfHNlYXJjaHwzfHxibGFjayUyMGFuZCUyMHdoaXRlJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzc0NTY4OTk1fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Black and white portrait of a female journalist."
+      },
+      {
+        "category": "writer_portrait_2",
+        "url": "https://images.pexels.com/photos/4687544/pexels-photo-4687544.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Monochrome portrait of a male journalist/editor."
+      }
+    ]
+  },
   "instructions_to_main_agent": [
-    "INSTALL FONTS: Add the Google Fonts import to your index.css or index.html immediately.",
-    "THEME: Implement the 'paper' feel. Avoid pure white backgrounds in sections; use subtle noise or off-white (#f9f9f9) to reduce eye strain, but keep text high-contrast.",
-    "LAYOUT: Homepage MUST use the 'Editorial Hero' grid. Do not stack everything vertically. Use the 'Bento' concept but for news (Featured, Opinion, Latest).",
-    "COMPONENTS: Use Shadcn for functional UI (Modals, Forms) but style them to look 'Editorial' (sharp corners, serif fonts in headers).",
-    "NAVIGATION: Sticky header. White background. Black text. Simple. High contrast.",
-    "ARTICLE PAGE: This is the core product. Center the content. Max-width 65ch for readability. Large, dramatic hero image.",
-    "IMAGES: Use the provided Unsplash URLs for 'Featured' and 'Community' sections. Do not use placeholders if possible.",
-    "TESTING: Add 'data-testid' to all interactive elements (buttons, links, inputs).",
-    "PERFORMANCE: Use 'next/image' for all images. Lazy load below the fold."
-  ],
-  "universal_guidelines": [
-    "Do not use generic 'Inter' for headings. Use 'Playfair Display'.",
-    "Do not use gradients for text or backgrounds unless it's a specific 'Breaking News' banner.",
-    "Use 2x more whitespace than you think is necessary.",
-    "Never use 'lorem ipsum' in final output if possible; use realistic news headlines.",
-    "Ensure the 'Contributor' section feels like a 'Masthead' (list of names/roles) rather than a social media profile grid."
+    "Do NOT use the previous bright purple (#8c52ff) as it was deemed childish. Stick strictly to the deep plum (#23103A) and terracotta accent (#D35A3D).",
+    "Install and use 'Cormorant Garamond' (or 'Playfair Display') for all H1/H2/H3 headings. Use 'Inter' for body.",
+    "Implement the UI with a strict grid. On the homepage, separate sections with 1px border lines (border-border) to simulate an editorial broadsheet.",
+    "The Human/AI toggle must be clearly visible on the article page.",
+    "The Crypto donation component should use a monospace font and have a sleek, tech-forward but minimal look.",
+    "For the Writers Directory, use the provided black and white portraits in a clean grid with their names and beats (e.g., 'Politics', 'Environment') in mono font overlines.",
+    "Use standard semantic HTML sections (main, article, section) but do not use overly styled Shadcn 'Cards' with rounded corners/shadows. Strip them down to flat 1px borders.",
+    "All interactive elements MUST include a data-testid attribute in kebab-case format (e.g., data-testid='ai-search-input', data-testid='crypto-donate-button')."
   ]
 }
