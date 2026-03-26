@@ -1,82 +1,84 @@
-/* LATAM Reportero Brand Guidelines Typography */
-@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Raleway:wght@600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap');
+/* LATAM Reportero - Editorial Design System */
+/* Mature, Professional News Publication Aesthetic */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Brand Color Variables */
+/* ============================================
+   EDITORIAL COLOR SYSTEM
+   Deep Plum + Newspaper Off-White + Terracotta Accent
+   ============================================ */
+
 :root {
-  /* Primary Brand Colors */
-  --brand-light-purple: 262 100% 66%;  /* #8c52ff */
-  --brand-dark-purple: 262 100% 53%;   /* #6111ff */
+  /* Primary Editorial Colors */
+  --editorial-plum: 266 57% 15%;        /* #23103A - Deep authoritative plum */
+  --editorial-plum-light: 266 40% 25%;  /* Lighter plum for hovers */
+  --editorial-cream: 40 23% 96%;        /* #F7F5F2 - Newspaper off-white */
+  --editorial-white: 0 0% 100%;         /* Pure white for cards */
+  --editorial-warm-gray: 40 15% 91%;    /* #EAE7E1 - Tertiary background */
   
-  /* Secondary Colors */
-  --brand-beige: 34 47% 85%;           /* #E7DAC4 */
-  --brand-white: 0 18% 97%;            /* #f9f6f6 */
-  --brand-off-black: 0 2% 10%;         /* #1a1919 */
+  /* Accent Colors */
+  --terracotta: 12 65% 53%;             /* #D35A3D - LATAM warmth accent */
+  --terracotta-dark: 12 65% 43%;        /* Darker terracotta for hover */
+  --ai-purple: 262 70% 53%;             /* #6B38D6 - AI indicator */
+  --crypto-gold: 43 89% 57%;            /* #F3BA2F - Crypto accent */
   
-  /* RGB values for gradients */
-  --light-purple-rgb: 140, 82, 255;
-  --dark-purple-rgb: 97, 17, 255;
+  /* Text Colors */
+  --text-primary: 266 57% 15%;          /* Deep plum */
+  --text-secondary: 270 8% 37%;         /* #5C5566 */
+  --text-tertiary: 270 5% 55%;          /* #8A8493 */
+  
+  /* Border Colors */
+  --border-light: 266 20% 15% / 0.15;
+  --border-strong: 266 20% 15% / 0.4;
 }
 
 @layer base {
   :root {
-    /* Editorial Design System - Light Mode with Brand Colors */
-    --background: 0 18% 97%;           /* Brand white #f9f6f6 */
-    --foreground: 0 2% 10%;            /* Brand off-black #1a1919 */
-    --card: 0 0% 100%;
-    --card-foreground: 0 2% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 2% 10%;
-    --primary: 262 100% 66%;           /* Brand light purple #8c52ff */
+    /* Shadcn theme mapping to editorial colors */
+    --background: var(--editorial-cream);
+    --foreground: var(--text-primary);
+    --card: var(--editorial-white);
+    --card-foreground: var(--text-primary);
+    --popover: var(--editorial-white);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--editorial-plum);
     --primary-foreground: 0 0% 100%;
-    --secondary: 34 47% 85%;           /* Brand beige #E7DAC4 */
-    --secondary-foreground: 0 2% 10%;
-    --muted: 34 30% 92%;               /* Lighter beige */
-    --muted-foreground: 0 2% 40%;
-    --accent: 262 100% 53%;            /* Brand dark purple #6111ff */
+    --secondary: var(--editorial-warm-gray);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--editorial-warm-gray);
+    --muted-foreground: var(--text-secondary);
+    --accent: var(--terracotta);
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 34 20% 85%;
-    --input: 34 20% 85%;
-    --ring: 262 100% 66%;
-    --radius: 0.375rem;
-    
-    /* Brand Accent Colors */
-    --brand-purple: 262 100% 66%;
-    --brand-purple-dark: 262 100% 53%;
-    
-    /* Chart colors */
-    --chart-1: 262 100% 66%;
-    --chart-2: 262 100% 53%;
-    --chart-3: 34 47% 75%;
-    --chart-4: 150 60% 45%;
-    --chart-5: 0 84% 55%;
+    --border: var(--border-light);
+    --input: var(--border-light);
+    --ring: var(--terracotta);
+    --radius: 0.125rem; /* Sharp corners - editorial style */
   }
 
   .dark {
-    --background: 262 30% 6%;
-    --foreground: 0 18% 97%;
-    --card: 262 25% 10%;
-    --card-foreground: 0 18% 97%;
-    --popover: 262 25% 10%;
-    --popover-foreground: 0 18% 97%;
-    --primary: 262 100% 70%;
-    --primary-foreground: 0 2% 10%;
-    --secondary: 34 30% 20%;
-    --secondary-foreground: 0 18% 97%;
-    --muted: 262 20% 15%;
-    --muted-foreground: 0 10% 65%;
-    --accent: 262 100% 60%;
+    --background: 266 30% 8%;
+    --foreground: 40 23% 96%;
+    --card: 266 25% 12%;
+    --card-foreground: 40 23% 96%;
+    --popover: 266 25% 12%;
+    --popover-foreground: 40 23% 96%;
+    --primary: 266 50% 70%;
+    --primary-foreground: 266 57% 10%;
+    --secondary: 266 20% 18%;
+    --secondary-foreground: 40 23% 96%;
+    --muted: 266 15% 20%;
+    --muted-foreground: 270 5% 65%;
+    --accent: var(--terracotta);
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 262 20% 20%;
-    --input: 262 20% 20%;
-    --ring: 262 100% 70%;
+    --border: 266 20% 20%;
+    --input: 266 20% 20%;
+    --ring: var(--terracotta);
   }
 }
 
@@ -91,240 +93,187 @@
   
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     font-size: 16px;
-    line-height: 1.7;
+    line-height: 1.6;
   }
   
-  /* Headlines - Raleway (Muller Bold alternative) */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Raleway', 'Arial', sans-serif;
-    @apply font-bold tracking-tight;
+  /* Editorial Headlines - Cormorant Garamond */
+  h1, h2, h3 {
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+    @apply tracking-tight;
+    font-weight: 600;
   }
   
-  /* Subheadings - Marcellus */
-  .subheading, .subtitle {
-    font-family: 'Marcellus', Georgia, serif;
-    @apply font-normal;
+  h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    @apply font-semibold tracking-tight;
   }
   
-  /* UI elements use Raleway */
-  button, input, select, textarea, label, nav, .ui-text {
-    font-family: 'Raleway', -apple-system, sans-serif;
-  }
-  
-  /* Captions - Italic serif */
-  .caption, figcaption {
-    font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
-    font-style: italic;
-    @apply text-sm text-muted-foreground;
+  /* Monospace for metadata */
+  .mono, code, .byline, .dateline {
+    font-family: 'IBM Plex Mono', monospace;
   }
 }
 
 /* ============================================
-   BRAND TYPOGRAPHY SCALE
+   EDITORIAL TYPOGRAPHY SCALE
    ============================================ */
 
-/* Hero Headline - Large impact headlines */
 .headline-hero {
-  @apply text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none;
-  font-family: 'Raleway', sans-serif;
-  font-weight: 800;
+  @apply text-5xl md:text-6xl tracking-tighter leading-none;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
 }
 
-/* Section Headlines */
 .headline-section {
-  @apply text-3xl md:text-4xl font-bold tracking-tight;
-  font-family: 'Raleway', sans-serif;
-}
-
-/* Card Headlines */
-.headline-card {
-  @apply text-xl md:text-2xl font-semibold leading-tight;
-  font-family: 'Raleway', sans-serif;
-}
-
-/* Subheadings - Marcellus */
-.subheading-large {
-  @apply text-2xl md:text-3xl;
-  font-family: 'Marcellus', Georgia, serif;
-  font-weight: 400;
-}
-
-.subheading-medium {
-  @apply text-xl md:text-2xl;
-  font-family: 'Marcellus', Georgia, serif;
-  font-weight: 400;
-}
-
-/* Body Text - Times New Roman style */
-.body-article {
-  @apply text-lg leading-relaxed;
-  font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
-  line-height: 1.8;
-}
-
-/* Captions */
-.caption-meta {
-  @apply text-xs uppercase tracking-widest text-muted-foreground;
-  font-family: 'Raleway', sans-serif;
+  @apply text-3xl md:text-4xl tracking-tight leading-tight;
+  font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
 }
 
-.caption-italic {
-  font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
-  font-style: italic;
-  @apply text-sm text-muted-foreground;
+.headline-card {
+  @apply text-xl md:text-2xl tracking-tight leading-snug;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
 }
 
-/* Pull Quotes */
-.pull-quote {
-  font-family: 'Marcellus', Georgia, serif;
-  @apply text-2xl md:text-3xl italic text-center py-8 px-4 border-y-2 border-primary my-12;
+.headline-small {
+  @apply text-lg md:text-xl leading-snug;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+}
+
+/* Body text */
+.body-large {
+  @apply text-lg leading-relaxed;
+  font-family: 'Inter', sans-serif;
+}
+
+.body-article {
+  @apply text-base md:text-lg leading-relaxed;
+  font-family: 'Inter', sans-serif;
+  max-width: 65ch;
+}
+
+/* Overline / Labels - Mono uppercase */
+.overline {
+  @apply text-xs uppercase tracking-[0.2em];
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+}
+
+.byline {
+  @apply text-sm;
+  font-family: 'IBM Plex Mono', monospace;
+  color: hsl(var(--text-secondary));
 }
 
 /* ============================================
-   BRAND COMPONENTS
+   EDITORIAL COMPONENTS
    ============================================ */
 
-/* Editorial Cards with Brand Styling */
+/* Cards - Flat with 1px borders */
 .editorial-card {
-  @apply relative overflow-hidden bg-card border border-border/40 hover:border-primary/30 transition-all duration-300;
-  border-radius: var(--radius);
+  @apply bg-card border border-border;
+  border-radius: 0;
 }
 
 .editorial-card:hover {
-  box-shadow: 0 4px 20px rgba(var(--light-purple-rgb), 0.1);
+  border-color: hsl(var(--editorial-plum) / 0.3);
 }
 
-/* Brand Buttons */
-.editorial-button {
-  @apply h-12 px-8 uppercase tracking-wider text-sm font-semibold transition-all;
-  font-family: 'Raleway', sans-serif;
-  background: linear-gradient(135deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
+/* Buttons - Sharp corners, solid fills */
+.btn-primary {
+  @apply h-11 px-6 text-sm font-medium transition-all;
+  font-family: 'Inter', sans-serif;
+  background: hsl(var(--editorial-plum));
   color: white;
-  border-radius: var(--radius);
+  border-radius: 0;
 }
 
-.editorial-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(var(--light-purple-rgb), 0.4);
+.btn-primary:hover {
+  background: hsl(var(--editorial-plum-light));
 }
 
-/* Secondary Button */
-.editorial-button-secondary {
-  @apply h-12 px-8 uppercase tracking-wider text-sm font-semibold transition-all;
-  font-family: 'Raleway', sans-serif;
-  background: hsl(var(--brand-beige));
-  color: hsl(var(--brand-off-black));
-  border-radius: var(--radius);
-}
-
-.editorial-button-secondary:hover {
-  background: hsl(34 47% 80%);
-}
-
-/* Outline Button */
-.editorial-button-outline {
-  @apply h-12 px-8 uppercase tracking-wider text-sm font-semibold transition-all border-2;
-  font-family: 'Raleway', sans-serif;
-  border-color: hsl(var(--brand-purple));
-  color: hsl(var(--brand-purple));
+.btn-secondary {
+  @apply h-11 px-6 text-sm font-medium transition-all border;
+  font-family: 'Inter', sans-serif;
   background: transparent;
-  border-radius: var(--radius);
+  border-color: hsl(var(--editorial-plum));
+  color: hsl(var(--editorial-plum));
+  border-radius: 0;
 }
 
-.editorial-button-outline:hover {
-  background: hsl(var(--brand-purple));
+.btn-secondary:hover {
+  background: hsl(var(--editorial-plum) / 0.05);
+}
+
+.btn-accent {
+  @apply h-11 px-6 text-sm font-medium transition-all;
+  font-family: 'Inter', sans-serif;
+  background: hsl(var(--terracotta));
   color: white;
+  border-radius: 0;
 }
 
-/* Editorial Input */
-.editorial-input {
-  @apply flex h-12 w-full border-b-2 border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary transition-colors;
-  font-family: 'Source Serif 4', serif;
+.btn-accent:hover {
+  background: hsl(var(--terracotta-dark));
 }
 
 /* ============================================
-   MOTION & INTERACTIONS
+   GRID BORDERS - Newspaper Style
    ============================================ */
 
-.hover-lift {
-  @apply hover:-translate-y-1 transition-transform duration-300;
+.grid-border-right {
+  @apply border-r border-border;
 }
 
-.image-zoom {
-  @apply group-hover:scale-105 transition-transform duration-700 ease-out;
+.grid-border-bottom {
+  @apply border-b border-border;
 }
 
-.link-underline {
-  @apply relative;
+.grid-border-all {
+  @apply border border-border;
 }
 
-.link-underline::after {
+/* Section dividers */
+.section-divider {
+  @apply h-px w-full;
+  background: hsl(var(--editorial-plum) / 0.15);
+}
+
+.section-divider-thick {
+  @apply h-[2px] w-full;
+  background: hsl(var(--editorial-plum));
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.nav-link {
+  @apply text-sm font-medium transition-colors relative;
+  font-family: 'Inter', sans-serif;
+  color: hsl(var(--text-primary));
+}
+
+.nav-link:hover {
+  color: hsl(var(--terracotta));
+}
+
+.nav-link::after {
   content: '';
-  @apply absolute bottom-0 left-0 h-[2px] w-0 transition-all duration-300;
-  background: linear-gradient(90deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
+  @apply absolute bottom-0 left-0 h-[1px] w-0 transition-all duration-300;
+  background: hsl(var(--terracotta));
 }
 
-.link-underline:hover::after {
+.nav-link:hover::after {
   @apply w-full;
 }
 
-/* Purple gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* ============================================
-   CUSTOM SCROLLBAR
-   ============================================ */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: hsl(var(--brand-beige));
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--brand-purple));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--brand-purple-dark));
-}
-
-/* ============================================
-   ARTICLE CONTENT SECTIONS
-   ============================================ */
-
-.problem-section {
-  @apply pl-6 py-4 my-6;
-  border-left: 4px solid hsl(var(--brand-purple-dark));
-  background: linear-gradient(90deg, hsla(var(--brand-purple), 0.05) 0%, transparent 100%);
-}
-
-.solutions-section {
-  @apply pl-6 py-4 my-6;
-  border-left: 4px solid hsl(var(--brand-purple));
-  background: linear-gradient(90deg, hsla(var(--brand-purple), 0.08) 0%, transparent 100%);
-}
-
-.impact-section {
-  @apply pl-6 py-4 my-6;
-  border-left: 4px solid #22c55e;
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.05) 0%, transparent 100%);
-}
-
-/* ============================================
-   ARTICLE PROSE
+   ARTICLE CONTENT STYLING
    ============================================ */
 
 .article-content {
@@ -332,106 +281,36 @@
 }
 
 .article-content p {
-  @apply mb-6 leading-relaxed text-lg;
-  font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
+  @apply mb-6 leading-relaxed;
+  font-family: 'Inter', sans-serif;
 }
 
-.article-content ul {
-  @apply list-disc pl-6 mb-6 space-y-2;
+.article-content h2 {
+  @apply text-2xl md:text-3xl mt-12 mb-6;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
 }
 
-.article-content ol {
-  @apply list-decimal pl-6 mb-6 space-y-2;
+.article-content h3 {
+  @apply text-xl md:text-2xl mt-8 mb-4;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
 }
 
-.article-content li {
-  @apply leading-relaxed;
-  font-family: 'Source Serif 4', 'Times New Roman', Georgia, serif;
+.article-content blockquote {
+  @apply py-4 my-8 text-xl italic border-l-2 pl-6;
+  font-family: 'Cormorant Garamond', serif;
+  border-color: hsl(var(--terracotta));
+  color: hsl(var(--text-secondary));
+}
+
+.article-content ul, .article-content ol {
+  @apply pl-6 mb-6 space-y-2;
 }
 
 .article-content strong {
   @apply font-semibold;
-  color: hsl(var(--brand-purple-dark));
-}
-
-.article-content blockquote {
-  @apply py-6 my-8 text-xl;
-  font-family: 'Marcellus', Georgia, serif;
-  border-left: 4px solid hsl(var(--brand-purple));
-  padding-left: 1.5rem;
-  font-style: italic;
-}
-
-.article-content h2 {
-  @apply text-2xl md:text-3xl font-bold mt-12 mb-6;
-  font-family: 'Raleway', sans-serif;
-}
-
-.article-content h3 {
-  @apply text-xl md:text-2xl font-semibold mt-8 mb-4;
-  font-family: 'Raleway', sans-serif;
-}
-
-/* ============================================
-   CONTRIBUTOR BADGES
-   ============================================ */
-
-.contributor-badge {
-  @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full;
-  font-family: 'Raleway', sans-serif;
-}
-
-.badge-verified {
-  background: linear-gradient(135deg, hsla(var(--brand-purple), 0.15) 0%, hsla(var(--brand-purple-dark), 0.15) 100%);
-  color: hsl(var(--brand-purple-dark));
-}
-
-.badge-editor {
-  background: linear-gradient(135deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
-  color: white;
-}
-
-.badge-longtime {
-  @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300;
-}
-
-.badge-reviewed {
-  @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
-}
-
-/* ============================================
-   EDITORIAL GRID LAYOUT
-   ============================================ */
-
-.editorial-grid {
-  @apply grid grid-cols-1 md:grid-cols-12 gap-6;
-}
-
-.editorial-grid-hero {
-  @apply col-span-1 md:col-span-8 row-span-2;
-}
-
-.editorial-grid-side {
-  @apply col-span-1 md:col-span-4;
-}
-
-/* ============================================
-   NEWSLETTER SECTION
-   ============================================ */
-
-.newsletter-section {
-  background: linear-gradient(135deg, hsl(var(--brand-purple-dark)) 0%, hsl(var(--brand-purple)) 100%);
-  @apply text-white py-16;
-}
-
-/* ============================================
-   BREAKING NEWS BANNER
-   ============================================ */
-
-.breaking-news {
-  background: linear-gradient(90deg, hsl(var(--brand-purple-dark)) 0%, hsl(var(--brand-purple)) 100%);
-  @apply text-white py-2 text-center text-sm font-medium tracking-wide;
-  font-family: 'Raleway', sans-serif;
+  color: hsl(var(--editorial-plum));
 }
 
 /* ============================================
@@ -439,51 +318,149 @@
    ============================================ */
 
 .category-tag {
-  @apply inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-wider;
-  font-family: 'Raleway', sans-serif;
-  background: hsl(var(--brand-purple));
+  @apply inline-flex items-center px-2 py-0.5 text-xs uppercase tracking-wider;
+  font-family: 'IBM Plex Mono', monospace;
+  background: hsl(var(--editorial-plum));
   color: white;
-  border-radius: var(--radius);
+  font-weight: 500;
 }
 
 .category-tag-outline {
-  @apply inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-wider border;
-  font-family: 'Raleway', sans-serif;
-  border-color: hsl(var(--brand-purple));
-  color: hsl(var(--brand-purple));
-  background: transparent;
-  border-radius: var(--radius);
+  @apply inline-flex items-center px-2 py-0.5 text-xs uppercase tracking-wider border;
+  font-family: 'IBM Plex Mono', monospace;
+  border-color: hsl(var(--editorial-plum));
+  color: hsl(var(--editorial-plum));
+  font-weight: 500;
 }
 
-.category-tag-beige {
-  @apply inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-wider;
-  font-family: 'Raleway', sans-serif;
-  background: hsl(var(--brand-beige));
-  color: hsl(var(--brand-off-black));
-  border-radius: var(--radius);
+.category-tag-accent {
+  @apply inline-flex items-center px-2 py-0.5 text-xs uppercase tracking-wider;
+  font-family: 'IBM Plex Mono', monospace;
+  background: hsl(var(--terracotta));
+  color: white;
+  font-weight: 500;
 }
 
 /* ============================================
-   DIVIDERS
+   AI / HUMAN INDICATORS
    ============================================ */
 
-.editorial-divider {
-  @apply h-px my-8;
-  background: linear-gradient(90deg, transparent 0%, hsl(var(--border)) 50%, transparent 100%);
+.ai-badge {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs uppercase tracking-wider;
+  font-family: 'IBM Plex Mono', monospace;
+  background: hsl(var(--ai-purple));
+  color: white;
 }
 
-.editorial-divider-thick {
-  @apply h-1 my-8;
-  background: linear-gradient(90deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
+.human-badge {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs uppercase tracking-wider;
+  font-family: 'IBM Plex Mono', monospace;
+  background: hsl(150 60% 40%);
+  color: white;
 }
 
 /* ============================================
-   FOCUS STATES FOR ACCESSIBILITY
+   CRYPTO STYLING
+   ============================================ */
+
+.crypto-element {
+  @apply font-mono text-sm;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.crypto-badge {
+  @apply inline-flex items-center gap-1 px-2 py-1 text-xs;
+  font-family: 'IBM Plex Mono', monospace;
+  background: #1A1A1A;
+  color: hsl(var(--crypto-gold));
+}
+
+/* ============================================
+   FEATURED STORY
+   ============================================ */
+
+.featured-story {
+  @apply relative overflow-hidden;
+}
+
+.featured-story::before {
+  content: '';
+  @apply absolute inset-0 z-10;
+  background: linear-gradient(to top, hsl(var(--editorial-plum) / 0.95) 0%, hsl(var(--editorial-plum) / 0.4) 50%, transparent 100%);
+}
+
+.featured-story-content {
+  @apply absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20 text-white;
+}
+
+/* ============================================
+   MOTION & INTERACTIONS
+   ============================================ */
+
+.hover-lift {
+  @apply transition-transform duration-300;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.image-zoom {
+  @apply transition-transform duration-500 ease-out;
+}
+
+.image-zoom:hover {
+  transform: scale(1.03);
+}
+
+/* Staggered entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+
+/* ============================================
+   FOCUS STATES - Accessibility
    ============================================ */
 
 *:focus-visible {
   @apply outline-2 outline-offset-2;
-  outline-color: hsl(var(--brand-purple));
+  outline-color: hsl(var(--terracotta));
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--editorial-cream));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--editorial-plum) / 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--editorial-plum) / 0.5);
 }
 
 /* ============================================
@@ -491,65 +468,9 @@
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ============================================
-   FEATURED STORY CARD
-   ============================================ */
-
-.featured-story {
-  @apply relative overflow-hidden;
-  border-radius: var(--radius);
-}
-
-.featured-story::before {
-  content: '';
-  @apply absolute inset-0 z-10;
-  background: linear-gradient(to top, hsla(var(--brand-off-black), 0.9) 0%, hsla(var(--brand-off-black), 0.4) 50%, transparent 100%);
-}
-
-.featured-story-content {
-  @apply absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20;
-}
-
-/* ============================================
-   NAVIGATION STYLING
-   ============================================ */
-
-.nav-link {
-  @apply text-sm font-semibold uppercase tracking-wider transition-colors;
-  font-family: 'Raleway', sans-serif;
-  color: hsl(var(--foreground));
-}
-
-.nav-link:hover {
-  color: hsl(var(--brand-purple));
-}
-
-.nav-link-active {
-  color: hsl(var(--brand-purple));
-}
-
-/* ============================================
-   SPECIAL ACCENT ELEMENTS
-   ============================================ */
-
-.accent-bar {
-  @apply w-16 h-1 mb-4;
-  background: linear-gradient(90deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-purple-dark)) 100%);
-}
-
-.accent-dot {
-  @apply w-2 h-2 rounded-full;
-  background: hsl(var(--brand-purple));
-}
-
-/* Purple highlight for important text */
-.highlight-purple {
-  background: linear-gradient(180deg, transparent 60%, hsla(var(--brand-purple), 0.2) 60%);
 }

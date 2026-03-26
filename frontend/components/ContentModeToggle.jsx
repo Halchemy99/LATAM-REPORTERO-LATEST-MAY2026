@@ -168,7 +168,7 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
   return (
     <>
       <TooltipProvider>
-        <div className="flex items-center gap-1 bg-muted rounded-full p-1">
+        <div className="flex items-center gap-0.5 bg-[#23103A]/5 p-0.5">
           {/* AI Mode Button */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -176,19 +176,19 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 variant={mode === 'ai' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => handleToggle('ai')}
-                className={`rounded-full px-3 h-8 ${
+                className={`px-3 h-7 rounded-none text-xs font-mono uppercase tracking-wider ${
                   mode === 'ai' 
-                    ? 'bg-gradient-to-r from-[#8c52ff] to-[#6111ff] text-white' 
-                    : 'hover:bg-background'
+                    ? 'bg-[#6B38D6] text-white hover:bg-[#5a2fc2]' 
+                    : 'hover:bg-[#23103A]/10 text-[#5C5566]'
                 }`}
                 data-testid="content-mode-ai"
               >
-                <Bot className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline text-xs">AI</span>
+                <Bot className="h-3 w-3 mr-1" />
+                AI
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>AI-Generated Articles (Free)</p>
+            <TooltipContent className="rounded-none">
+              <p className="font-mono text-xs">AI-Generated Articles (Free)</p>
             </TooltipContent>
           </Tooltip>
           
@@ -199,25 +199,25 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 variant={mode === 'human' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => handleToggle('human')}
-                className={`rounded-full px-3 h-8 relative ${
+                className={`px-3 h-7 rounded-none text-xs font-mono uppercase tracking-wider relative ${
                   mode === 'human' 
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' 
-                    : 'hover:bg-background'
+                    ? 'bg-[#23103A] text-white hover:bg-[#160A26]' 
+                    : 'hover:bg-[#23103A]/10 text-[#5C5566]'
                 }`}
                 data-testid="content-mode-human"
               >
-                <User className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline text-xs">Human</span>
+                <User className="h-3 w-3 mr-1" />
+                Human
                 {!canViewHuman && (
-                  <Lock className="h-3 w-3 absolute -top-1 -right-1 text-yellow-500" />
+                  <Lock className="h-2.5 w-2.5 absolute -top-0.5 -right-0.5 text-[#D35A3D]" />
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>
+            <TooltipContent className="rounded-none">
+              <p className="font-mono text-xs">
                 {canViewHuman 
                   ? 'Human-Written Articles' 
-                  : 'Human Articles (Subscribers Only)'}
+                  : 'Subscribers Only'}
               </p>
             </TooltipContent>
           </Tooltip>
@@ -229,14 +229,14 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
             <TooltipTrigger asChild>
               <Badge 
                 variant="outline" 
-                className="ml-2 text-xs border-[#8c52ff]/30 text-[#8c52ff]"
+                className="ml-1 text-[10px] font-mono uppercase tracking-wider border-[#23103A]/20 text-[#5C5566] rounded-none"
               >
-                <Eye className="h-3 w-3 mr-1" />
+                <Eye className="h-2.5 w-2.5 mr-1" />
                 {getViewLabel()}
               </Badge>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Current view perspective</p>
+            <TooltipContent className="rounded-none">
+              <p className="font-mono text-xs">Current view perspective</p>
             </TooltipContent>
           </Tooltip>
         )}
