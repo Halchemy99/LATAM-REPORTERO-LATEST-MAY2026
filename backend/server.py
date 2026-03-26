@@ -13,6 +13,10 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 from supabase import create_client, Client
 
+# Import RSS ingestion service
+from rss_ingestion import ContentIngestionService, RSSFeedService, run_scheduled_ingestion
+from rss_config import RSS_FEEDS
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -560,6 +564,113 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         logger.error(f"Webhook error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+
+# ============================================
+# RSS INGESTION ENDPOINTS
+# ============================================
+
+class RSSIngestionRequest(BaseModel):
+    feed_keys: Optional[List[str]] = None  # If None, ingest from all feeds
+
+class RSSIngestionResponse(BaseModel):
+    total_fetched: int
+    processed: int
+    skipped_existing: int
+    failed: int
+    duration_seconds: float
+    timestamp: str
+
+@api_router.get("/rss/feeds")
+async def list_rss_feeds():
+    """List all configured RSS feeds"""
+    feeds = []
+    for key, config in RSS_FEEDS.items():
+        feeds.append({
+            "key": key,
+            "name": config["name"],
+            "language": config["language"],
+            "region": config["region"],
+            "category": config["category"]
+        })
+    return {"feeds": feeds, "total": len(feeds)}
+
+@api_router.post("/rss/ingest", response_model=RSSIngestionResponse)
+async def trigger_rss_ingestion(request: RSSIngestionRequest):
+    """
+    Trigger RSS feed ingestion.
+    
+    This will:
+    1. Fetch articles from RSS feeds
+    2. Process with AI (GPT-5.2) into solutions journalism format
+    3. Translate to EN/ES/PT using DeepL
+    4. Create drafts in Sanity CMS (tagged as AI-generated)
+    """
+    try:
+        service = ContentIngestionService()
+        results = await service.run_ingestion(request.feed_keys)
+        
+        # Store ingestion log in MongoDB
+        log_doc = {
+            "id": str(uuid.uuid4()),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "results": {
+                "total_fetched": results["total_fetched"],
+                "processed": results["processed"],
+                "skipped_existing": results["skipped_existing"],
+                "failed": results["failed"]
+            },
+            "duration_seconds": results["duration_seconds"]
+        }
+        await db.rss_ingestion_logs.insert_one(log_doc)
+        
+        return RSSIngestionResponse(
+            total_fetched=results["total_fetched"],
+            processed=results["processed"],
+            skipped_existing=results["skipped_existing"],
+            failed=results["failed"],
+            duration_seconds=results["duration_seconds"],
+            timestamp=results["timestamp"]
+        )
+    except Exception as e:
+        logger.error(f"RSS ingestion error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/rss/test-feed/{feed_key}")
+async def test_single_feed(feed_key: str):
+    """Test fetching a single RSS feed without processing"""
+    if feed_key not in RSS_FEEDS:
+        raise HTTPException(status_code=404, detail=f"Feed not found: {feed_key}")
+    
+    try:
+        service = RSSFeedService()
+        articles = await service.fetch_feed(feed_key)
+        
+        return {
+            "feed": RSS_FEEDS[feed_key]["name"],
+            "articles_found": len(articles),
+            "sample_articles": [
+                {
+                    "title": a.title,
+                    "published": a.published.isoformat(),
+                    "source": a.source_feed,
+                    "link": a.link[:100]
+                }
+                for a in articles[:5]
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Feed test error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/rss/ingestion-logs")
+async def get_ingestion_logs(limit: int = 20):
+    """Get recent RSS ingestion logs"""
+    logs = await db.rss_ingestion_logs.find().sort("timestamp", -1).limit(limit).to_list(limit)
+    
+    for log in logs:
+        log.pop("_id", None)
+    
+    return {"logs": logs}
 
 # Include the router in the main app
 app.include_router(api_router)
