@@ -42,6 +42,35 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# ============================================
+# BACKGROUND SCHEDULER (replaces crontab)
+# ============================================
+RSS_INGESTION_INTERVAL_HOURS = 3
+_scheduler_task = None
+
+async def _rss_scheduler_loop():
+    """Background loop that runs RSS ingestion every N hours"""
+    import asyncio as _asyncio
+    while True:
+        try:
+            await _asyncio.sleep(RSS_INGESTION_INTERVAL_HOURS * 3600)
+            logging.getLogger(__name__).info("Scheduled RSS ingestion starting...")
+            service = ContentIngestionService()
+            results = await service.run_ingestion()
+            logging.getLogger(__name__).info(
+                f"Scheduled ingestion done: {results.get('processed', 0)} new, "
+                f"{results.get('skipped_existing', 0)} skipped"
+            )
+        except Exception as e:
+            logging.getLogger(__name__).error(f"Scheduled ingestion error: {e}")
+
+@app.on_event("startup")
+async def start_scheduler():
+    import asyncio as _asyncio
+    global _scheduler_task
+    _scheduler_task = _asyncio.create_task(_rss_scheduler_loop())
+    logging.getLogger(__name__).info(f"RSS scheduler started (every {RSS_INGESTION_INTERVAL_HOURS}h)")
+
 
 # Define Models
 class StatusCheck(BaseModel):
@@ -97,6 +126,16 @@ class AISearchResponse(BaseModel):
     articles: List[Dict[str, Any]]
     session_id: str
     follow_up_suggestions: List[str]
+
+# Comment Models
+class CreateCommentRequest(BaseModel):
+    article_slug: str
+    user_email: str
+    user_name: str
+    content: str
+    user_role: str
+
+PAID_ROLES = {"paid", "subscriber", "contributor", "editor", "admin"}
 
 # Define subscription plans (server-side only)
 SUBSCRIPTION_PLANS = {
@@ -371,29 +410,28 @@ async def ai_search(request: AISearchRequest):
         if not EMERGENT_LLM_KEY:
             raise HTTPException(status_code=500, detail="LLM API key not configured")
         
-        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-            raise HTTPException(status_code=500, detail="Supabase not configured")
+        # Fetch articles from Sanity instead of Supabase
+        import httpx as _httpx
+        project_id = os.environ.get("SANITY_PROJECT_ID", "s5taeh5v")
+        dataset = os.environ.get("SANITY_DATASET", "production")
         
-        # Create Supabase client to fetch articles
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        sanity_query = '*[_type == "article" && status == "published" && language == "en"] | order(publishedAt desc) [0...30] {_id, title, "slug": slug.current, standfirst, category, region, isAiGenerated, sourceFeed}'
         
-        # Fetch all published articles from CMS
-        articles_response = supabase.table('cms_articles').select(
-            'id, title_en, title_es, title_pt, slug, standfirst_en, standfirst_es, standfirst_pt, '
-            'featured_image, region, read_time, published_at, is_featured, '
-            'category:categories(name_en, slug), author:authors(name)'
-        ).eq('status', 'published').execute()
+        async with _httpx.AsyncClient() as http_client:
+            sanity_url = f"https://{project_id}.api.sanity.io/v2025-03-01/data/query/{dataset}"
+            resp = await http_client.get(sanity_url, params={"query": sanity_query})
+            sanity_data = resp.json()
         
-        articles = articles_response.data or []
+        articles = sanity_data.get("result", [])
         
         # Build article summaries for the LLM
         article_summaries = []
         for i, art in enumerate(articles):
             summary = f"""
 Article {i+1}:
-- Title: {art.get('title_en', 'Untitled')}
-- Summary: {art.get('standfirst_en', 'No summary')}
-- Category: {art.get('category', {}).get('name_en', 'General') if art.get('category') else 'General'}
+- Title: {art.get('title', 'Untitled')}
+- Summary: {art.get('standfirst', 'No summary')}
+- Category: {art.get('category', 'General')}
 - Region: {art.get('region', 'Unknown')}
 - Slug: {art.get('slug', '')}
 """
@@ -468,36 +506,31 @@ Keep responses concise but helpful. You can suggest related topics they might be
         for art in articles:
             if art.get('slug') in matched_slugs:
                 matched_articles.append({
-                    'id': art.get('id'),
-                    'title': art.get('title_en'),
-                    'excerpt': art.get('standfirst_en'),
+                    'id': art.get('_id'),
+                    'title': art.get('title'),
+                    'excerpt': art.get('standfirst'),
                     'slug': art.get('slug'),
-                    'image': art.get('featured_image'),
-                    'category': art.get('category', {}).get('name_en') if art.get('category') else 'General',
+                    'category': art.get('category', 'General'),
                     'region': art.get('region'),
-                    'read_time': art.get('read_time'),
-                    'author': art.get('author', {}).get('name') if art.get('author') else 'Staff Writer'
+                    'author': art.get('sourceFeed', 'Staff Writer')
                 })
         
         # If no matches found via JSON, try to find articles mentioned in text
         if not matched_articles:
             response_lower = clean_response.lower()
             for art in articles:
-                title = art.get('title_en', '').lower()
-                # Check if significant part of title is mentioned
+                title = art.get('title', '').lower()
                 title_words = [w for w in title.split() if len(w) > 4]
                 matches = sum(1 for w in title_words if w in response_lower)
                 if matches >= 2 or art.get('slug', '') in response_lower:
                     matched_articles.append({
-                        'id': art.get('id'),
-                        'title': art.get('title_en'),
-                        'excerpt': art.get('standfirst_en'),
+                        'id': art.get('_id'),
+                        'title': art.get('title'),
+                        'excerpt': art.get('standfirst'),
                         'slug': art.get('slug'),
-                        'image': art.get('featured_image'),
-                        'category': art.get('category', {}).get('name_en') if art.get('category') else 'General',
+                        'category': art.get('category', 'General'),
                         'region': art.get('region'),
-                        'read_time': art.get('read_time'),
-                        'author': art.get('author', {}).get('name') if art.get('author') else 'Staff Writer'
+                        'author': art.get('sourceFeed', 'Staff Writer')
                     })
         
         # Generate follow-up suggestions
@@ -724,6 +757,80 @@ async def get_ingestion_logs(limit: int = 20):
         log.pop("_id", None)
     
     return {"logs": logs}
+
+# ============================================
+# COMMENTS ENDPOINTS
+# ============================================
+
+@api_router.post("/comments")
+async def create_comment(request: CreateCommentRequest):
+    """Create a comment - only paid/verified users"""
+    if request.user_role not in PAID_ROLES:
+        raise HTTPException(status_code=403, detail="Only subscribers can leave comments")
+    
+    if not request.content.strip():
+        raise HTTPException(status_code=400, detail="Comment cannot be empty")
+    
+    comment_doc = {
+        "id": str(uuid.uuid4()),
+        "article_slug": request.article_slug,
+        "user_email": request.user_email,
+        "user_name": request.user_name,
+        "content": request.content.strip(),
+        "user_role": request.user_role,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.comments.insert_one(comment_doc)
+    comment_doc.pop("_id", None)
+    
+    return {"comment": comment_doc}
+
+@api_router.get("/comments/{article_slug}")
+async def get_comments(article_slug: str):
+    """Get comments for an article"""
+    comments = await db.comments.find(
+        {"article_slug": article_slug},
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(100)
+    
+    return {"comments": comments}
+
+# ============================================
+# SANITY PROXY ENDPOINTS (avoids CORS issues)
+# ============================================
+
+SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID", "s5taeh5v")
+SANITY_DATASET = os.environ.get("SANITY_DATASET", "production")
+SANITY_API_VERSION = "2025-03-01"
+
+async def _sanity_query(groq_query: str, params: Dict = None) -> Any:
+    """Execute a GROQ query against Sanity"""
+    import httpx as _httpx
+    url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v{SANITY_API_VERSION}/data/query/{SANITY_DATASET}"
+    async with _httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.get(url, params={"query": groq_query, **(params or {})})
+        return resp.json().get("result", [])
+
+@api_router.get("/sanity/articles")
+async def get_sanity_articles(language: str = "en", limit: int = 20):
+    """Fetch published articles from Sanity by language"""
+    query = f'*[_type == "article" && status == "published" && language == "{language}"] | order(publishedAt desc) [0...{limit}] {{_id, title, "slug": slug.current, language, standfirst, category, region, isAiGenerated, publishedAt, sourceFeed, sourceUrl, "featuredImage": featuredImage.asset->url}}'
+    articles = await _sanity_query(query)
+    return {"articles": articles}
+
+@api_router.get("/sanity/articles/all")
+async def get_all_sanity_articles(limit: int = 50):
+    """Fetch all published articles from Sanity"""
+    query = f'*[_type == "article" && status == "published"] | order(publishedAt desc) [0...{limit}] {{_id, title, "slug": slug.current, language, standfirst, category, region, isAiGenerated, publishedAt, sourceFeed, sourceUrl, "featuredImage": featuredImage.asset->url}}'
+    articles = await _sanity_query(query)
+    return {"articles": articles}
+
+@api_router.get("/sanity/article/{slug}")
+async def get_sanity_article(slug: str):
+    """Fetch a single article by slug from Sanity"""
+    query = f'*[_type == "article" && slug.current == "{slug}"][0] {{_id, title, "slug": slug.current, language, standfirst, body, category, region, sourceUrl, sourceFeed, isAiGenerated, status, publishedAt, createdAt, "featuredImage": featuredImage.asset->url}}'
+    article = await _sanity_query(query)
+    return {"article": article}
 
 # Include the router in the main app
 app.include_router(api_router)

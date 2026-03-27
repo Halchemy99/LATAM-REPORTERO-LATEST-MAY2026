@@ -94,7 +94,7 @@ A solutions-oriented journalism platform for Latin America with:
 - **BTC**: `bc1qaw8j4t8593hmtt5y9uzs4fkl2fmuh5lue40m8v`
 
 ## Preview URL
-https://reportero-cms.preview.emergentagent.com
+https://latam-reportero-2.preview.emergentagent.com
 
 ## Admin Credentials
 - Email: `oket.hoxha@gmail.com`
