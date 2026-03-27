@@ -11,7 +11,8 @@ import uuid
 from datetime import datetime, timezone
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
-from supabase import create_client, Client
+import jwt
+import bcrypt
 
 # Import RSS ingestion service
 from rss_ingestion import ContentIngestionService, RSSFeedService, run_scheduled_ingestion
@@ -24,9 +25,8 @@ load_dotenv(ROOT_DIR / '.env')
 # LLM API key
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
-# Supabase configuration
-SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+# JWT Secret
+JWT_SECRET = os.environ.get('JWT_SECRET', 'latam-reportero-jwt-secret-2026')
 
 # Stripe configuration
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
@@ -137,6 +137,16 @@ class CreateCommentRequest(BaseModel):
 
 PAID_ROLES = {"paid", "subscriber", "contributor", "editor", "admin"}
 
+# Auth Models
+class SignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 # Define subscription plans (server-side only)
 SUBSCRIPTION_PLANS = {
     "standard": {
@@ -157,6 +167,94 @@ SUBSCRIPTION_PLANS = {
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
+
+# ============================================
+# AUTH ENDPOINTS (MongoDB + JWT)
+# ============================================
+
+def _hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def _verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+def _create_token(user_id: str, email: str, role: str) -> str:
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "role": role,
+        "exp": datetime.now(timezone.utc).timestamp() + 86400 * 7  # 7 days
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+def _decode_token(token: str) -> dict:
+    return jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+
+@api_router.post("/auth/signup")
+async def signup(request: SignupRequest):
+    """Register a new user"""
+    existing = await db.users.find_one({"email": request.email.lower()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    user_doc = {
+        "id": str(uuid.uuid4()),
+        "name": request.name,
+        "email": request.email.lower(),
+        "password_hash": _hash_password(request.password),
+        "role": "free",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    
+    token = _create_token(user_doc["id"], user_doc["email"], user_doc["role"])
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user_doc["id"],
+            "name": user_doc["name"],
+            "email": user_doc["email"],
+            "role": user_doc["role"]
+        }
+    }
+
+@api_router.post("/auth/login")
+async def login(request: LoginRequest):
+    """Login with email and password"""
+    user = await db.users.find_one({"email": request.email.lower()})
+    if not user or not _verify_password(request.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    token = _create_token(user["id"], user["email"], user["role"])
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "role": user["role"]
+        }
+    }
+
+@api_router.get("/auth/me")
+async def get_current_user(request: Request):
+    """Get current user from JWT token"""
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        payload = _decode_token(auth_header.split(" ")[1])
+        user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return {"user": user}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
@@ -9,31 +9,28 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Lock, Mail, User, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, User, AlertCircle } from 'lucide-react';
+
+const PREFERENCE_OPTIONS = ['environment', 'economy', 'health', 'education', 'politics', 'technology'];
 
 export default function SignupPage() {
   const { t } = useTranslation();
-  const { signup } = useUserRole();
+  const { signup, user, isLoading } = useUserRole();
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [preferences, setPreferences] = useState({
-    environment: false,
-    economy: false,
-    health: false,
-    education: false,
-    politics: false,
-    technology: false
-  });
+  const [preferences, setPreferences] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && user) router.push('/');
+  }, [user, isLoading, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,59 +46,21 @@ export default function SignupPage() {
     const result = await signup(email, password, name);
     
     if (result.success) {
-      // Save preferences to localStorage
       localStorage.setItem('userPreferences', JSON.stringify(preferences));
-      
-      if (result.needsConfirmation) {
-        // Supabase requires email confirmation
-        setSuccess(true);
-        toast.success('Account created! Please check your email to confirm.');
-      } else {
-        // Auto-confirmed or demo mode - redirect to dashboard
-        toast.success('Account created! Welcome to LATAM Reportero.');
-        // Small delay to ensure state is properly set
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 100);
-      }
+      toast.success('Account created! Welcome to LATAM Reportero.');
+      router.push('/');
     } else {
       setError(result.error || 'Failed to create account');
-      toast.error(result.error || 'Failed to create account');
     }
     setLoading(false);
   };
 
-  const togglePreference = (key) => {
-    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  if (success) {
+  if (isLoading || user) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
         <Header />
-        <main className="flex-1 flex items-center justify-center py-12 px-4">
-          <Card className="w-full max-w-md">
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="h-16 w-16 mx-auto mb-4 text-green-600" />
-              <h2 className="text-2xl font-bold mb-2">Check Your Email</h2>
-              <p className="text-muted-foreground mb-6">
-                We've sent a confirmation link to <strong>{email}</strong>. 
-                Please click the link to activate your account.
-              </p>
-              <div className="space-y-3">
-                <Button onClick={() => router.push('/auth/login')} className="w-full">
-                  Go to Login
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setSuccess(false)}
-                  className="w-full"
-                >
-                  Use a Different Email
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-pulse text-[#5C5566]">Loading...</div>
         </main>
         <Footer />
       </div>
@@ -109,122 +68,118 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
       <Header />
       
       <main className="flex-1 flex items-center justify-center py-12 px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">{t('auth.signupTitle')}</CardTitle>
-            <CardDescription>{t('auth.signupSubtitle')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {/* Auth Mode Indicator */}
-            <Alert className="mb-4">
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                Create your account to access solutions-oriented journalism for Latin America.
-              </AlertDescription>
-            </Alert>
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-[#23103A] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Join LATAM Reportero
+            </h1>
+            <p className="text-sm text-[#5C5566]">Create your account to access solutions journalism</p>
+          </div>
 
+          <div className="bg-white border border-[#23103A]/10 p-6">
             {error && (
-              <Alert variant="destructive" className="mb-4">
+              <Alert variant="destructive" className="mb-4 rounded-none">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+            <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Full Name</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 rounded-none border-[#23103A]/15 h-10"
                     required
+                    data-testid="signup-name"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('auth.email')}</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 rounded-none border-[#23103A]/15 h-10"
                     required
+                    data-testid="signup-email"
                   />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Min. 6 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10 rounded-none border-[#23103A]/15 h-10"
+                    required
+                    minLength={6}
+                    data-testid="signup-password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-2.5 text-[#5C5566] hover:text-[#23103A]"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">{t('auth.password')}</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="********"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
-                    required
-                    minLength={6}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1 h-8 w-8"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
-              </div>
-
-              <div className="space-y-3">
-                <Label>News Preferences (optional)</Label>
+                <Label className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Interests (optional)</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(preferences).map(([key, value]) => (
+                  {PREFERENCE_OPTIONS.map((key) => (
                     <div key={key} className="flex items-center space-x-2">
                       <Checkbox
                         id={key}
-                        checked={value}
-                        onCheckedChange={() => togglePreference(key)}
+                        checked={!!preferences[key]}
+                        onCheckedChange={() => setPreferences(prev => ({ ...prev, [key]: !prev[key] }))}
+                        className="rounded-none"
                       />
-                      <label htmlFor={key} className="text-sm capitalize cursor-pointer">
-                        {t(`categories.${key}`) || key}
+                      <label htmlFor={key} className="text-sm capitalize cursor-pointer text-[#23103A]">
+                        {key}
                       </label>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? t('common.loading') : t('nav.signup')}
+              <Button type="submit" className="w-full rounded-none bg-[#D35A3D] hover:bg-[#B84A30] h-10 text-white" disabled={loading} data-testid="signup-submit">
+                {loading ? 'Creating account...' : 'Create Account'}
               </Button>
 
-              <p className="text-center text-sm text-muted-foreground">
-                {t('auth.hasAccount')}{' '}
-                <Link href="/auth/login" className="text-primary hover:underline">
-                  {t('nav.login')}
+              <p className="text-center text-sm text-[#5C5566]">
+                Already have an account?{' '}
+                <Link href="/auth/login" className="text-[#D35A3D] hover:underline font-medium">
+                  Sign in
                 </Link>
               </p>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
 
       <Footer />

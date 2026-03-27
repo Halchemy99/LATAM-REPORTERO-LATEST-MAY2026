@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
-import GlobalSearchBar from '@/components/GlobalSearchBar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -196,7 +195,6 @@ export default function HomePage() {
     return (
       <div className="min-h-screen bg-[#F7F5F2]">
         <Header />
-        <GlobalSearchBar locale={locale} />
         <div className="container py-8">
           <div className="animate-pulse space-y-4">
             {[...Array(6)].map((_, i) => (
@@ -211,7 +209,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#F7F5F2]">
       <Header />
-      <GlobalSearchBar locale={locale} />
       
       <main className="container py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

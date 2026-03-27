@@ -9,14 +9,13 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const { t } = useTranslation();
-  const { login, user, role, isLoading, canAccessAdminDashboard } = useUserRole();
+  const { login, user, isLoading } = useUserRole();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,55 +23,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Redirect if already logged in
   useEffect(() => {
-    if (!isLoading && user) {
-      // User is already logged in, redirect based on role
-      let redirectUrl = '/dashboard';
-      if (canAccessAdminDashboard) {
-        redirectUrl = '/admin/dashboard';
-      } else if (role === 'editor') {
-        redirectUrl = '/editor/dashboard';
-      } else if (role === 'contributor') {
-        redirectUrl = '/contributor/dashboard';
-      }
-      // Use window.location for more reliable redirect
-      window.location.href = redirectUrl;
-    }
-  }, [user, role, isLoading, canAccessAdminDashboard]);
+    if (!isLoading && user) router.push('/');
+  }, [user, isLoading, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Try Supabase login
     const result = await login({ email, password });
     
     if (result.success) {
-      toast.success('Login successful!');
-      // Wait a moment for state to update, then redirect
-      setTimeout(() => {
-        if (result.user) {
-          router.push('/dashboard');
-        }
-      }, 100);
+      toast.success('Welcome back!');
+      router.push('/');
     } else {
       setError(result.error || 'Invalid email or password');
-      toast.error(result.error || 'Invalid email or password');
     }
     setLoading(false);
   };
 
-  // Show loading while checking if already logged in
   if (isLoading || user) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">
-            {user ? 'Redirecting to dashboard...' : 'Loading...'}
-          </div>
+          <div className="animate-pulse text-[#5C5566]">Loading...</div>
         </main>
         <Footer />
       </div>
@@ -80,84 +56,81 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
       <Header />
       
       <main className="flex-1 flex items-center justify-center py-12 px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">{t('auth.loginTitle')}</CardTitle>
-            <CardDescription>{t('auth.loginSubtitle')}</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-[#23103A] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              Welcome Back
+            </h1>
+            <p className="text-sm text-[#5C5566]">Sign in to access your account</p>
+          </div>
+
+          <div className="bg-white border border-[#23103A]/10 p-6">
             {error && (
-              <Alert variant="destructive" className="mb-4">
+              <Alert variant="destructive" className="mb-4 rounded-none">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('auth.email')}</Label>
+            <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 rounded-none border-[#23103A]/15 h-10"
                     required
+                    data-testid="login-email"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">{t('auth.password')}</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="********"
+                    placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 rounded-none border-[#23103A]/15 h-10"
                     required
+                    data-testid="login-password"
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1 h-8 w-8"
+                    className="absolute right-3 top-2.5 text-[#5C5566] hover:text-[#23103A]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
+                  </button>
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
-                  {t('auth.forgotPassword')}
-                </Link>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? t('common.loading') : t('nav.login')}
+              <Button type="submit" className="w-full rounded-none bg-[#23103A] hover:bg-[#160A26] h-10" disabled={loading} data-testid="login-submit">
+                {loading ? 'Signing in...' : 'Sign In'}
               </Button>
 
-              <p className="text-center text-sm text-muted-foreground">
-                {t('auth.noAccount')}{' '}
-                <Link href="/auth/signup" className="text-primary hover:underline">
-                  {t('nav.signup')}
+              <p className="text-center text-sm text-[#5C5566]">
+                Don&apos;t have an account?{' '}
+                <Link href="/auth/signup" className="text-[#D35A3D] hover:underline font-medium">
+                  Create one
                 </Link>
               </p>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
 
       <Footer />
