@@ -1,131 +1,257 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslation } from '@/lib/providers';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import Header from '@/components/Header';
+import GlobalSearchBar from '@/components/GlobalSearchBar';
+import Footer from '@/components/Footer';
 import { 
-  Shield, 
-  DollarSign, 
-  FileText, 
-  Lock, 
-  ArrowRight,
-  CheckCircle,
-  Eye
+  Shield, FileText, Bot, User, Users, Wallet, 
+  ArrowRight, CheckCircle, AlertCircle
 } from 'lucide-react';
 
 export default function TransparencyPage() {
-  const { t } = useTranslation();
-
-  const transparencyAreas = [
-    {
-      title: 'Financial Transparency',
-      description: 'How we fund our journalism and where the money goes',
-      icon: DollarSign,
-      href: '/transparency/funding',
-      color: 'text-green-600 bg-green-100'
-    },
-    {
-      title: 'Editorial Standards',
-      description: 'Our fact-checking process and correction policies',
-      icon: FileText,
-      href: '/transparency/editorial',
-      color: 'text-blue-600 bg-blue-100'
-    },
-    {
-      title: 'Data Privacy',
-      description: 'What data we collect and how we protect it',
-      icon: Lock,
-      href: '/transparency/data',
-      color: 'text-purple-600 bg-purple-100'
-    }
-  ];
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-[#F7F5F2]">
       <Header />
+      <GlobalSearchBar />
       
-      <main className="flex-1">
+      <main className="container py-12">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-primary/5 to-primary/10 py-16">
-          <div className="container text-center">
-            <div className="mx-auto p-4 bg-primary/10 rounded-full w-fit mb-6">
-              <Eye className="h-12 w-12 text-primary" />
+        <div className="max-w-3xl mb-16">
+          <Badge className="mb-4 bg-[#23103A] text-white rounded-none font-mono text-xs uppercase tracking-wider">
+            Editorial Standards
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-[#23103A] mb-6 leading-tight">
+            Transparency
+          </h1>
+          <p className="text-xl text-[#5C5566] leading-relaxed">
+            LATAM Reportero is independently funded. No wire copy. No press releases. 
+            Every story tagged <strong>Human</strong>, <strong>AI-Assisted</strong>, or <strong>AI</strong> so 
+            you know exactly what you're reading.
+          </p>
+          <div className="mt-8">
+            <Link href="/transparency/editorial">
+              <Button className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none gap-2">
+                Read our editorial standards
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Content Source Tagging */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-serif font-semibold text-[#23103A] mb-6">
+            How We Tag Content
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Human */}
+            <div className="bg-white border border-[#23103A]/10 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-emerald-100 flex items-center justify-center">
+                  <User className="h-5 w-5 text-emerald-600" />
+                </div>
+                <Badge className="bg-emerald-600 text-white rounded-none font-mono text-xs uppercase">
+                  Human
+                </Badge>
+              </div>
+              <h3 className="font-semibold text-[#23103A] mb-2">Human-Written</h3>
+              <p className="text-sm text-[#5C5566]">
+                Written entirely by human journalists. Researched, verified, and edited 
+                through our traditional editorial process. Available to subscribers.
+              </p>
             </div>
-            <h1 className="text-4xl font-bold mb-4">Transparency Hub</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              We believe in open journalism. Here's everything you need to know about how we operate.
-            </p>
+
+            {/* AI-Assisted */}
+            <div className="bg-white border border-[#23103A]/10 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-amber-100 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-amber-600" />
+                </div>
+                <Badge className="bg-amber-600 text-white rounded-none font-mono text-xs uppercase">
+                  AI-Assisted
+                </Badge>
+              </div>
+              <h3 className="font-semibold text-[#23103A] mb-2">AI-Assisted</h3>
+              <p className="text-sm text-[#5C5566]">
+                Written by human journalists with AI tools for research, translation, 
+                or initial drafts. Final content reviewed and approved by editors.
+              </p>
+            </div>
+
+            {/* AI */}
+            <div className="bg-white border border-[#23103A]/10 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-purple-100 flex items-center justify-center">
+                  <Bot className="h-5 w-5 text-purple-600" />
+                </div>
+                <Badge className="bg-[#6B38D6] text-white rounded-none font-mono text-xs uppercase">
+                  AI
+                </Badge>
+              </div>
+              <h3 className="font-semibold text-[#23103A] mb-2">AI-Generated</h3>
+              <p className="text-sm text-[#5C5566]">
+                Generated by AI from verified news sources. Transformed into our 
+                solutions journalism format. Always cites original sources. Free to read.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* Transparency Areas */}
-        <section className="py-16">
-          <div className="container">
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              {transparencyAreas.map((area) => (
-                <Link href={area.href} key={area.title}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardHeader>
-                      <div className={`p-3 rounded-lg w-fit ${area.color} mb-2`}>
-                        <area.icon className="h-6 w-6" />
-                      </div>
-                      <CardTitle className="group-hover:text-primary transition-colors">
-                        {area.title}
-                      </CardTitle>
-                      <CardDescription>{area.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <span className="text-primary flex items-center gap-1 text-sm font-medium">
-                        Learn more <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+        {/* Funding */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-serif font-semibold text-[#23103A] mb-6">
+            Our Funding
+          </h2>
+          <div className="bg-white border border-[#23103A]/10 p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="font-semibold text-[#23103A] mb-4 flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-[#D35A3D]" />
+                  Independence Guaranteed
+                </h3>
+                <ul className="space-y-3 text-[#5C5566]">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span>100% reader-funded through subscriptions and donations</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span>No corporate ownership or investor pressure</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span>No advertising revenue or sponsored content</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span>Editorial decisions made solely by our team</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#23103A] mb-4 flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  What We Don't Do
+                </h3>
+                <ul className="space-y-3 text-[#5C5566]">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✕</span>
+                    <span>No wire copy or press release republishing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✕</span>
+                    <span>No pay-for-play or sponsored journalism</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✕</span>
+                    <span>No data selling or user tracking for ads</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✕</span>
+                    <span>No political party or government funding</span>
+                  </li>
+                </ul>
+              </div>
             </div>
+            <div className="mt-8 pt-8 border-t border-[#23103A]/10 flex flex-col sm:flex-row gap-4">
+              <Link href="/pricing">
+                <Button className="bg-[#23103A] hover:bg-[#160A26] text-white rounded-none gap-2">
+                  <Wallet className="h-4 w-4" />
+                  Support Our Journalism
+                </Button>
+              </Link>
+              <Link href="/transparency/funding">
+                <Button variant="outline" className="rounded-none border-[#23103A]/20 gap-2">
+                  View Financial Details
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
 
-            {/* Our Commitments */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-6 w-6 text-primary" />
-                  Our Transparency Commitments
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {[
-                    'All funding sources disclosed publicly',
-                    'Clear distinction between news and opinion',
-                    'Corrections issued within 24 hours',
-                    'No data sold to third parties',
-                    'Open methodology for trust scores',
-                    'Regular financial reports published',
-                    'Editorial independence from funders',
-                    'Reader feedback actively incorporated'
-                  ].map((commitment, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span>{commitment}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+        {/* Editorial Process */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-serif font-semibold text-[#23103A] mb-6">
+            Our Editorial Process
+          </h2>
+          <div className="space-y-4">
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 bg-[#23103A] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
+                1
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#23103A]">Source Verification</h3>
+                <p className="text-[#5C5566]">
+                  All stories—whether human or AI-generated—trace back to verified primary sources. 
+                  AI content pulls from reputable news outlets (Reuters, AP, NYT, Guardian, major LATAM publications).
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 bg-[#23103A] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
+                2
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#23103A]">Solutions Framework</h3>
+                <p className="text-[#5C5566]">
+                  Every story follows our Problem → Solution → Impact structure. We don't just report problems—we 
+                  investigate what's being done to solve them.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 bg-[#23103A] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
+                3
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#23103A]">Editorial Review</h3>
+                <p className="text-[#5C5566]">
+                  AI-generated drafts go through human editorial review before publication. 
+                  Human-written stories follow our standard fact-checking and editing process.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 bg-[#23103A] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
+                4
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#23103A]">Multilingual Publishing</h3>
+                <p className="text-[#5C5566]">
+                  All content is available in English, Spanish, and Portuguese. Translations are done by 
+                  professional AI (DeepL) and reviewed for accuracy.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Contact */}
-        <section className="py-16 bg-muted/50">
-          <div className="container text-center">
-            <h2 className="text-2xl font-bold mb-4">Have Questions?</h2>
-            <p className="text-muted-foreground mb-6">
-              We're committed to answering your questions about our operations.
+        <section className="bg-[#23103A] text-white p-8">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl font-serif font-semibold mb-4">
+              Questions or Concerns?
+            </h2>
+            <p className="text-white/80 mb-6">
+              We welcome feedback on our editorial approach. If you spot an error, have questions 
+              about our methodology, or want to discuss our coverage, reach out.
             </p>
-            <Button>Contact Our Transparency Team</Button>
+            <div className="flex gap-4">
+              <a href="mailto:editorial@latamreportero.com">
+                <Button className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none">
+                  Contact Editorial Team
+                </Button>
+              </a>
+              <Link href="/transparency/corrections">
+                <Button variant="outline" className="rounded-none border-white/30 text-white hover:bg-white/10">
+                  View Corrections
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Request, File, UploadFile
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -564,6 +564,59 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         logger.error(f"Webhook error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+
+# ============================================
+# VOICE TRANSCRIPTION (WHISPER) ENDPOINT
+# ============================================
+
+@api_router.post("/transcribe")
+async def transcribe_audio(audio: UploadFile = File(...)):
+    """Transcribe audio using OpenAI Whisper via Emergent"""
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        if not EMERGENT_LLM_KEY:
+            raise HTTPException(status_code=500, detail="LLM API key not configured")
+        
+        # Save uploaded file temporarily
+        import tempfile
+        import os as local_os
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp_file:
+            content = await audio.read()
+            tmp_file.write(content)
+            tmp_path = tmp_file.name
+        
+        try:
+            # Use OpenAI Whisper for transcription
+            import httpx
+            
+            # For now, use a simple approach - send to OpenAI directly
+            # In production, this would use the Emergent integrations library
+            async with httpx.AsyncClient() as client:
+                with open(tmp_path, "rb") as f:
+                    response = await client.post(
+                        "https://api.openai.com/v1/audio/transcriptions",
+                        headers={"Authorization": f"Bearer {EMERGENT_LLM_KEY}"},
+                        files={"file": ("audio.webm", f, "audio/webm")},
+                        data={"model": "whisper-1"},
+                        timeout=30.0
+                    )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    return {"text": result.get("text", ""), "success": True}
+                else:
+                    logger.error(f"Whisper API error: {response.text}")
+                    return {"text": "", "success": False, "error": "Transcription failed"}
+                    
+        finally:
+            # Cleanup temp file
+            local_os.unlink(tmp_path)
+            
+    except Exception as e:
+        logger.error(f"Transcription error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================
 # RSS INGESTION ENDPOINTS

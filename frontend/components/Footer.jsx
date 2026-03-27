@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslation } from '@/lib/providers';
 import Newsletter from '@/components/Newsletter';
-import { Facebook, Twitter, Instagram, Linkedin, Mail, MessageCircle, Wallet } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, MessageCircle, Wallet } from 'lucide-react';
 
 // Custom TikTok icon (lucide-react doesn't have one)
 const TikTokIcon = ({ className }) => (
@@ -88,22 +88,19 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Social Links */}
             <div className="flex items-center space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="Facebook">
+              <a href="#" className="text-muted-foreground hover:text-[#D35A3D] transition-colors" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="Twitter">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#D35A3D] transition-colors" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://www.tiktok.com/@latamreportero" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="TikTok">
+              <a href="https://www.tiktok.com/@latamreportero" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#D35A3D] transition-colors" aria-label="TikTok">
                 <TikTokIcon className="h-5 w-5" />
               </a>
-              <a href="https://www.linkedin.com/company/latam-reportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/latam-reportero/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-[#D35A3D] transition-colors" aria-label="LinkedIn">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="mailto:contact@latamreportero.com" className="text-muted-foreground hover:text-[#8c52ff] transition-colors" aria-label="Email">
+              <a href="mailto:contact@latamreportero.com" className="text-muted-foreground hover:text-[#D35A3D] transition-colors" aria-label="Email">
                 <Mail className="h-5 w-5" />
               </a>
             </div>

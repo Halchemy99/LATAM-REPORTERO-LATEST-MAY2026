@@ -5,6 +5,7 @@ import { useTranslation, useUserRole, useContentMode } from '@/lib/providers';
 import { mockArticles, mockWriters, getLocalizedContent } from '@/lib/mock-data';
 import { getArticles } from '@/lib/supabase/cms';
 import Header from '@/components/Header';
+import GlobalSearchBar from '@/components/GlobalSearchBar';
 import Footer from '@/components/Footer';
 import Newsletter from '@/components/Newsletter';
 import ContributorReputation from '@/components/ContributorReputation';
@@ -12,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight, Clock, Users, Headphones, Video, TrendingUp } from 'lucide-react';
+import { ArrowRight, Clock, Users, Headphones, Video, TrendingUp, Bot, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -196,8 +197,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
       <Header />
+      <GlobalSearchBar locale={locale} />
       
       <main className="flex-1">
         {/* Editorial Hero Grid */}
