@@ -94,6 +94,7 @@ export default function Header() {
                 width={100}
                 height={28}
                 className="h-7 w-auto group-hover:opacity-80 transition-opacity"
+                style={{ width: 'auto', height: '28px' }}
                 priority
               />
             </Link>
