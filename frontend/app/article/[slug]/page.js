@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import SanityPortableText from '@/components/SanityPortableText';
+import ArticlePodcastPlayer from '@/components/ArticlePodcastPlayer';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Bookmark, Share2, Heart, MessageCircle, Clock,
-  Bot, User, Send, Lock, ExternalLink, ArrowLeft
+  Bot, User, Send, Lock, ArrowLeft
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -236,7 +237,7 @@ export default function ArticlePage() {
             )}
             
             <div className="flex items-center gap-4 mt-6 text-sm text-white/60">
-              <span>{article.sourceFeed || 'Staff Writer'}</span>
+              <span>LATAM Reportero</span>
               <span className="text-white/30">&bull;</span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
@@ -269,12 +270,10 @@ export default function ArticlePage() {
                     <Share2 className="h-5 w-5 text-[#5C5566]" />
                   </Button>
                 </div>
-                {article.sourceUrl && (
-                  <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#D35A3D] hover:underline flex items-center gap-1 font-mono uppercase tracking-wider">
-                    Original Source <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
               </div>
+
+              {/* Podcast Player */}
+              <ArticlePodcastPlayer article={article} />
 
               {/* Paywall for Human Content */}
               {needsUpgrade ? (
@@ -380,28 +379,6 @@ export default function ArticlePage() {
                   <p className="text-sm text-[#5C5566]">No related articles found.</p>
                 )}
               </div>
-
-              {/* Source Info */}
-              {article.sourceFeed && (
-                <div className="bg-white border border-[#23103A]/10 p-5">
-                  <h3 className="text-sm font-mono uppercase tracking-wider text-[#23103A] font-semibold mb-3 pb-2 border-b border-[#23103A]/10">
-                    Source
-                  </h3>
-                  <p className="text-sm text-[#5C5566]">
-                    Originally sourced from <span className="font-medium text-[#23103A]">{article.sourceFeed}</span>
-                  </p>
-                  {article.sourceUrl && (
-                    <a 
-                      href={article.sourceUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-xs text-[#D35A3D] hover:underline mt-2 inline-flex items-center gap-1"
-                    >
-                      View original <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>

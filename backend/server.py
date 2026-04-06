@@ -933,6 +933,64 @@ async def get_sanity_article(slug: str):
 # Include the router in the main app
 app.include_router(api_router)
 
+# ============================================
+# TTS (Text-to-Speech) ENDPOINT
+# ============================================
+from emergentintegrations.llm.openai import OpenAITextToSpeech
+from fastapi.responses import Response
+import base64
+
+@app.post("/api/tts")
+async def text_to_speech(request: Request):
+    """Convert article text to speech audio (MP3)"""
+    body = await request.json()
+    text = body.get("text", "")
+    
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="Text is required")
+    
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="TTS API key not configured")
+    
+    try:
+        tts = OpenAITextToSpeech(api_key=EMERGENT_LLM_KEY)
+        
+        # TTS has a 4096 char limit — chunk and concatenate
+        chunks = []
+        remaining = text.strip()
+        while remaining:
+            chunk = remaining[:4000]
+            # Try to break at sentence boundary
+            if len(remaining) > 4000:
+                last_period = chunk.rfind('.')
+                last_newline = chunk.rfind('\n')
+                break_at = max(last_period, last_newline)
+                if break_at > 2000:
+                    chunk = remaining[:break_at + 1]
+            chunks.append(chunk.strip())
+            remaining = remaining[len(chunk):].strip()
+        
+        audio_parts = []
+        for chunk in chunks:
+            audio_bytes = await tts.generate_speech(
+                text=chunk,
+                model="tts-1-hd",
+                voice="nova",
+                response_format="mp3",
+                speed=1.0
+            )
+            audio_parts.append(audio_bytes)
+        
+        # Concatenate all audio parts
+        full_audio = b"".join(audio_parts)
+        audio_b64 = base64.b64encode(full_audio).decode("utf-8")
+        
+        return {"audio_base64": audio_b64, "format": "mp3"}
+    
+    except Exception as e:
+        logger.error(f"TTS error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"TTS generation failed: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

@@ -26,7 +26,7 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
   const readTime = article.readTime || 5;
   const category = article.category || 'general';
   const region = article.region || 'latam';
-  const authorName = article.sourceFeed || 'Staff Writer';
+  const authorName = 'LATAM Reportero';
   const image = article.featuredImage || null;
 
   return (

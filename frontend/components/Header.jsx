@@ -19,7 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
   Menu, User, LogOut, Bookmark, 
   ChevronDown, MapPin, FileText, TrendingUp, Sparkles, Radio,
-  Search, X, Loader2, Mic, ArrowRight
+  Search, X, Loader2, Mic, MicOff, ArrowRight
 } from 'lucide-react';
 
 const REGIONS = {
@@ -64,9 +64,9 @@ export default function Header() {
   const { user, role, logout, isSubscribed } = useUserRole();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [results, setResults] = useState(null);
   const inputRef = useRef(null);
   const resultsRef = useRef(null);
@@ -76,7 +76,6 @@ export default function Header() {
     window.location.href = '/';
   };
 
-  // Close search results on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (resultsRef.current && !resultsRef.current.contains(e.target)) {
@@ -87,15 +86,10 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Focus input when search opens
-  useEffect(() => {
-    if (searchOpen) inputRef.current?.focus();
-  }, [searchOpen]);
-
   const placeholders = {
-    en: "Search stories, regions, topics...",
-    es: "Buscar historias, regiones, temas...",
-    pt: "Pesquisar historias, regioes, topicos..."
+    en: "Ask AI: What solutions are addressing corruption in Venezuela?",
+    es: "Pregunta a la IA: Que soluciones estan abordando la corrupcion?",
+    pt: "Pergunte a IA: Quais solucoes estao abordando a corrupcao?"
   };
 
   const handleSearch = async () => {
@@ -118,7 +112,54 @@ export default function Header() {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') handleSearch();
-    if (e.key === 'Escape') { setSearchOpen(false); setResults(null); }
+    if (e.key === 'Escape') setResults(null);
+  };
+
+  // Whisper voice search
+  const startVoiceInput = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) return;
+    try {
+      setIsListening(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        setIsListening(false);
+        setIsProcessing(true);
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.webm');
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+          const resp = await fetch(`${baseUrl}/api/transcribe`, { method: 'POST', body: formData });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.text) {
+              setQuery(data.text);
+              // Auto-search after transcription
+              const searchResp = await fetch(`${baseUrl}/api/ai-search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: data.text })
+              });
+              if (searchResp.ok) setResults(await searchResp.json());
+            }
+          }
+        } catch (err) {
+          console.error('Voice error:', err);
+        } finally {
+          setIsProcessing(false);
+        }
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      mediaRecorder.start();
+      setTimeout(() => { if (mediaRecorder.state === 'recording') mediaRecorder.stop(); }, 5000);
+    } catch (err) {
+      setIsListening(false);
+    }
   };
 
   return (
@@ -127,7 +168,6 @@ export default function Header() {
       <div className="bg-[#23103A] text-white">
         <div className="container">
           <div className="flex h-11 items-center justify-between">
-            {/* Left: Logo + Nav */}
             <div className="flex items-center gap-5">
               <Link href="/" className="flex items-center gap-2 group" data-testid="logo-link">
                 <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
@@ -177,25 +217,12 @@ export default function Header() {
               </nav>
             </div>
 
-            {/* Right: Actions */}
             <div className="flex items-center gap-1.5">
               <div className="hidden sm:block">
                 <ContentModeToggle isSubscribed={isSubscribed} userRole={role} />
               </div>
               <LanguageSelector />
 
-              {/* Search Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="text-white/70 hover:text-white hover:bg-white/10 rounded-none h-8 w-8"
-                data-testid="search-toggle-btn"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-
-              {/* User Menu or Login/Join */}
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -241,7 +268,6 @@ export default function Header() {
                 </div>
               )}
 
-              {/* Mobile Menu */}
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild className="lg:hidden">
                   <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10 rounded-none h-8 w-8">
@@ -297,71 +323,80 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Search Bar (sticky, toggleable) */}
-      {searchOpen && (
-        <div className="bg-[#1A0B2E] border-b border-white/5" data-testid="global-search-bar">
-          <div className="container">
-            <div className="flex items-center h-10 gap-2">
-              <Search className="h-3.5 w-3.5 text-white/40 flex-shrink-0" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={placeholders[locale] || placeholders.en}
-                className="flex-1 bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none"
-                style={{ fontFamily: 'Inter, sans-serif' }}
-                data-testid="global-search-input"
-              />
-              {isProcessing && <Loader2 className="h-3.5 w-3.5 text-white/50 animate-spin" />}
-              {query && !isProcessing && (
-                <button onClick={() => { setQuery(''); setResults(null); }} className="text-white/40 hover:text-white">
-                  <X className="h-3.5 w-3.5" />
-                </button>
+      {/* Always-visible AI Search Bar — thin strip */}
+      <div className="bg-[#1A0B2E] border-b border-white/5" data-testid="global-search-bar">
+        <div className="container">
+          <div className="flex items-center h-8 gap-2">
+            <Search className="h-3 w-3 text-[#D35A3D] flex-shrink-0" />
+            <span className="text-[9px] font-mono uppercase tracking-wider text-white/30 hidden sm:inline flex-shrink-0">AI</span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholders[locale] || placeholders.en}
+              className="flex-1 bg-transparent text-white/90 text-xs placeholder:text-white/25 focus:outline-none"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+              data-testid="global-search-input"
+            />
+            {isProcessing && <Loader2 className="h-3 w-3 text-[#D35A3D] animate-spin" />}
+            {query && !isProcessing && (
+              <button onClick={() => { setQuery(''); setResults(null); }} className="text-white/30 hover:text-white">
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {/* Whisper Voice Button */}
+            <button
+              onClick={isListening ? () => setIsListening(false) : startVoiceInput}
+              disabled={isProcessing}
+              className={`p-1 rounded-sm transition-colors ${
+                isListening ? 'bg-[#D35A3D] text-white' : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+              }`}
+              title="Voice search (Whisper)"
+              data-testid="voice-search-btn"
+            >
+              {isListening ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
+            </button>
+            <button
+              onClick={handleSearch}
+              disabled={!query.trim() || isProcessing}
+              className="px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider text-white/40 hover:text-white disabled:opacity-30 transition-colors"
+              data-testid="search-submit-btn"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* Search Results Dropdown */}
+        {results && (
+          <div ref={resultsRef} className="bg-white border-b border-[#23103A]/10 shadow-lg">
+            <div className="container py-4">
+              {results.articles?.length > 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-[#5C5566] leading-relaxed">{results.answer}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {results.articles.slice(0, 3).map((article) => (
+                      <Link key={article.id || article.slug} href={`/article/${article.slug}`}
+                        onClick={() => setResults(null)}
+                        className="flex items-start gap-3 p-3 hover:bg-[#23103A]/5 transition-colors group border border-[#23103A]/5">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-mono uppercase text-[#D35A3D] mb-1">{article.category}</p>
+                          <h4 className="text-sm font-medium text-[#23103A] line-clamp-2 group-hover:text-[#D35A3D]">{article.title}</h4>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-[#23103A]/20 group-hover:text-[#D35A3D] flex-shrink-0 mt-1" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-[#5C5566]">No results found for &ldquo;{query}&rdquo;</p>
               )}
-              <button
-                onClick={handleSearch}
-                disabled={!query.trim() || isProcessing}
-                className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-white/60 hover:text-white disabled:opacity-40"
-              >
-                Search
-              </button>
-              <button onClick={() => { setSearchOpen(false); setResults(null); }} className="text-white/40 hover:text-white ml-1">
-                <X className="h-4 w-4" />
-              </button>
             </div>
           </div>
-
-          {/* Search Results */}
-          {results && (
-            <div ref={resultsRef} className="bg-white border-b border-[#23103A]/10 shadow-lg">
-              <div className="container py-4">
-                {results.articles?.length > 0 ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-[#5C5566] leading-relaxed">{results.answer}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {results.articles.slice(0, 3).map((article) => (
-                        <Link key={article.id || article.slug} href={`/article/${article.slug}`}
-                          onClick={() => { setResults(null); setSearchOpen(false); }}
-                          className="flex items-start gap-3 p-3 hover:bg-[#23103A]/5 transition-colors group border border-[#23103A]/5">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] font-mono uppercase text-[#D35A3D] mb-1">{article.category}</p>
-                            <h4 className="text-sm font-medium text-[#23103A] line-clamp-2 group-hover:text-[#D35A3D]">{article.title}</h4>
-                          </div>
-                          <ArrowRight className="h-3.5 w-3.5 text-[#23103A]/20 group-hover:text-[#D35A3D] flex-shrink-0 mt-1" />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-sm text-[#5C5566]">No results found for &ldquo;{query}&rdquo;</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 }
