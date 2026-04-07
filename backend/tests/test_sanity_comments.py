@@ -7,7 +7,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = "https://latam-reportero-2.preview.emergentagent.com"
+BASE_URL = "https://true-replica-1.preview.emergentagent.com"
 
 
 class TestSanityProxyEndpoints:

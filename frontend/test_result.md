@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the LATAM Reportero API endpoints: GET /api/, GET /api/articles with various query parameters (limit, category, type), and GET /api/health. Base URL: https://latam-reportero-2.preview.emergentagent.com"
+user_problem_statement: "Test the LATAM Reportero API endpoints: GET /api/, GET /api/articles with various query parameters (limit, category, type), and GET /api/health. Base URL: https://true-replica-1.preview.emergentagent.com"
 
 backend:
   - task: "API Root Endpoint"
