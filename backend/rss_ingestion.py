@@ -117,7 +117,7 @@ class SanityClient:
         """Check if an article with external_id already exists"""
         query = f'*[_type == "article" && externalId == "{external_id}"][0]._id'
         result = await self.query(query)
-        return result is not None
+        return result is not None and result != ""
 
 # ============================================
 # DEEPL TRANSLATION SERVICE
@@ -261,14 +261,14 @@ Please analyze this article and rewrite it in our solutions journalism format. I
             if para.startswith('**') and para.endswith('**'):
                 blocks.append({
                     "_type": "block",
-                    "_key": hashlib.md5(para.encode()).hexdigest()[:12],
+                    "_key": hashlib.sha256(para.encode()).hexdigest()[:12],
                     "style": "h3",
                     "children": [{"_type": "span", "text": para.strip('*')}]
                 })
             else:
                 blocks.append({
                     "_type": "block",
-                    "_key": hashlib.md5(para.encode()).hexdigest()[:12],
+                    "_key": hashlib.sha256(para.encode()).hexdigest()[:12],
                     "style": "normal",
                     "children": [{"_type": "span", "text": para}]
                 })
@@ -286,7 +286,7 @@ class RSSFeedService:
     def generate_external_id(url: str, title: str) -> str:
         """Generate unique ID from URL and title"""
         content = f"{url}:{title}"
-        return hashlib.md5(content.encode()).hexdigest()[:16]
+        return hashlib.sha256(content.encode()).hexdigest()[:16]
     
     @staticmethod
     def generate_slug(title: str) -> str:

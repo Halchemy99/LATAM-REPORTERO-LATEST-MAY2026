@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { en, es, pt } from './translations';
 
 // ============ I18n Provider ============
@@ -12,24 +12,33 @@ export function I18nProvider({ children }) {
 
   useEffect(() => {
     setMounted(true);
-    const savedLocale = localStorage.getItem('locale');
-    if (savedLocale) {
-      setLocale(savedLocale);
-      return;
+    try {
+      const savedLocale = localStorage.getItem('locale');
+      if (savedLocale) {
+        setLocale(savedLocale);
+        return;
+      }
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (timezone.startsWith('America/') && !timezone.includes('New_York') && !timezone.includes('Los_Angeles') && !timezone.includes('Chicago')) {
+        setLocale('es');
+        return;
+      }
+      const browserLang = navigator.language?.split('-')[0];
+      if (browserLang === 'es') setLocale('es');
+      else if (browserLang === 'pt') setLocale('pt');
+    } catch (e) {
+      // localStorage not available (SSR or privacy mode)
+      console.warn('localStorage not available:', e);
     }
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (timezone.startsWith('America/') && !timezone.includes('New_York') && !timezone.includes('Los_Angeles') && !timezone.includes('Chicago')) {
-      setLocale('es');
-      return;
-    }
-    const browserLang = navigator.language?.split('-')[0];
-    if (browserLang === 'es') setLocale('es');
-    else if (browserLang === 'pt') setLocale('pt');
   }, []);
 
   const changeLocale = useCallback((newLocale) => {
     setLocale(newLocale);
-    localStorage.setItem('locale', newLocale);
+    try {
+      localStorage.setItem('locale', newLocale);
+    } catch (e) {
+      console.warn('localStorage not available:', e);
+    }
   }, []);
 
   const t = useCallback((key) => {
@@ -40,10 +49,16 @@ export function I18nProvider({ children }) {
     return value || key;
   }, [locale]);
 
+  const contextValue = useMemo(() => ({
+    locale,
+    setLocale: changeLocale,
+    t
+  }), [locale, changeLocale, t]);
+
   if (!mounted) return <div className="min-h-screen bg-background" />;
 
   return (
-    <I18nContext.Provider value={{ locale, setLocale: changeLocale, t }}>
+    <I18nContext.Provider value={contextValue}>
       {children}
     </I18nContext.Provider>
   );
@@ -69,24 +84,28 @@ export function UserRoleProvider({ children }) {
   // Initialize from stored token
   useEffect(() => {
     const init = async () => {
-      const storedToken = localStorage.getItem('auth_token');
-      if (storedToken) {
-        try {
-          const resp = await fetch(`${API_URL}/api/auth/me`, {
-            headers: { 'Authorization': `Bearer ${storedToken}` }
-          });
-          if (resp.ok) {
-            const data = await resp.json();
-            setUser(data.user);
-            setRole(data.user.role);
-            setToken(storedToken);
-          } else {
+      try {
+        const storedToken = localStorage.getItem('auth_token');
+        if (storedToken) {
+          try {
+            const resp = await fetch(`${API_URL}/api/auth/me`, {
+              headers: { 'Authorization': `Bearer ${storedToken}` }
+            });
+            if (resp.ok) {
+              const data = await resp.json();
+              setUser(data.user);
+              setRole(data.user.role);
+              setToken(storedToken);
+            } else {
+              localStorage.removeItem('auth_token');
+            }
+          } catch (err) {
+            console.error('Auth check failed:', err);
             localStorage.removeItem('auth_token');
           }
-        } catch (err) {
-          console.error('Auth check failed:', err);
-          localStorage.removeItem('auth_token');
         }
+      } catch (e) {
+        // localStorage not available
       }
       setIsLoading(false);
     };
@@ -106,7 +125,11 @@ export function UserRoleProvider({ children }) {
         setUser(data.user);
         setRole(data.user.role);
         setToken(data.token);
-        localStorage.setItem('auth_token', data.token);
+        try {
+          localStorage.setItem('auth_token', data.token);
+        } catch (e) {
+          // localStorage not available
+        }
         return { success: true, user: data.user };
       } else {
         const err = await resp.json();
@@ -130,7 +153,11 @@ export function UserRoleProvider({ children }) {
         setUser(data.user);
         setRole(data.user.role);
         setToken(data.token);
-        localStorage.setItem('auth_token', data.token);
+        try {
+          localStorage.setItem('auth_token', data.token);
+        } catch (e) {
+          // localStorage not available
+        }
         return { success: true, user: data.user };
       } else {
         const err = await resp.json();
@@ -145,26 +172,32 @@ export function UserRoleProvider({ children }) {
     setUser(null);
     setRole(null);
     setToken(null);
-    localStorage.removeItem('auth_token');
+    try {
+      localStorage.removeItem('auth_token');
+    } catch (e) {
+      // localStorage not available
+    }
   }, []);
 
   const isSubscribed = role && ['paid', 'subscriber', 'contributor', 'editor', 'admin'].includes(role);
   const canAccessHumanContent = isSubscribed;
   const canAccessAdminDashboard = role === 'admin';
 
+  const contextValue = useMemo(() => ({
+    user,
+    role,
+    token,
+    isLoading,
+    login,
+    signup,
+    logout,
+    isSubscribed,
+    canAccessHumanContent,
+    canAccessAdminDashboard
+  }), [user, role, token, isLoading, login, signup, logout, isSubscribed, canAccessHumanContent, canAccessAdminDashboard]);
+
   return (
-    <UserRoleContext.Provider value={{
-      user,
-      role,
-      token,
-      isLoading,
-      login,
-      signup,
-      logout,
-      isSubscribed,
-      canAccessHumanContent,
-      canAccessAdminDashboard
-    }}>
+    <UserRoleContext.Provider value={contextValue}>
       {children}
     </UserRoleContext.Provider>
   );
@@ -183,17 +216,30 @@ export function ContentModeProvider({ children }) {
   const [mode, setMode] = useState('all');
   
   useEffect(() => {
-    const saved = localStorage.getItem('contentMode');
-    if (saved) setMode(saved);
+    try {
+      const saved = localStorage.getItem('contentMode');
+      if (saved) setMode(saved);
+    } catch (e) {
+      // localStorage not available
+    }
   }, []);
   
   const changeMode = useCallback((newMode) => {
     setMode(newMode);
-    localStorage.setItem('contentMode', newMode);
+    try {
+      localStorage.setItem('contentMode', newMode);
+    } catch (e) {
+      // localStorage not available
+    }
   }, []);
+
+  const contextValue = useMemo(() => ({
+    mode,
+    setMode: changeMode
+  }), [mode, changeMode]);
   
   return (
-    <ContentModeContext.Provider value={{ mode, setMode: changeMode }}>
+    <ContentModeContext.Provider value={contextValue}>
       {children}
     </ContentModeContext.Provider>
   );

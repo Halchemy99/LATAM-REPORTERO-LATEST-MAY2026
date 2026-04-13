@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/lib/providers';
+import { sanitizeHtml, sanitizeEmbed } from '@/lib/sanitize';
 
 // ============================================
 // TEXT BLOCKS
@@ -280,7 +281,7 @@ export function PodcastEmbedBlock({ content, locale }) {
   
   if (embedCode) {
     return (
-      <div className="my-8" dangerouslySetInnerHTML={{ __html: embedCode }} />
+      <div className="my-8" dangerouslySetInnerHTML={{ __html: sanitizeEmbed(embedCode) }} />
     );
   }
   
@@ -413,7 +414,7 @@ export function MapEmbedBlock({ content, locale }) {
   if (data.embedCode) {
     return (
       <figure className="my-8">
-        <div dangerouslySetInnerHTML={{ __html: data.embedCode }} className="rounded-lg overflow-hidden" />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeEmbed(data.embedCode) }} className="rounded-lg overflow-hidden" />
         {data.caption && (
           <figcaption className="mt-2 text-sm text-muted-foreground">
             {data.caption}

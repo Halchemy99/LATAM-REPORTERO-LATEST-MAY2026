@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { createClient } from '@/lib/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -528,7 +529,7 @@ export default function AIDraftInboxPage() {
                 {selectedDraft?.body && (
                   <div>
                     <h4 className="font-semibold mb-1">Content</h4>
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedDraft.body }} />
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedDraft.body) }} />
                   </div>
                 )}
                 
@@ -536,7 +537,7 @@ export default function AIDraftInboxPage() {
                 {selectedDraft?.problem_section && (
                   <div>
                     <h4 className="font-semibold mb-1 text-red-600">Problem</h4>
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedDraft.problem_section }} />
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedDraft.problem_section) }} />
                   </div>
                 )}
                 
@@ -544,7 +545,7 @@ export default function AIDraftInboxPage() {
                 {selectedDraft?.solutions_section && (
                   <div>
                     <h4 className="font-semibold mb-1 text-green-600">Solutions</h4>
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedDraft.solutions_section }} />
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedDraft.solutions_section) }} />
                   </div>
                 )}
                 
@@ -552,7 +553,7 @@ export default function AIDraftInboxPage() {
                 {selectedDraft?.impact_section && (
                   <div>
                     <h4 className="font-semibold mb-1 text-blue-600">Impact</h4>
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedDraft.impact_section }} />
+                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedDraft.impact_section) }} />
                   </div>
                 )}
               </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUserRole } from '@/lib/providers';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -18,45 +18,45 @@ export default function PollWidget({ poll, compact = false }) {
   const [totalVotes, setTotalVotes] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const checkVoteAndGetResults = async () => {
-      if (!poll?.id) return;
-      
-      const supabase = createClient();
-      
-      // Check if user already voted
-      if (user?.id) {
-        const { data: vote } = await supabase
-          .from('poll_votes')
-          .select('option_index')
-          .eq('poll_id', poll.id)
-          .eq('user_id', user.id)
-          .single();
-        
-        if (vote) {
-          setHasVoted(true);
-          setSelectedOption(vote.option_index);
-        }
-      }
-      
-      // Get vote counts
-      const { data: votes } = await supabase
+  const loadPollData = useCallback(async () => {
+    if (!poll?.id) return;
+    
+    const supabase = createClient();
+    
+    // Check if user already voted
+    if (user?.id) {
+      const { data: vote } = await supabase
         .from('poll_votes')
         .select('option_index')
-        .eq('poll_id', poll.id);
+        .eq('poll_id', poll.id)
+        .eq('user_id', user.id)
+        .single();
       
-      if (votes) {
-        const counts = {};
-        votes.forEach(v => {
-          counts[v.option_index] = (counts[v.option_index] || 0) + 1;
-        });
-        setResults(counts);
-        setTotalVotes(votes.length);
+      if (vote) {
+        setHasVoted(true);
+        setSelectedOption(vote.option_index);
       }
-    };
+    }
     
-    checkVoteAndGetResults();
+    // Get vote counts
+    const { data: votes } = await supabase
+      .from('poll_votes')
+      .select('option_index')
+      .eq('poll_id', poll.id);
+    
+    if (votes) {
+      const counts = {};
+      votes.forEach(v => {
+        counts[v.option_index] = (counts[v.option_index] || 0) + 1;
+      });
+      setResults(counts);
+      setTotalVotes(votes.length);
+    }
   }, [poll?.id, user?.id]);
+
+  useEffect(() => {
+    loadPollData();
+  }, [loadPollData]);
 
   const handleVote = async (optionIndex) => {
     if (!user) {
@@ -147,7 +147,7 @@ export default function PollWidget({ poll, compact = false }) {
       </CardHeader>
       <CardContent className="space-y-3">
         {options.map((option, index) => (
-          <div key={index}>
+          <div key={`poll-option-${poll?.id || 'unknown'}-${index}`}>
             {hasVoted ? (
               // Show results
               <div className="space-y-1">
