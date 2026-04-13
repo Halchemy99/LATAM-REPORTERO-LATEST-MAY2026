@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import httpx
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
@@ -30,6 +31,11 @@ JWT_SECRET = os.environ.get('JWT_SECRET', 'latam-reportero-jwt-secret-2026')
 
 # Stripe configuration
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
+
+# Sanity configuration
+SANITY_PROJECT_ID = os.environ.get('SANITY_PROJECT_ID', 's5taeh5v')
+SANITY_DATASET = os.environ.get('SANITY_DATASET', 'production')
+SANITY_API_TOKEN = os.environ.get('SANITY_API_TOKEN')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -356,25 +362,26 @@ Keep responses concise (2-3 paragraphs max) and engaging. Use a friendly, journa
 # Admin Password Change Endpoint
 @api_router.post("/admin/users/password")
 async def admin_change_password(request: AdminPasswordChangeRequest):
-    """Admin endpoint to change a user's password using Supabase Admin API"""
+    """Admin endpoint to change a user's password using MongoDB"""
     try:
-        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-            logger.error("Supabase credentials not configured")
-            raise HTTPException(status_code=500, detail="Supabase admin not configured")
-        
         if len(request.newPassword) < 6:
             raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
         
-        # Create Supabase admin client
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        # Find user by ID
+        user = await db.users.find_one({"id": request.userId})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         
-        # Update user password using admin API
-        response = supabase.auth.admin.update_user_by_id(
-            request.userId,
-            {"password": request.newPassword}
+        # Hash new password
+        new_password_hash = bcrypt.hashpw(request.newPassword.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Update password
+        result = await db.users.update_one(
+            {"id": request.userId},
+            {"$set": {"password_hash": new_password_hash}}
         )
         
-        if response.user:
+        if result.modified_count > 0:
             logger.info(f"Password changed successfully for user: {request.userId}")
             return {"success": True, "message": "Password changed successfully"}
         else:
@@ -593,7 +600,7 @@ Keep responses concise but helpful. You can suggest related topics they might be
                 end = json_part.find(']') + 1
                 if start >= 0 and end > start:
                     matched_slugs = json.loads(json_part[start:end])
-            except:
+            except (json.JSONDecodeError, IndexError, ValueError):
                 pass
         
         # Clean the response (remove the JSON part for display)
@@ -910,9 +917,31 @@ async def _sanity_query(groq_query: str, params: Dict = None) -> Any:
         return resp.json().get("result", [])
 
 @api_router.get("/sanity/articles")
-async def get_sanity_articles(language: str = "en", limit: int = 20):
-    """Fetch published articles from Sanity by language"""
-    query = f'*[_type == "article" && status == "published" && language == "{language}"] | order(publishedAt desc) [0...{limit}] {{_id, title, "slug": slug.current, language, standfirst, category, region, isAiGenerated, publishedAt, sourceFeed, sourceUrl, "featuredImage": featuredImage.asset->url}}'
+async def get_sanity_articles(
+    language: str = "en", 
+    limit: int = 50,
+    status: str = None,
+    category: str = None,
+    ai_only: str = None
+):
+    """Fetch articles from Sanity by language with optional filters"""
+    # Build filter conditions
+    conditions = ['_type == "article"', f'language == "{language}"']
+    
+    if status and status != 'all':
+        conditions.append(f'status == "{status}"')
+    else:
+        # By default, show all articles regardless of status for admin views
+        pass
+    
+    if category and category != 'all':
+        conditions.append(f'category == "{category}"')
+    
+    if ai_only == 'true':
+        conditions.append('isAiGenerated == true')
+    
+    filter_str = " && ".join(conditions)
+    query = f'*[{filter_str}] | order(publishedAt desc) [0...{limit}] {{_id, title, "slug": slug.current, language, standfirst, body, problem, solutions, impact, category, region, isAiGenerated, status, publishedAt, createdAt, sourceFeed, sourceUrl, "featuredImage": featuredImage.asset->url}}'
     articles = await _sanity_query(query)
     return {"articles": articles}
 
@@ -929,6 +958,87 @@ async def get_sanity_article(slug: str):
     query = f'*[_type == "article" && slug.current == "{slug}"][0] {{_id, title, "slug": slug.current, language, standfirst, body, category, region, sourceUrl, sourceFeed, isAiGenerated, status, publishedAt, createdAt, "featuredImage": featuredImage.asset->url}}'
     article = await _sanity_query(query)
     return {"article": article}
+
+@api_router.patch("/sanity/article/{article_id}/status")
+async def update_sanity_article_status(article_id: str, request: Request):
+    """Update an article's status in Sanity (draft, published, rejected)"""
+    try:
+        data = await request.json()
+        new_status = data.get('status')
+        
+        if new_status not in ['draft', 'published', 'rejected']:
+            raise HTTPException(status_code=400, detail="Invalid status. Must be draft, published, or rejected.")
+        
+        # Sanity mutation API
+        mutations = [{
+            "patch": {
+                "id": article_id,
+                "set": {
+                    "status": new_status
+                }
+            }
+        }]
+        
+        if new_status == 'published':
+            mutations[0]["patch"]["set"]["publishedAt"] = datetime.now(timezone.utc).isoformat()
+        
+        sanity_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/data/mutate/{SANITY_DATASET}"
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                sanity_url,
+                headers={
+                    "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                    "Content-Type": "application/json"
+                },
+                json={"mutations": mutations}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Sanity mutation error: {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to update article status")
+            
+            return {"success": True, "status": new_status, "article_id": article_id}
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating article status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/sanity/article/{article_id}")
+async def delete_sanity_article(article_id: str):
+    """Delete an article from Sanity"""
+    try:
+        mutations = [{
+            "delete": {
+                "id": article_id
+            }
+        }]
+        
+        sanity_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/data/mutate/{SANITY_DATASET}"
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                sanity_url,
+                headers={
+                    "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                    "Content-Type": "application/json"
+                },
+                json={"mutations": mutations}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Sanity delete error: {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to delete article")
+            
+            return {"success": True, "deleted": article_id}
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting article: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Include the router in the main app
 app.include_router(api_router)
