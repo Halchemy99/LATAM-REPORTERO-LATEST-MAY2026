@@ -14,14 +14,14 @@ export default function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-[#23103A] text-white" data-testid="footer">
+    <footer className="bg-[#1a1a1a] text-white" data-testid="footer">
       {/* Main Footer */}
       <div className="container py-12">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4">
             <h2 className="text-xl font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              LATAM <span className="text-[#D35A3D]">Reportero</span>
+              LATAM <span className="text-[#6110ff]">Reportero</span>
             </h2>
             <p className="text-sm text-white/60 leading-relaxed max-w-xs mb-5" style={{ fontFamily: 'Inter, sans-serif' }}>
               Independent, solutions-oriented journalism for Latin America. 
@@ -29,16 +29,16 @@ export default function Footer() {
             </p>
             {/* Social */}
             <div className="flex items-center gap-3">
-              <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#D35A3D] transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/latamreportero/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#6110ff] transition-colors" aria-label="Instagram">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="https://www.tiktok.com/@latamreportero" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#D35A3D] transition-colors" aria-label="TikTok">
+              <a href="https://www.tiktok.com/@latamreportero" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#6110ff] transition-colors" aria-label="TikTok">
                 <TikTokIcon className="h-4 w-4" />
               </a>
-              <a href="https://www.linkedin.com/company/latam-reportero/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#D35A3D] transition-colors" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/latam-reportero/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#6110ff] transition-colors" aria-label="LinkedIn">
                 <Linkedin className="h-4 w-4" />
               </a>
-              <a href="mailto:contact@latamreportero.com" className="text-white/40 hover:text-[#D35A3D] transition-colors" aria-label="Email">
+              <a href="mailto:contact@latamreportero.com" className="text-white/40 hover:text-[#6110ff] transition-colors" aria-label="Email">
                 <Mail className="h-4 w-4" />
               </a>
             </div>
@@ -48,11 +48,11 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Journalism</h3>
             <ul className="space-y-2">
-              <li><Link href="/" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">All Stories</Link></li>
-              <li><Link href="/?category=politics" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Investigations</Link></li>
-              <li><Link href="/?category=environment" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Environment</Link></li>
-              <li><Link href="/?category=economy" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Economy</Link></li>
-              <li><Link href="/?category=health" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Health</Link></li>
+              <li><Link href="/" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">All Stories</Link></li>
+              <li><Link href="/?category=politics" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Investigations</Link></li>
+              <li><Link href="/?category=environment" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Environment</Link></li>
+              <li><Link href="/?category=economy" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Economy</Link></li>
+              <li><Link href="/?category=health" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Health</Link></li>
             </ul>
           </div>
 
@@ -60,11 +60,11 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Community</h3>
             <ul className="space-y-2">
-              <li><Link href="/community" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Join Network</Link></li>
-              <li><Link href="/pricing" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Membership</Link></li>
-              <li><Link href="/auth/signup" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Create Account</Link></li>
+              <li><Link href="/community" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Join Network</Link></li>
+              <li><Link href="/pricing" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Membership</Link></li>
+              <li><Link href="/auth/signup" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Create Account</Link></li>
               <li>
-                <a href="https://signal.group" target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors inline-flex items-center gap-1">
+                <a href="https://signal.group" target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors inline-flex items-center gap-1">
                   <MessageCircle className="h-3 w-3" /> Signal
                 </a>
               </li>
@@ -75,10 +75,10 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Transparency</h3>
             <ul className="space-y-2">
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Editorial Standards</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Our Funding</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">Data & Privacy</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#D35A3D] transition-colors">AI Disclosure</Link></li>
+              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Editorial Standards</Link></li>
+              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Our Funding</Link></li>
+              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Data & Privacy</Link></li>
+              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">AI Disclosure</Link></li>
             </ul>
           </div>
 
@@ -87,7 +87,7 @@ export default function Footer() {
             <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Stay Informed</h3>
             <p className="text-sm text-white/60 mb-3">Solutions journalism delivered weekly.</p>
             <Link href="/auth/signup">
-              <button className="w-full h-9 px-4 text-xs font-medium bg-[#D35A3D] hover:bg-[#B84A30] text-white transition-colors" data-testid="footer-subscribe-btn">
+              <button className="w-full h-9 px-4 text-xs font-medium bg-[#6110ff] hover:bg-[#B84A30] text-white transition-colors" data-testid="footer-subscribe-btn">
                 Subscribe Free
               </button>
             </Link>

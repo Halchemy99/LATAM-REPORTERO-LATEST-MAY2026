@@ -61,7 +61,7 @@ const TOPICS = [
 
 export default function Header() {
   const { t, locale } = useTranslation();
-  const { user, role, logout, isSubscribed } = useUserRole();
+  const { user, role, logout, isSubscribed, token } = useUserRole();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -97,9 +97,14 @@ export default function Header() {
     setIsProcessing(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+      const headers = { 'Content-Type': 'application/json' };
+      // Pass auth token for subscription-aware search
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
       const resp = await fetch(`${baseUrl}/api/ai-search`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ query })
       });
       if (resp.ok) setResults(await resp.json());
@@ -165,13 +170,13 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full" data-testid="header">
       {/* Main Nav Bar */}
-      <div className="bg-[#23103A] text-white">
+      <div className="bg-[#6110ff] text-white">
         <div className="container">
           <div className="flex h-11 items-center justify-between">
             <div className="flex items-center gap-5">
               <Link href="/" className="flex items-center gap-2 group" data-testid="logo-link">
                 <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                  LATAM <span className="text-[#D35A3D]">Reportero</span>
+                  LATAM <span className="text-[#600fff]">Reportero</span>
                 </span>
               </Link>
 
@@ -184,16 +189,16 @@ export default function Header() {
                       <ChevronDown className="h-2.5 w-2.5" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[420px] p-4 rounded-none border-[#23103A]/15" align="start">
+                  <DropdownMenuContent className="w-[420px] p-4 rounded-none border-[#6110ff]/15" align="start">
                     <div className="grid grid-cols-3 gap-4">
                       {Object.entries(REGIONS).map(([region, countries]) => (
                         <div key={region}>
-                          <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-wider text-[#5C5566] mb-1.5 px-0">
+                          <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-1.5 px-0">
                             {region}
                           </DropdownMenuLabel>
                           {countries.map((country) => (
                             <DropdownMenuItem key={country.slug} asChild>
-                              <Link href={`/region/${country.slug}`} className="text-xs text-[#23103A] hover:text-[#D35A3D] cursor-pointer py-1">
+                              <Link href={`/region/${country.slug}`} className="text-xs text-[#6110ff] hover:text-[#600fff] cursor-pointer py-1">
                                 {country.name}
                               </Link>
                             </DropdownMenuItem>
@@ -234,10 +239,10 @@ export default function Header() {
                       <ChevronDown className="h-2.5 w-2.5" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 rounded-none border-[#23103A]/15">
+                  <DropdownMenuContent align="end" className="w-48 rounded-none border-[#6110ff]/15">
                     <div className="px-2 py-1.5">
-                      <p className="text-sm font-medium text-[#23103A]">{user.name || user.email}</p>
-                      <p className="text-[10px] text-[#5C5566] font-mono uppercase tracking-wider">{role}</p>
+                      <p className="text-sm font-medium text-[#6110ff]">{user.name || user.email}</p>
+                      <p className="text-[10px] text-[#666666] font-mono uppercase tracking-wider">{role}</p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -247,7 +252,7 @@ export default function Header() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#D35A3D] text-xs">
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#600fff] text-xs">
                       <LogOut className="mr-2 h-3.5 w-3.5" />
                       Sign Out
                     </DropdownMenuItem>
@@ -261,7 +266,7 @@ export default function Header() {
                     </Button>
                   </Link>
                   <Link href="/auth/signup">
-                    <Button size="sm" className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none h-8 px-3 text-xs font-medium" data-testid="signup-btn">
+                    <Button size="sm" className="bg-[#600fff] hover:bg-[#B84A30] text-white rounded-none h-8 px-3 text-xs font-medium" data-testid="signup-btn">
                       Subscribe
                     </Button>
                   </Link>
@@ -275,13 +280,13 @@ export default function Header() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] bg-[#F7F5F2] p-0">
-                  <div className="p-4 bg-[#23103A]">
+                  <div className="p-4 bg-[#6110ff]">
                     <span className="text-lg font-bold text-white" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                      LATAM <span className="text-[#D35A3D]">Reportero</span>
+                      LATAM <span className="text-[#600fff]">Reportero</span>
                     </span>
                   </div>
                   <nav className="p-4 space-y-1">
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#5C5566] mb-2 px-2">Navigation</p>
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-2 px-2">Navigation</p>
                     {[
                       { href: '/', label: 'Home' },
                       { href: '/community', label: 'Community' },
@@ -289,30 +294,30 @@ export default function Header() {
                       { href: '/pricing', label: 'Pricing' },
                     ].map(item => (
                       <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-                        className="block px-2 py-2 text-sm text-[#23103A] hover:bg-[#23103A]/5">
+                        className="block px-2 py-2 text-sm text-[#6110ff] hover:bg-[#6110ff]/5">
                         {item.label}
                       </Link>
                     ))}
                   </nav>
-                  <div className="p-4 border-t border-[#23103A]/10">
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#5C5566] mb-2">Topics</p>
+                  <div className="p-4 border-t border-[#6110ff]/10">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-2">Topics</p>
                     <div className="grid grid-cols-2 gap-1">
                       {TOPICS.map((topic) => (
                         <Link key={topic.slug} href={`/topic/${topic.slug}`} onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-1.5 p-2 text-xs text-[#23103A] hover:bg-[#23103A]/5">
-                          <topic.icon className="h-3 w-3 text-[#D35A3D]" />
+                          className="flex items-center gap-1.5 p-2 text-xs text-[#6110ff] hover:bg-[#6110ff]/5">
+                          <topic.icon className="h-3 w-3 text-[#600fff]" />
                           {topic.name}
                         </Link>
                       ))}
                     </div>
                   </div>
                   {!user && (
-                    <div className="p-4 border-t border-[#23103A]/10 space-y-2">
+                    <div className="p-4 border-t border-[#6110ff]/10 space-y-2">
                       <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
-                        <Button variant="outline" className="w-full rounded-none border-[#23103A]/20 text-sm">Log In</Button>
+                        <Button variant="outline" className="w-full rounded-none border-[#6110ff]/20 text-sm">Log In</Button>
                       </Link>
                       <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>
-                        <Button className="w-full rounded-none bg-[#D35A3D] text-sm">Subscribe</Button>
+                        <Button className="w-full rounded-none bg-[#600fff] text-sm">Subscribe</Button>
                       </Link>
                     </div>
                   )}
@@ -327,7 +332,7 @@ export default function Header() {
       <div className="bg-[#1A0B2E] border-b border-white/5" data-testid="global-search-bar">
         <div className="container">
           <div className="flex items-center h-8 gap-2">
-            <Search className="h-3 w-3 text-[#D35A3D] flex-shrink-0" />
+            <Search className="h-3 w-3 text-[#600fff] flex-shrink-0" />
             <span className="text-[9px] font-mono uppercase tracking-wider text-white/30 hidden sm:inline flex-shrink-0">AI</span>
             <input
               ref={inputRef}
@@ -340,7 +345,7 @@ export default function Header() {
               style={{ fontFamily: 'Inter, sans-serif' }}
               data-testid="global-search-input"
             />
-            {isProcessing && <Loader2 className="h-3 w-3 text-[#D35A3D] animate-spin" />}
+            {isProcessing && <Loader2 className="h-3 w-3 text-[#600fff] animate-spin" />}
             {query && !isProcessing && (
               <button onClick={() => { setQuery(''); setResults(null); }} className="text-white/30 hover:text-white">
                 <X className="h-3 w-3" />
@@ -351,7 +356,7 @@ export default function Header() {
               onClick={isListening ? () => setIsListening(false) : startVoiceInput}
               disabled={isProcessing}
               className={`p-1 rounded-sm transition-colors ${
-                isListening ? 'bg-[#D35A3D] text-white' : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+                isListening ? 'bg-[#600fff] text-white' : 'text-white/30 hover:text-white/60 hover:bg-white/5'
               }`}
               title="Voice search (Whisper)"
               data-testid="voice-search-btn"
@@ -371,27 +376,27 @@ export default function Header() {
 
         {/* Search Results Dropdown */}
         {results && (
-          <div ref={resultsRef} className="bg-white border-b border-[#23103A]/10 shadow-lg">
+          <div ref={resultsRef} className="bg-white border-b border-[#6110ff]/10 shadow-lg">
             <div className="container py-4">
               {results.articles?.length > 0 ? (
                 <div className="space-y-3">
-                  <p className="text-sm text-[#5C5566] leading-relaxed">{results.answer}</p>
+                  <p className="text-sm text-[#666666] leading-relaxed">{results.answer}</p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {results.articles.slice(0, 3).map((article) => (
                       <Link key={article.id || article.slug} href={`/article/${article.slug}`}
                         onClick={() => setResults(null)}
-                        className="flex items-start gap-3 p-3 hover:bg-[#23103A]/5 transition-colors group border border-[#23103A]/5">
+                        className="flex items-start gap-3 p-3 hover:bg-[#6110ff]/5 transition-colors group border border-[#6110ff]/5">
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] font-mono uppercase text-[#D35A3D] mb-1">{article.category}</p>
-                          <h4 className="text-sm font-medium text-[#23103A] line-clamp-2 group-hover:text-[#D35A3D]">{article.title}</h4>
+                          <p className="text-[10px] font-mono uppercase text-[#600fff] mb-1">{article.category}</p>
+                          <h4 className="text-sm font-medium text-[#6110ff] line-clamp-2 group-hover:text-[#600fff]">{article.title}</h4>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 text-[#23103A]/20 group-hover:text-[#D35A3D] flex-shrink-0 mt-1" />
+                        <ArrowRight className="h-3.5 w-3.5 text-[#6110ff]/20 group-hover:text-[#600fff] flex-shrink-0 mt-1" />
                       </Link>
                     ))}
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-[#5C5566]">No results found for &ldquo;{query}&rdquo;</p>
+                <p className="text-sm text-[#666666]">No results found for &ldquo;{query}&rdquo;</p>
               )}
             </div>
           </div>

@@ -509,18 +509,41 @@ async def get_payment_status(session_id: str, http_request: Request):
 # ============================================
 
 @api_router.post("/ai-search", response_model=AISearchResponse)
-async def ai_search(request: AISearchRequest):
-    """AI-powered article search with conversational follow-ups"""
+async def ai_search(request: AISearchRequest, req: Request):
+    """AI-powered article search with conversational follow-ups
+    
+    Access control:
+    - Free users: Can only search AI-generated articles
+    - Paid users: Can search ALL articles including human-written
+    """
     try:
         if not EMERGENT_LLM_KEY:
             raise HTTPException(status_code=500, detail="LLM API key not configured")
         
-        # Fetch articles from Sanity instead of Supabase
+        # Check user subscription status from token
+        is_subscriber = False
+        auth_header = req.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            try:
+                token = auth_header.split(" ")[1]
+                payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+                user_role = payload.get("role", "free")
+                is_subscriber = user_role in ["paid", "subscriber", "contributor", "editor", "admin"]
+            except (jwt.InvalidTokenError, jwt.ExpiredSignatureError):
+                pass  # Invalid token, treat as free user
+        
+        # Fetch articles from Sanity
         import httpx as _httpx
         project_id = os.environ.get("SANITY_PROJECT_ID", "s5taeh5v")
         dataset = os.environ.get("SANITY_DATASET", "production")
         
-        sanity_query = '*[_type == "article" && status == "published" && language == "en"] | order(publishedAt desc) [0...30] {_id, title, "slug": slug.current, standfirst, category, region, isAiGenerated, sourceFeed}'
+        # Build query based on subscription status
+        if is_subscriber:
+            # Subscribers can search ALL published articles
+            sanity_query = '*[_type == "article" && status == "published" && language == "en"] | order(publishedAt desc) [0...30] {_id, title, "slug": slug.current, standfirst, category, region, isAiGenerated, sourceFeed}'
+        else:
+            # Free users can ONLY search AI-generated articles
+            sanity_query = '*[_type == "article" && status == "published" && language == "en" && isAiGenerated == true] | order(publishedAt desc) [0...30] {_id, title, "slug": slug.current, standfirst, category, region, isAiGenerated, sourceFeed}'
         
         async with _httpx.AsyncClient() as http_client:
             sanity_url = f"https://{project_id}.api.sanity.io/v2025-03-01/data/query/{dataset}"
@@ -645,6 +668,12 @@ Keep responses concise but helpful. You can suggest related topics they might be
             "Find articles about different solutions"
         ]
         
+        # Add subscription prompt for free users
+        access_note = ""
+        if not is_subscriber:
+            access_note = "\n\n*Note: Subscribe to search our full library including human-written investigative journalism.*"
+            clean_response = clean_response + access_note
+        
         # Store search in MongoDB for analytics
         search_doc = {
             "id": str(uuid.uuid4()),
@@ -652,6 +681,7 @@ Keep responses concise but helpful. You can suggest related topics they might be
             "query": request.query,
             "matched_count": len(matched_articles),
             "matched_slugs": [a.get('slug') for a in matched_articles],
+            "is_subscriber": is_subscriber,
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.ai_searches.insert_one(search_doc)
