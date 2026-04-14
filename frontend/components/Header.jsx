@@ -19,7 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
   Menu, User, LogOut, Bookmark, 
   ChevronDown, MapPin, FileText, TrendingUp, Sparkles, Radio,
-  Search, X, Loader2, Mic, MicOff, ArrowRight
+  Search, X, Loader2, Mic, MicOff, ArrowRight, Play
 } from 'lucide-react';
 
 const REGIONS = {
@@ -212,6 +212,12 @@ export default function Header() {
                 <Link href="/community">
                   <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 rounded-none h-8 px-2.5 text-xs font-medium">
                     Community
+                  </Button>
+                </Link>
+                <Link href="/watch">
+                  <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 rounded-none h-8 px-2.5 text-xs font-medium gap-1">
+                    <Play className="h-3 w-3" />
+                    Watch
                   </Button>
                 </Link>
                 <Link href="/transparency">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { SocialBar, VideoHighlightsSection, SocialSidebarWidget } from '@/components/SocialVideo';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -208,6 +209,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F7F5F2]">
+      <SocialBar />
       <Header />
       
       <main className="container py-6">
@@ -268,8 +270,11 @@ export default function HomePage() {
 
           {/* Right Sidebar */}
           <aside className="lg:col-span-4 space-y-6">
+            {/* Social Video Widget - NEW */}
+            <SocialSidebarWidget />
+            
             {!isSubscribed && (
-              <div className="bg-[#1a1a1a] text-white p-5 mb-6">
+              <div className="bg-[#1a1a1a] text-white p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Lock className="h-4 w-4 text-[#6110ff]" />
                   <span className="text-xs font-mono uppercase tracking-wider">Subscriber Exclusive</span>
@@ -334,6 +339,9 @@ export default function HomePage() {
           </div>
         )}
       </main>
+
+      {/* Video Highlights Section - Between main content and footer */}
+      <VideoHighlightsSection />
 
       <Footer />
     </div>
