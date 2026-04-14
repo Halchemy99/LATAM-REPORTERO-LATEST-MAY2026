@@ -5,22 +5,22 @@ import { PortableText } from '@portabletext/react';
 const portableTextComponents = {
   block: {
     h1: ({ children }) => (
-      <h1 className="text-3xl font-serif font-bold text-[#23103A] mt-8 mb-4">{children}</h1>
+      <h1 className="text-3xl font-serif font-bold text-[#1a1a1a] mt-8 mb-4">{children}</h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-2xl font-serif font-bold text-[#23103A] mt-8 mb-3">{children}</h2>
+      <h2 className="text-2xl font-serif font-bold text-[#1a1a1a] mt-8 mb-3">{children}</h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl font-serif font-semibold text-[#23103A] mt-6 mb-3">{children}</h3>
+      <h3 className="text-xl font-serif font-semibold text-[#1a1a1a] mt-6 mb-3">{children}</h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-lg font-serif font-semibold text-[#23103A] mt-4 mb-2">{children}</h4>
+      <h4 className="text-lg font-serif font-semibold text-[#1a1a1a] mt-4 mb-2">{children}</h4>
     ),
     normal: ({ children }) => (
       <p className="text-base text-[#2C1A3D] leading-relaxed mb-4 font-serif">{children}</p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-[#D35A3D] pl-4 my-6 italic text-[#5C5566] font-serif">
+      <blockquote className="border-l-4 border-[#6110ff] pl-4 my-6 italic text-[#666666] font-serif">
         {children}
       </blockquote>
     ),
@@ -33,7 +33,7 @@ const portableTextComponents = {
         href={value?.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-[#D35A3D] underline hover:text-[#B84A30] transition-colors"
+        className="text-[#6110ff] underline hover:text-[#4a0dd6] transition-colors"
       >
         {children}
       </a>
@@ -55,7 +55,7 @@ const portableTextComponents = {
 
 export default function SanityPortableText({ content }) {
   if (!content || !Array.isArray(content) || content.length === 0) {
-    return <p className="text-[#5C5566] italic">No content available.</p>;
+    return <p className="text-[#666666] italic">No content available.</p>;
   }
 
   return (

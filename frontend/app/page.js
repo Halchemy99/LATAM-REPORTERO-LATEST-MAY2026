@@ -31,7 +31,7 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
 
   return (
     <article 
-      className={`group ${sizeClasses[size]} border-b border-[#23103A]/10 pb-4 hover:bg-[#23103A]/[0.02] transition-colors`}
+      className={`group ${sizeClasses[size]} border-b border-[#1a1a1a]/10 pb-4 hover:bg-[#1a1a1a]/[0.02] transition-colors`}
       data-testid={`story-card-${article._id}`}
     >
       <Link href={`/article/${slug}`} className="block">
@@ -45,13 +45,13 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
             {showVideo && (
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                 <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                  <Play className="h-5 w-5 text-[#23103A] ml-0.5" />
+                  <Play className="h-5 w-5 text-[#1a1a1a] ml-0.5" />
                 </div>
               </div>
             )}
             <div className="absolute top-2 left-2">
               {isAI ? (
-                <Badge className="bg-[#6B38D6] text-white rounded-none font-mono text-[10px] uppercase tracking-wider gap-1">
+                <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-[10px] uppercase tracking-wider gap-1">
                   <Bot className="h-3 w-3" />
                   AI
                 </Badge>
@@ -66,18 +66,18 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
         )}
         
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#D35A3D]">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[#6110ff]">
             {category}
           </span>
-          <span className="text-[#23103A]/30">|</span>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#5C5566]">
+          <span className="text-[#1a1a1a]/30">|</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[#666666]">
             {region}
           </span>
           {(size === 'small' || size === 'list') && (
             <>
-              <span className="text-[#23103A]/30">|</span>
+              <span className="text-[#1a1a1a]/30">|</span>
               {isAI ? (
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#6B38D6] flex items-center gap-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#6110ff] flex items-center gap-1">
                   <Bot className="h-3 w-3" />
                   AI
                 </span>
@@ -91,7 +91,7 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
           )}
         </div>
         
-        <h3 className={`font-serif font-semibold text-[#23103A] group-hover:text-[#D35A3D] transition-colors leading-tight mb-2 ${
+        <h3 className={`font-serif font-semibold text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors leading-tight mb-2 ${
           size === 'large' ? 'text-2xl md:text-3xl' : 
           size === 'medium' ? 'text-lg md:text-xl' : 
           'text-base'
@@ -100,14 +100,14 @@ function StoryCard({ article, size = 'medium', showVideo = false }) {
         </h3>
         
         {(size === 'large' || size === 'medium') && article.standfirst && (
-          <p className="text-sm text-[#5C5566] line-clamp-2 mb-2">
+          <p className="text-sm text-[#666666] line-clamp-2 mb-2">
             {article.standfirst}
           </p>
         )}
         
-        <div className="flex items-center gap-2 text-xs text-[#5C5566]">
+        <div className="flex items-center gap-2 text-xs text-[#666666]">
           <span>{authorName}</span>
-          <span className="text-[#23103A]/30">&bull;</span>
+          <span className="text-[#1a1a1a]/30">&bull;</span>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {readTime} min
@@ -123,9 +123,9 @@ function TopicSection({ title, icon: Icon, articles }) {
   
   return (
     <section className="mb-8">
-      <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-[#23103A]">
-        <Icon className="h-4 w-4 text-[#D35A3D]" />
-        <h2 className="text-sm font-mono uppercase tracking-wider text-[#23103A] font-semibold">
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-[#1a1a1a]">
+        <Icon className="h-4 w-4 text-[#6110ff]" />
+        <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold">
           {title}
         </h2>
       </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
         <div className="container py-8">
           <div className="animate-pulse space-y-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-24 bg-[#23103A]/10 rounded" />
+              <div key={i} className="h-24 bg-[#1a1a1a]/10 rounded" />
             ))}
           </div>
         </div>
@@ -216,11 +216,11 @@ export default function HomePage() {
           {/* Left Column - Main Stories */}
           <div className="lg:col-span-8">
             <section className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#23103A]">
-                <h2 className="text-sm font-mono uppercase tracking-wider text-[#23103A] font-semibold">
+              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#1a1a1a]">
+                <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold">
                   Top Stories
                 </h2>
-                <Link href="/solutions" className="text-xs font-mono uppercase tracking-wider text-[#D35A3D] hover:underline flex items-center gap-1">
+                <Link href="/solutions" className="text-xs font-mono uppercase tracking-wider text-[#6110ff] hover:underline flex items-center gap-1">
                   All Stories <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -247,9 +247,9 @@ export default function HomePage() {
             </section>
 
             <section className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#23103A]">
-                <h2 className="text-sm font-mono uppercase tracking-wider text-[#23103A] font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-[#D35A3D]" />
+              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#1a1a1a]">
+                <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-[#6110ff]" />
                   Latest
                 </h2>
               </div>
@@ -269,9 +269,9 @@ export default function HomePage() {
           {/* Right Sidebar */}
           <aside className="lg:col-span-4 space-y-6">
             {!isSubscribed && (
-              <div className="bg-[#23103A] text-white p-5 mb-6">
+              <div className="bg-[#1a1a1a] text-white p-5 mb-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Lock className="h-4 w-4 text-[#D35A3D]" />
+                  <Lock className="h-4 w-4 text-[#6110ff]" />
                   <span className="text-xs font-mono uppercase tracking-wider">Subscriber Exclusive</span>
                 </div>
                 <h3 className="font-serif text-lg font-semibold mb-2">
@@ -281,7 +281,7 @@ export default function HomePage() {
                   Access investigative stories written by our journalists across Latin America.
                 </p>
                 <Link href="/pricing">
-                  <Button className="w-full bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none text-sm">
+                  <Button className="w-full bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none text-sm">
                     Subscribe Now
                   </Button>
                 </Link>
@@ -306,19 +306,19 @@ export default function HomePage() {
               articles={economy}
             />
 
-            <div className="bg-[#F7F5F2] border border-[#23103A]/10 p-5">
+            <div className="bg-[#F7F5F2] border border-[#1a1a1a]/10 p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Users className="h-4 w-4 text-[#D35A3D]" />
-                <span className="text-xs font-mono uppercase tracking-wider text-[#23103A]">Community</span>
+                <Users className="h-4 w-4 text-[#6110ff]" />
+                <span className="text-xs font-mono uppercase tracking-wider text-[#1a1a1a]">Community</span>
               </div>
-              <h3 className="font-serif text-lg font-semibold text-[#23103A] mb-2">
+              <h3 className="font-serif text-lg font-semibold text-[#1a1a1a] mb-2">
                 Join the Conversation
               </h3>
-              <p className="text-sm text-[#5C5566] mb-4">
+              <p className="text-sm text-[#666666] mb-4">
                 Connect with readers and journalists in regional WhatsApp & Signal groups.
               </p>
               <Link href="/community">
-                <Button variant="outline" className="w-full rounded-none border-[#23103A]/20 text-sm">
+                <Button variant="outline" className="w-full rounded-none border-[#1a1a1a]/20 text-sm">
                   Explore Community
                 </Button>
               </Link>
@@ -329,8 +329,8 @@ export default function HomePage() {
         {/* Empty State */}
         {articles.length === 0 && !loading && (
           <div className="text-center py-16">
-            <p className="text-[#5C5566] text-lg mb-4">No articles available yet.</p>
-            <p className="text-[#5C5566] text-sm">Content is being generated. Check back soon.</p>
+            <p className="text-[#666666] text-lg mb-4">No articles available yet.</p>
+            <p className="text-[#666666] text-sm">Content is being generated. Check back soon.</p>
           </div>
         )}
       </main>

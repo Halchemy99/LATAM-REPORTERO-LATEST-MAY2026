@@ -60,7 +60,7 @@ export default function SignupPage() {
       <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse text-[#5C5566]">Loading...</div>
+          <div className="animate-pulse text-[#666666]">Loading...</div>
         </main>
         <Footer />
       </div>
@@ -74,13 +74,13 @@ export default function SignupPage() {
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#23103A] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               Join LATAM Reportero
             </h1>
-            <p className="text-sm text-[#5C5566]">Create your account to access solutions journalism</p>
+            <p className="text-sm text-[#666666]">Create your account to access solutions journalism</p>
           </div>
 
-          <div className="bg-white border border-[#23103A]/10 p-6">
+          <div className="bg-white border border-[#1a1a1a]/10 p-6">
             {error && (
               <Alert variant="destructive" className="mb-4 rounded-none">
                 <AlertCircle className="h-4 w-4" />
@@ -90,16 +90,16 @@ export default function SignupPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
               <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Full Name</Label>
+                <Label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Full Name</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="name"
                     type="text"
                     placeholder="Your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10 rounded-none border-[#23103A]/15 h-10"
+                    className="pl-10 rounded-none border-[#1a1a1a]/15 h-10"
                     required
                     data-testid="signup-name"
                   />
@@ -107,16 +107,16 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Email</Label>
+                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 rounded-none border-[#23103A]/15 h-10"
+                    className="pl-10 rounded-none border-[#1a1a1a]/15 h-10"
                     required
                     data-testid="signup-email"
                   />
@@ -124,23 +124,23 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Password</Label>
+                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#5C5566]" />
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Min. 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 rounded-none border-[#23103A]/15 h-10"
+                    className="pl-10 pr-10 rounded-none border-[#1a1a1a]/15 h-10"
                     required
                     minLength={6}
                     data-testid="signup-password"
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-2.5 text-[#5C5566] hover:text-[#23103A]"
+                    className="absolute right-3 top-2.5 text-[#666666] hover:text-[#1a1a1a]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -149,7 +149,7 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-mono uppercase tracking-wider text-[#5C5566]">Interests (optional)</Label>
+                <Label className="text-xs font-mono uppercase tracking-wider text-[#666666]">Interests (optional)</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {PREFERENCE_OPTIONS.map((key) => (
                     <div key={key} className="flex items-center space-x-2">
@@ -159,7 +159,7 @@ export default function SignupPage() {
                         onCheckedChange={() => setPreferences(prev => ({ ...prev, [key]: !prev[key] }))}
                         className="rounded-none"
                       />
-                      <label htmlFor={key} className="text-sm capitalize cursor-pointer text-[#23103A]">
+                      <label htmlFor={key} className="text-sm capitalize cursor-pointer text-[#1a1a1a]">
                         {key}
                       </label>
                     </div>
@@ -167,13 +167,13 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full rounded-none bg-[#D35A3D] hover:bg-[#B84A30] h-10 text-white" disabled={loading} data-testid="signup-submit">
+              <Button type="submit" className="w-full rounded-none bg-[#6110ff] hover:bg-[#4a0dd6] h-10 text-white" disabled={loading} data-testid="signup-submit">
                 {loading ? 'Creating account...' : 'Create Account'}
               </Button>
 
-              <p className="text-center text-sm text-[#5C5566]">
+              <p className="text-center text-sm text-[#666666]">
                 Already have an account?{' '}
-                <Link href="/auth/login" className="text-[#D35A3D] hover:underline font-medium">
+                <Link href="/auth/login" className="text-[#6110ff] hover:underline font-medium">
                   Sign in
                 </Link>
               </p>

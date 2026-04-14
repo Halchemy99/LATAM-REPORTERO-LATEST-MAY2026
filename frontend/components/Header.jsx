@@ -266,7 +266,7 @@ export default function Header() {
                     </Button>
                   </Link>
                   <Link href="/auth/signup">
-                    <Button size="sm" className="bg-[#600fff] hover:bg-[#B84A30] text-white rounded-none h-8 px-3 text-xs font-medium" data-testid="signup-btn">
+                    <Button size="sm" className="bg-[#600fff] hover:bg-[#4a0dd6] text-white rounded-none h-8 px-3 text-xs font-medium" data-testid="signup-btn">
                       Subscribe
                     </Button>
                   </Link>

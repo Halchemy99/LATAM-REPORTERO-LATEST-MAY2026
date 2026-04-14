@@ -111,14 +111,14 @@ export default function CommunityPage() {
       <main className="container py-12">
         {/* Hero */}
         <div className="max-w-3xl mb-12">
-          <Badge className="mb-4 bg-[#23103A] text-white rounded-none font-mono text-xs uppercase tracking-wider">
+          <Badge className="mb-4 bg-[#1a1a1a] text-white rounded-none font-mono text-xs uppercase tracking-wider">
             <Users className="h-3 w-3 mr-1" />
             Subscriber Community
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-[#23103A] mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-[#1a1a1a] mb-6 leading-tight">
             Join the Conversation
           </h1>
-          <p className="text-xl text-[#5C5566] leading-relaxed">
+          <p className="text-xl text-[#666666] leading-relaxed">
             Connect with fellow readers, journalists, and experts in our regional community groups. 
             Discuss stories, share insights, and stay informed.
           </p>
@@ -126,35 +126,35 @@ export default function CommunityPage() {
 
         {/* Access Gate for Non-Subscribers */}
         {!hasAccess && (
-          <div className="bg-white border-2 border-[#D35A3D]/30 p-8 mb-12">
+          <div className="bg-white border-2 border-[#6110ff]/30 p-8 mb-12">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-[#D35A3D]/10 flex items-center justify-center flex-shrink-0">
-                <Lock className="h-6 w-6 text-[#D35A3D]" />
+              <div className="w-12 h-12 bg-[#6110ff]/10 flex items-center justify-center flex-shrink-0">
+                <Lock className="h-6 w-6 text-[#6110ff]" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-semibold text-[#23103A] mb-2">
+                <h2 className="text-xl font-semibold text-[#1a1a1a] mb-2">
                   Community Access for Subscribers
                 </h2>
-                <p className="text-[#5C5566] mb-4">
+                <p className="text-[#666666] mb-4">
                   Our regional WhatsApp and Signal groups are exclusive to subscribers. 
                   Join to connect with journalists, experts, and engaged readers across Latin America.
                 </p>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-[#5C5566]">
+                  <div className="flex items-center gap-2 text-sm text-[#666666]">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
                     <span>8 regional groups</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-[#5C5566]">
+                  <div className="flex items-center gap-2 text-sm text-[#666666]">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
                     <span>4,600+ active members</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-[#5C5566]">
+                  <div className="flex items-center gap-2 text-sm text-[#666666]">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
                     <span>Direct access to reporters</span>
                   </div>
                 </div>
                 <Link href="/pricing">
-                  <Button className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none gap-2">
+                  <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
                     <Crown className="h-4 w-4" />
                     Subscribe to Access Community
                   </Button>
@@ -166,14 +166,14 @@ export default function CommunityPage() {
 
         {/* Platform Toggle */}
         <div className="flex items-center gap-2 mb-8">
-          <span className="text-sm text-[#5C5566]">Choose platform:</span>
-          <div className="flex gap-1 bg-[#23103A]/5 p-1">
+          <span className="text-sm text-[#666666]">Choose platform:</span>
+          <div className="flex gap-1 bg-[#1a1a1a]/5 p-1">
             <button
               onClick={() => setSelectedPlatform('whatsapp')}
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors ${
                 selectedPlatform === 'whatsapp'
                   ? 'bg-[#25D366] text-white'
-                  : 'text-[#5C5566] hover:bg-[#23103A]/5'
+                  : 'text-[#666666] hover:bg-[#1a1a1a]/5'
               }`}
             >
               <WhatsAppIcon className="h-4 w-4" />
@@ -184,7 +184,7 @@ export default function CommunityPage() {
               className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors ${
                 selectedPlatform === 'signal'
                   ? 'bg-[#3A76F0] text-white'
-                  : 'text-[#5C5566] hover:bg-[#23103A]/5'
+                  : 'text-[#666666] hover:bg-[#1a1a1a]/5'
               }`}
             >
               <SignalIcon className="h-4 w-4" />
@@ -198,18 +198,18 @@ export default function CommunityPage() {
           {COMMUNITY_GROUPS.map((group) => (
             <Card 
               key={group.slug} 
-              className={`rounded-none border-[#23103A]/10 ${!hasAccess ? 'opacity-75' : ''}`}
+              className={`rounded-none border-[#1a1a1a]/10 ${!hasAccess ? 'opacity-75' : ''}`}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <MapPin className="h-4 w-4 text-[#D35A3D]" />
-                  <h3 className="font-semibold text-[#23103A]">{group.region}</h3>
+                  <MapPin className="h-4 w-4 text-[#6110ff]" />
+                  <h3 className="font-semibold text-[#1a1a1a]">{group.region}</h3>
                 </div>
-                <p className="text-sm text-[#5C5566] mb-3 line-clamp-2">
+                <p className="text-sm text-[#666666] mb-3 line-clamp-2">
                   {group.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-[#5C5566] font-mono">
+                  <span className="text-xs text-[#666666] font-mono">
                     {group.members.toLocaleString()} members
                   </span>
                   {hasAccess ? (
@@ -227,7 +227,7 @@ export default function CommunityPage() {
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   ) : (
-                    <span className="flex items-center gap-1 text-sm text-[#5C5566]">
+                    <span className="flex items-center gap-1 text-sm text-[#666666]">
                       <Lock className="h-3 w-3" />
                       Locked
                     </span>
@@ -239,34 +239,34 @@ export default function CommunityPage() {
         </div>
 
         {/* Community Guidelines */}
-        <section className="bg-white border border-[#23103A]/10 p-8 mb-12">
-          <h2 className="text-2xl font-serif font-semibold text-[#23103A] mb-6">
+        <section className="bg-white border border-[#1a1a1a]/10 p-8 mb-12">
+          <h2 className="text-2xl font-serif font-semibold text-[#1a1a1a] mb-6">
             Community Guidelines
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex gap-3">
-              <Shield className="h-5 w-5 text-[#D35A3D] flex-shrink-0 mt-0.5" />
+              <Shield className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#23103A] mb-1">Respect & Civility</h3>
-                <p className="text-sm text-[#5C5566]">
+                <h3 className="font-medium text-[#1a1a1a] mb-1">Respect & Civility</h3>
+                <p className="text-sm text-[#666666]">
                   Engage respectfully. No personal attacks, harassment, or hate speech.
                 </p>
               </div>
             </div>
             <div className="flex gap-3">
-              <MessageCircle className="h-5 w-5 text-[#D35A3D] flex-shrink-0 mt-0.5" />
+              <MessageCircle className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#23103A] mb-1">Stay On Topic</h3>
-                <p className="text-sm text-[#5C5566]">
+                <h3 className="font-medium text-[#1a1a1a] mb-1">Stay On Topic</h3>
+                <p className="text-sm text-[#666666]">
                   Keep discussions relevant to LATAM news and the group's region.
                 </p>
               </div>
             </div>
             <div className="flex gap-3">
-              <Users className="h-5 w-5 text-[#D35A3D] flex-shrink-0 mt-0.5" />
+              <Users className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#23103A] mb-1">No Spam</h3>
-                <p className="text-sm text-[#5C5566]">
+                <h3 className="font-medium text-[#1a1a1a] mb-1">No Spam</h3>
+                <p className="text-sm text-[#666666]">
                   No promotional content, chain messages, or repetitive posts.
                 </p>
               </div>
@@ -276,7 +276,7 @@ export default function CommunityPage() {
 
         {/* CTA for Non-Subscribers */}
         {!hasAccess && (
-          <section className="bg-[#23103A] text-white p-8 text-center">
+          <section className="bg-[#1a1a1a] text-white p-8 text-center">
             <h2 className="text-2xl font-serif font-semibold mb-4">
               Ready to Join the Conversation?
             </h2>
@@ -285,7 +285,7 @@ export default function CommunityPage() {
               journalism and early access to investigations.
             </p>
             <Link href="/pricing">
-              <Button className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none gap-2">
+              <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
                 View Subscription Plans
                 <ArrowRight className="h-4 w-4" />
               </Button>

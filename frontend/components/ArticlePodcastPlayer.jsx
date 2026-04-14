@@ -109,9 +109,9 @@ export default function ArticlePodcastPlayer({ article }) {
   const currentTime = audioRef.current?.currentTime || 0;
 
   return (
-    <div className="bg-[#23103A] p-4 mb-6" data-testid="podcast-player">
+    <div className="bg-[#1a1a1a] p-4 mb-6" data-testid="podcast-player">
       <div className="flex items-center gap-3">
-        <Headphones className="h-4 w-4 text-[#D35A3D] flex-shrink-0" />
+        <Headphones className="h-4 w-4 text-[#6110ff] flex-shrink-0" />
         <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">Listen to this article</span>
       </div>
 
@@ -121,7 +121,7 @@ export default function ArticlePodcastPlayer({ article }) {
           size="icon"
           onClick={generateAudio}
           disabled={status === 'loading'}
-          className="h-9 w-9 rounded-full bg-[#D35A3D] hover:bg-[#B84A30] text-white flex-shrink-0"
+          className="h-9 w-9 rounded-full bg-[#6110ff] hover:bg-[#4a0dd6] text-white flex-shrink-0"
           data-testid="podcast-play-btn"
         >
           {status === 'loading' ? (
@@ -145,7 +145,7 @@ export default function ArticlePodcastPlayer({ article }) {
               }
             }}
           >
-            <div className="h-full bg-[#D35A3D] transition-all duration-200" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-[#6110ff] transition-all duration-200" style={{ width: `${progress}%` }} />
           </div>
           <div className="flex justify-between mt-1">
             <span className="text-[10px] text-white/40 font-mono">{formatTime(currentTime)}</span>
@@ -169,7 +169,7 @@ export default function ArticlePodcastPlayer({ article }) {
         <p className="text-[10px] text-white/30 mt-2 font-mono">Generating audio with AI... this may take a moment</p>
       )}
       {status === 'error' && (
-        <p className="text-[10px] text-[#D35A3D] mt-2 font-mono">Audio generation failed. Try again later.</p>
+        <p className="text-[10px] text-[#6110ff] mt-2 font-mono">Audio generation failed. Try again later.</p>
       )}
     </div>
   );

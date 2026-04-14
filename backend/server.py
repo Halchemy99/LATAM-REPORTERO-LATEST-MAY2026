@@ -37,6 +37,9 @@ SANITY_PROJECT_ID = os.environ.get('SANITY_PROJECT_ID', 's5taeh5v')
 SANITY_DATASET = os.environ.get('SANITY_DATASET', 'production')
 SANITY_API_TOKEN = os.environ.get('SANITY_API_TOKEN')
 
+# Make.com configuration
+MAKE_API_KEY = os.environ.get('MAKE_API_KEY')
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
@@ -1069,6 +1072,251 @@ async def delete_sanity_article(article_id: str):
     except Exception as e:
         logger.error(f"Error deleting article: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# MAKE.COM WEBHOOK ENDPOINTS
+# ============================================
+
+class MakeArticleRequest(BaseModel):
+    """Request from Make.com with RSS article data"""
+    title: str
+    content: str
+    source_url: str
+    source_name: str
+    published_at: Optional[str] = None
+    image_url: Optional[str] = None
+    category: Optional[str] = None
+    region: Optional[str] = "latam"
+    language: Optional[str] = "en"
+
+class MakeArticleResponse(BaseModel):
+    """Response to Make.com after processing"""
+    success: bool
+    article_id: Optional[str] = None
+    sanity_id: Optional[str] = None
+    title: str
+    slug: str
+    message: str
+
+@api_router.post("/make/process-article", response_model=MakeArticleResponse)
+async def make_process_article(request: MakeArticleRequest):
+    """
+    Webhook endpoint for Make.com to send RSS articles for AI processing.
+    
+    Flow:
+    1. Make.com fetches RSS feed
+    2. Make.com sends article here
+    3. We process with GPT for solutions journalism format
+    4. We create article in Sanity as draft
+    5. Return success with Sanity ID
+    
+    Use this URL in Make.com: {YOUR_DOMAIN}/api/make/process-article
+    """
+    try:
+        if not EMERGENT_LLM_KEY:
+            raise HTTPException(status_code=500, detail="LLM API key not configured")
+        
+        if not SANITY_API_TOKEN:
+            raise HTTPException(status_code=500, detail="Sanity API token not configured")
+        
+        logger.info(f"Make.com webhook received article: {request.title[:50]}...")
+        
+        # Generate unique article ID
+        article_id = str(uuid.uuid4())[:16]
+        
+        # Process with AI to rewrite in solutions journalism format
+        system_message = """You are a solutions journalism editor for LATAM Reportero.
+Your task is to transform news articles into our "solutions journalism" format that focuses on:
+1. PROBLEM: What issue is being addressed?
+2. SOLUTIONS: What approaches are being tried?
+3. IMPACT: What results have been achieved?
+
+Transform the article while:
+- Maintaining factual accuracy
+- Focusing on constructive angles
+- Highlighting actionable solutions
+- Writing in clear, engaging prose
+
+Output as JSON with these fields:
+{
+  "title": "rewritten title focusing on solutions angle",
+  "standfirst": "1-2 sentence summary (max 200 chars)",
+  "body": "full article in HTML format with <p> tags",
+  "problem": "problem section in HTML",
+  "solutions": "solutions section in HTML", 
+  "impact": "impact section in HTML",
+  "category": "one of: politics, health, environment, economy, education, human-rights, technology, energy",
+  "region": "one of: mexico, brazil, argentina, chile, colombia, peru, venezuela, latam, international"
+}"""
+        
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"make-{article_id}",
+            system_message=system_message
+        )
+        chat.with_model("openai", "gpt-5.2")
+        
+        user_message = UserMessage(text=f"""Transform this article:
+
+Title: {request.title}
+Source: {request.source_name}
+Content: {request.content[:3000]}
+
+Rewrite in solutions journalism format. Return ONLY valid JSON.""")
+        
+        response = await chat.send_message(user_message)
+        
+        # Parse AI response
+        import json
+        try:
+            # Extract JSON from response
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                ai_result = json.loads(response[json_start:json_end])
+            else:
+                raise ValueError("No JSON found in response")
+        except (json.JSONDecodeError, ValueError) as e:
+            logger.error(f"Failed to parse AI response: {e}")
+            # Use original content as fallback
+            ai_result = {
+                "title": request.title,
+                "standfirst": request.content[:200] if request.content else "",
+                "body": f"<p>{request.content}</p>" if request.content else "",
+                "category": request.category or "general",
+                "region": request.region or "latam"
+            }
+        
+        # Generate slug
+        slug_base = ai_result.get('title', request.title).lower()
+        slug_base = ''.join(c if c.isalnum() or c == ' ' else '' for c in slug_base)
+        slug = '-'.join(slug_base.split()[:10]) + f"-{request.language}"
+        
+        # Create article document for Sanity
+        sanity_doc = {
+            "_type": "article",
+            "title": ai_result.get('title', request.title),
+            "slug": {"_type": "slug", "current": slug},
+            "standfirst": ai_result.get('standfirst', '')[:200],
+            "body": ai_result.get('body', ''),
+            "problem": ai_result.get('problem', ''),
+            "solutions": ai_result.get('solutions', ''),
+            "impact": ai_result.get('impact', ''),
+            "language": request.language,
+            "category": ai_result.get('category', request.category or 'general'),
+            "region": ai_result.get('region', request.region or 'latam'),
+            "sourceUrl": request.source_url,
+            "sourceFeed": request.source_name,
+            "externalId": article_id,
+            "isAiGenerated": True,
+            "status": "draft",
+            "publishedAt": request.published_at or datetime.now(timezone.utc).isoformat(),
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Upload image to Sanity if provided
+        if request.image_url:
+            try:
+                async with httpx.AsyncClient() as http_client:
+                    # Download image
+                    img_response = await http_client.get(request.image_url, timeout=30)
+                    if img_response.status_code == 200:
+                        # Upload to Sanity
+                        upload_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/assets/images/{SANITY_DATASET}"
+                        content_type = img_response.headers.get('content-type', 'image/jpeg')
+                        
+                        upload_response = await http_client.post(
+                            upload_url,
+                            headers={
+                                "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                                "Content-Type": content_type
+                            },
+                            content=img_response.content
+                        )
+                        
+                        if upload_response.status_code == 200:
+                            asset_data = upload_response.json()
+                            asset_id = asset_data.get('document', {}).get('_id')
+                            if asset_id:
+                                sanity_doc["featuredImage"] = {
+                                    "_type": "image",
+                                    "asset": {"_type": "reference", "_ref": asset_id}
+                                }
+                                logger.info(f"Image uploaded to Sanity: {asset_id}")
+            except Exception as img_error:
+                logger.warning(f"Failed to upload image: {img_error}")
+        
+        # Create article in Sanity
+        sanity_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/data/mutate/{SANITY_DATASET}"
+        
+        async with httpx.AsyncClient() as http_client:
+            response = await http_client.post(
+                sanity_url,
+                headers={
+                    "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                    "Content-Type": "application/json"
+                },
+                json={"mutations": [{"create": sanity_doc}]}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Sanity create error: {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to create article in Sanity")
+            
+            result = response.json()
+            sanity_id = result.get('results', [{}])[0].get('id', '')
+        
+        logger.info(f"Article created in Sanity: {sanity_id} - {slug}")
+        
+        # Log to MongoDB for tracking
+        await db.make_webhook_logs.insert_one({
+            "id": article_id,
+            "sanity_id": sanity_id,
+            "source_url": request.source_url,
+            "source_name": request.source_name,
+            "title": ai_result.get('title', request.title),
+            "slug": slug,
+            "status": "created",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        return MakeArticleResponse(
+            success=True,
+            article_id=article_id,
+            sanity_id=sanity_id,
+            title=ai_result.get('title', request.title),
+            slug=slug,
+            message="Article processed and created in Sanity as draft"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Make.com webhook error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/make/status")
+async def make_status():
+    """Check Make.com integration status and recent activity"""
+    try:
+        # Get recent webhook logs
+        recent_logs = await db.make_webhook_logs.find(
+            {},
+            {"_id": 0}
+        ).sort("created_at", -1).limit(10).to_list(10)
+        
+        return {
+            "status": "active",
+            "make_api_configured": bool(MAKE_API_KEY),
+            "sanity_configured": bool(SANITY_API_TOKEN),
+            "llm_configured": bool(EMERGENT_LLM_KEY),
+            "recent_articles": len(recent_logs),
+            "recent_logs": recent_logs,
+            "webhook_url": "/api/make/process-article"
+        }
+    except Exception as e:
+        logger.error(f"Make status error: {e}")
+        return {"status": "error", "message": str(e)}
 
 # Include the router in the main app
 app.include_router(api_router)

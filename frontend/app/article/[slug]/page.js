@@ -180,9 +180,9 @@ export default function ArticlePage() {
         <Header />
         <main className="flex-1 container py-8">
           <div className="text-center py-20">
-            <h1 className="text-2xl font-serif font-bold mb-4 text-[#23103A]">Article Not Found</h1>
+            <h1 className="text-2xl font-serif font-bold mb-4 text-[#1a1a1a]">Article Not Found</h1>
             <Link href="/">
-              <Button className="rounded-none bg-[#23103A]">Return Home</Button>
+              <Button className="rounded-none bg-[#1a1a1a]">Return Home</Button>
             </Link>
           </div>
         </main>
@@ -197,7 +197,7 @@ export default function ArticlePage() {
       
       <main className="flex-1">
         {/* Article Header */}
-        <div className="bg-[#23103A] text-white">
+        <div className="bg-[#1a1a1a] text-white">
           <div className="container py-10">
             <Link href="/" className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6 transition-colors">
               <ArrowLeft className="h-4 w-4" />
@@ -205,7 +205,7 @@ export default function ArticlePage() {
             </Link>
             
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge className="bg-[#D35A3D] text-white rounded-none font-mono text-xs uppercase tracking-wider">
+              <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-xs uppercase tracking-wider">
                 {article.category || 'General'}
               </Badge>
               {article.region && (
@@ -214,7 +214,7 @@ export default function ArticlePage() {
                 </Badge>
               )}
               {article.isAiGenerated ? (
-                <Badge className="bg-[#6B38D6] text-white rounded-none font-mono text-xs uppercase tracking-wider gap-1">
+                <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-xs uppercase tracking-wider gap-1">
                   <Bot className="h-3 w-3" />
                   AI Generated
                 </Badge>
@@ -258,16 +258,16 @@ export default function ArticlePage() {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Action Bar */}
-              <div className="flex items-center justify-between mb-8 p-4 bg-white border border-[#23103A]/10">
+              <div className="flex items-center justify-between mb-8 p-4 bg-white border border-[#1a1a1a]/10">
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="icon" onClick={handleLike} className="rounded-none" data-testid="like-btn">
-                    <Heart className={`h-5 w-5 ${liked ? 'fill-red-500 text-red-500' : 'text-[#5C5566]'}`} />
+                    <Heart className={`h-5 w-5 ${liked ? 'fill-red-500 text-red-500' : 'text-[#666666]'}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleBookmark} className="rounded-none" data-testid="bookmark-btn">
-                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-[#6B38D6] text-[#6B38D6]' : 'text-[#5C5566]'}`} />
+                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-[#6110ff] text-[#6110ff]' : 'text-[#666666]'}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-none" data-testid="share-btn">
-                    <Share2 className="h-5 w-5 text-[#5C5566]" />
+                    <Share2 className="h-5 w-5 text-[#666666]" />
                   </Button>
                 </div>
               </div>
@@ -277,28 +277,28 @@ export default function ArticlePage() {
 
               {/* Paywall for Human Content */}
               {needsUpgrade ? (
-                <Card className="border-[#D35A3D]/30 bg-white">
+                <Card className="border-[#6110ff]/30 bg-white">
                   <CardContent className="p-8 text-center">
-                    <Lock className="h-12 w-12 mx-auto mb-4 text-[#D35A3D]" />
-                    <h3 className="text-xl font-serif font-bold mb-2 text-[#23103A]">Premium Content</h3>
-                    <p className="text-[#5C5566] mb-6">
+                    <Lock className="h-12 w-12 mx-auto mb-4 text-[#6110ff]" />
+                    <h3 className="text-xl font-serif font-bold mb-2 text-[#1a1a1a]">Premium Content</h3>
+                    <p className="text-[#666666] mb-6">
                       This human-written article requires a paid subscription to read.
                     </p>
                     <Link href="/pricing">
-                      <Button className="bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none">Upgrade to Read</Button>
+                      <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none">Upgrade to Read</Button>
                     </Link>
                   </CardContent>
                 </Card>
               ) : (
-                <div className="bg-white border border-[#23103A]/10 p-6 md:p-10">
+                <div className="bg-white border border-[#1a1a1a]/10 p-6 md:p-10">
                   <SanityPortableText content={article.body} />
                 </div>
               )}
 
               {/* Comments Section */}
-              <section className="mt-8 bg-white border border-[#23103A]/10 p-6" data-testid="comments-section">
-                <h3 className="text-lg font-serif font-semibold text-[#23103A] mb-4 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-[#D35A3D]" />
+              <section className="mt-8 bg-white border border-[#1a1a1a]/10 p-6" data-testid="comments-section">
+                <h3 className="text-lg font-serif font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5 text-[#6110ff]" />
                   Comments ({comments.length})
                 </h3>
                 
@@ -308,24 +308,24 @@ export default function ArticlePage() {
                       placeholder="Add a comment..."
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      className="rounded-none border-[#23103A]/20"
+                      className="rounded-none border-[#1a1a1a]/20"
                       data-testid="comment-input"
                     />
-                    <Button type="submit" className="rounded-none bg-[#23103A]" data-testid="comment-submit">
+                    <Button type="submit" className="rounded-none bg-[#1a1a1a]" data-testid="comment-submit">
                       <Send className="h-4 w-4" />
                     </Button>
                   </form>
                 ) : (
-                  <div className="mb-6 p-4 bg-[#23103A]/5 border border-[#23103A]/10" data-testid="comment-gate">
-                    <div className="flex items-center gap-2 text-sm text-[#5C5566]">
-                      <Lock className="h-4 w-4 text-[#D35A3D]" />
+                  <div className="mb-6 p-4 bg-[#1a1a1a]/5 border border-[#1a1a1a]/10" data-testid="comment-gate">
+                    <div className="flex items-center gap-2 text-sm text-[#666666]">
+                      <Lock className="h-4 w-4 text-[#6110ff]" />
                       {!user ? (
                         <span>
-                          <Link href="/auth/login" className="text-[#D35A3D] hover:underline">Log in</Link> and subscribe to leave comments.
+                          <Link href="/auth/login" className="text-[#6110ff] hover:underline">Log in</Link> and subscribe to leave comments.
                         </span>
                       ) : (
                         <span>
-                          Only subscribers can comment. <Link href="/pricing" className="text-[#D35A3D] hover:underline">Subscribe now</Link>.
+                          Only subscribers can comment. <Link href="/pricing" className="text-[#6110ff] hover:underline">Subscribe now</Link>.
                         </span>
                       )}
                     </div>
@@ -334,17 +334,17 @@ export default function ArticlePage() {
 
                 <div className="space-y-4">
                   {commentsLoading ? (
-                    <div className="text-sm text-[#5C5566]">Loading comments...</div>
+                    <div className="text-sm text-[#666666]">Loading comments...</div>
                   ) : comments.length === 0 ? (
-                    <div className="text-sm text-[#5C5566]">No comments yet. Be the first to share your thoughts.</div>
+                    <div className="text-sm text-[#666666]">No comments yet. Be the first to share your thoughts.</div>
                   ) : (
                     comments.map((c) => (
-                      <div key={c.id} className="border-b border-[#23103A]/5 pb-3 last:border-0" data-testid={`comment-${c.id}`}>
+                      <div key={c.id} className="border-b border-[#1a1a1a]/5 pb-3 last:border-0" data-testid={`comment-${c.id}`}>
                         <div className="flex justify-between items-start mb-1">
-                          <span className="text-sm font-medium text-[#23103A]">{c.user_name}</span>
-                          <span className="text-xs text-[#5C5566]">{new Date(c.created_at).toLocaleDateString()}</span>
+                          <span className="text-sm font-medium text-[#1a1a1a]">{c.user_name}</span>
+                          <span className="text-xs text-[#666666]">{new Date(c.created_at).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-sm text-[#5C5566]">{c.content}</p>
+                        <p className="text-sm text-[#666666]">{c.content}</p>
                       </div>
                     ))
                   )}
@@ -355,8 +355,8 @@ export default function ArticlePage() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Related Articles */}
-              <div className="bg-white border border-[#23103A]/10 p-5">
-                <h3 className="text-sm font-mono uppercase tracking-wider text-[#23103A] font-semibold mb-4 pb-2 border-b border-[#23103A]/10">
+              <div className="bg-white border border-[#1a1a1a]/10 p-5">
+                <h3 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold mb-4 pb-2 border-b border-[#1a1a1a]/10">
                   Related Stories
                 </h3>
                 {relatedArticles.length > 0 ? (
@@ -365,10 +365,10 @@ export default function ArticlePage() {
                       const relSlug = typeof related.slug === 'object' ? related.slug.current : related.slug;
                       return (
                         <Link key={related._id} href={`/article/${relSlug}`} className="block group">
-                          <h4 className="text-sm font-serif font-medium text-[#23103A] group-hover:text-[#D35A3D] transition-colors line-clamp-2 mb-1">
+                          <h4 className="text-sm font-serif font-medium text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors line-clamp-2 mb-1">
                             {related.title}
                           </h4>
-                          <span className="text-xs text-[#5C5566] font-mono uppercase tracking-wider">
+                          <span className="text-xs text-[#666666] font-mono uppercase tracking-wider">
                             {related.category}
                           </span>
                         </Link>
@@ -376,7 +376,7 @@ export default function ArticlePage() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-sm text-[#5C5566]">No related articles found.</p>
+                  <p className="text-sm text-[#666666]">No related articles found.</p>
                 )}
               </div>
             </div>

@@ -152,7 +152,7 @@ export default function GlobalSearchBar({ locale = 'en' }) {
   };
 
   return (
-    <div className="w-full bg-[#23103A] border-b border-[#23103A]" data-testid="global-search-bar">
+    <div className="w-full bg-[#1a1a1a] border-b border-[#1a1a1a]" data-testid="global-search-bar">
       <div className="container">
         <div className="flex items-center h-10 gap-2">
           {/* Search Icon */}
@@ -192,7 +192,7 @@ export default function GlobalSearchBar({ locale = 'en' }) {
             disabled={isProcessing}
             className={`p-1.5 rounded transition-colors ${
               isListening 
-                ? 'bg-[#D35A3D] text-white' 
+                ? 'bg-[#6110ff] text-white' 
                 : 'text-white/50 hover:text-white hover:bg-white/10'
             }`}
             title="Voice search"
@@ -220,19 +220,19 @@ export default function GlobalSearchBar({ locale = 'en' }) {
       {showResults && results && (
         <div 
           ref={resultsRef}
-          className="absolute left-0 right-0 bg-white border-b border-[#23103A]/15 shadow-lg z-50"
+          className="absolute left-0 right-0 bg-white border-b border-[#1a1a1a]/15 shadow-lg z-50"
         >
           <div className="container py-4">
             {results.articles && results.articles.length > 0 ? (
               <div className="space-y-3">
-                <p className="text-sm text-[#5C5566]">{results.answer}</p>
+                <p className="text-sm text-[#666666]">{results.answer}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {results.articles.slice(0, 3).map((article) => (
                     <a
                       key={article.id}
                       href={`/article/${article.slug}`}
                       onClick={() => setShowResults(false)}
-                      className="flex items-start gap-3 p-3 hover:bg-[#23103A]/5 transition-colors group"
+                      className="flex items-start gap-3 p-3 hover:bg-[#1a1a1a]/5 transition-colors group"
                     >
                       {article.image && (
                         <img 
@@ -242,20 +242,20 @@ export default function GlobalSearchBar({ locale = 'en' }) {
                         />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-mono uppercase text-[#D35A3D] mb-1">
+                        <p className="text-xs font-mono uppercase text-[#6110ff] mb-1">
                           {article.category}
                         </p>
-                        <h4 className="text-sm font-medium text-[#23103A] line-clamp-2 group-hover:text-[#D35A3D]">
+                        <h4 className="text-sm font-medium text-[#1a1a1a] line-clamp-2 group-hover:text-[#6110ff]">
                           {article.title}
                         </h4>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-[#23103A]/30 group-hover:text-[#D35A3D] flex-shrink-0" />
+                      <ArrowRight className="h-4 w-4 text-[#1a1a1a]/30 group-hover:text-[#6110ff] flex-shrink-0" />
                     </a>
                   ))}
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-[#5C5566]">No results found for "{query}"</p>
+              <p className="text-sm text-[#666666]">No results found for "{query}"</p>
             )}
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function GlobalSearchBar({ locale = 'en' }) {
       {/* Error message */}
       {error && (
         <div className="container">
-          <p className="text-xs text-[#D35A3D] py-1">{error}</p>
+          <p className="text-xs text-[#6110ff] py-1">{error}</p>
         </div>
       )}
     </div>

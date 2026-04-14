@@ -87,7 +87,7 @@ export default function Footer() {
             <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Stay Informed</h3>
             <p className="text-sm text-white/60 mb-3">Solutions journalism delivered weekly.</p>
             <Link href="/auth/signup">
-              <button className="w-full h-9 px-4 text-xs font-medium bg-[#6110ff] hover:bg-[#B84A30] text-white transition-colors" data-testid="footer-subscribe-btn">
+              <button className="w-full h-9 px-4 text-xs font-medium bg-[#6110ff] hover:bg-[#4a0dd6] text-white transition-colors" data-testid="footer-subscribe-btn">
                 Subscribe Free
               </button>
             </Link>

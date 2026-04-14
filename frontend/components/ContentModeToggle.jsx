@@ -168,7 +168,7 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
   return (
     <>
       <TooltipProvider>
-        <div className="flex items-center gap-0.5 bg-[#23103A]/5 p-0.5">
+        <div className="flex items-center gap-0.5 bg-[#1a1a1a]/5 p-0.5">
           {/* AI Mode Button */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -178,8 +178,8 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 onClick={() => handleToggle('ai')}
                 className={`px-3 h-7 rounded-none text-xs font-mono uppercase tracking-wider ${
                   mode === 'ai' 
-                    ? 'bg-[#6B38D6] text-white hover:bg-[#5a2fc2]' 
-                    : 'hover:bg-[#23103A]/10 text-[#5C5566]'
+                    ? 'bg-[#6110ff] text-white hover:bg-[#5a2fc2]' 
+                    : 'hover:bg-[#1a1a1a]/10 text-[#666666]'
                 }`}
                 data-testid="content-mode-ai"
               >
@@ -201,15 +201,15 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 onClick={() => handleToggle('human')}
                 className={`px-3 h-7 rounded-none text-xs font-mono uppercase tracking-wider relative ${
                   mode === 'human' 
-                    ? 'bg-[#23103A] text-white hover:bg-[#160A26]' 
-                    : 'hover:bg-[#23103A]/10 text-[#5C5566]'
+                    ? 'bg-[#1a1a1a] text-white hover:bg-[#160A26]' 
+                    : 'hover:bg-[#1a1a1a]/10 text-[#666666]'
                 }`}
                 data-testid="content-mode-human"
               >
                 <User className="h-3 w-3 mr-1" />
                 Human
                 {!canViewHuman && (
-                  <Lock className="h-2.5 w-2.5 absolute -top-0.5 -right-0.5 text-[#D35A3D]" />
+                  <Lock className="h-2.5 w-2.5 absolute -top-0.5 -right-0.5 text-[#6110ff]" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -229,7 +229,7 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
             <TooltipTrigger asChild>
               <Badge 
                 variant="outline" 
-                className="ml-1 text-[10px] font-mono uppercase tracking-wider border-[#23103A]/20 text-[#5C5566] rounded-none"
+                className="ml-1 text-[10px] font-mono uppercase tracking-wider border-[#1a1a1a]/20 text-[#666666] rounded-none"
               >
                 <Eye className="h-2.5 w-2.5 mr-1" />
                 {getViewLabel()}

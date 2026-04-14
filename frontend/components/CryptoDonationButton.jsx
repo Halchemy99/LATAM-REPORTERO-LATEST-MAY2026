@@ -172,40 +172,40 @@ export default function CryptoDonationButton({ variant = 'default', className = 
           <Button 
             variant="ghost" 
             size="icon"
-            className={`hover:bg-[#23103A]/5 rounded-none ${className}`}
+            className={`hover:bg-[#1a1a1a]/5 rounded-none ${className}`}
             data-testid="crypto-donate-btn"
           >
-            <Heart className="h-4 w-4 text-[#D35A3D]" />
+            <Heart className="h-4 w-4 text-[#6110ff]" />
           </Button>
         ) : (
           <Button 
             variant="outline"
-            className={`gap-2 hover:bg-[#23103A]/5 border-[#23103A]/20 rounded-none ${className}`}
+            className={`gap-2 hover:bg-[#1a1a1a]/5 border-[#1a1a1a]/20 rounded-none ${className}`}
             data-testid="crypto-donate-btn"
           >
-            <Heart className="h-4 w-4 text-[#D35A3D]" />
+            <Heart className="h-4 w-4 text-[#6110ff]" />
             <span>Donate Crypto</span>
           </Button>
         )}
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md rounded-none border-[#23103A]/15">
+      <DialogContent className="sm:max-w-md rounded-none border-[#1a1a1a]/15">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-serif text-xl">
-            <Heart className="h-5 w-5 text-[#D35A3D]" />
+            <Heart className="h-5 w-5 text-[#6110ff]" />
             Support Independent Journalism
           </DialogTitle>
-          <DialogDescription className="text-[#5C5566]">
+          <DialogDescription className="text-[#666666]">
             Your crypto donation helps fund solutions-focused journalism across Latin America.
           </DialogDescription>
         </DialogHeader>
         
         <Tabs defaultValue="ETH" className="mt-4">
-          <TabsList className="grid w-full grid-cols-2 rounded-none bg-[#23103A]/5">
-            <TabsTrigger value="ETH" className="gap-2 rounded-none data-[state=active]:bg-[#23103A] data-[state=active]:text-white">
+          <TabsList className="grid w-full grid-cols-2 rounded-none bg-[#1a1a1a]/5">
+            <TabsTrigger value="ETH" className="gap-2 rounded-none data-[state=active]:bg-[#1a1a1a] data-[state=active]:text-white">
               <span className="text-lg">⟠</span> ETH
             </TabsTrigger>
-            <TabsTrigger value="BTC" className="gap-2 rounded-none data-[state=active]:bg-[#23103A] data-[state=active]:text-white">
+            <TabsTrigger value="BTC" className="gap-2 rounded-none data-[state=active]:bg-[#1a1a1a] data-[state=active]:text-white">
               <span className="text-lg">₿</span> BTC
             </TabsTrigger>
           </TabsList>
@@ -261,14 +261,14 @@ export default function CryptoDonationButton({ variant = 'default', className = 
                     </div>
                     
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-[#23103A]">Amount (ETH)</label>
+                      <label className="text-sm font-medium text-[#1a1a1a]">Amount (ETH)</label>
                       <Input 
                         type="number"
                         step="0.001"
                         min="0.001"
                         value={donationAmount}
                         onChange={(e) => setDonationAmount(e.target.value)}
-                        className="rounded-none border-[#23103A]/20"
+                        className="rounded-none border-[#1a1a1a]/20"
                         placeholder="0.01"
                       />
                     </div>
@@ -276,7 +276,7 @@ export default function CryptoDonationButton({ variant = 'default', className = 
                     <Button 
                       onClick={sendDonation}
                       disabled={isProcessing}
-                      className="w-full bg-[#D35A3D] hover:bg-[#B84A30] text-white rounded-none"
+                      className="w-full bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none"
                     >
                       {isProcessing ? (
                         <>
@@ -294,7 +294,7 @@ export default function CryptoDonationButton({ variant = 'default', className = 
                 ) : (
                   <Button 
                     onClick={connectWallet}
-                    className="w-full bg-[#23103A] hover:bg-[#160A26] text-white rounded-none"
+                    className="w-full bg-[#1a1a1a] hover:bg-[#160A26] text-white rounded-none"
                   >
                     <Wallet className="h-4 w-4 mr-2" />
                     Connect MetaMask
@@ -308,26 +308,26 @@ export default function CryptoDonationButton({ variant = 'default', className = 
                   href="https://metamask.io/download/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#D35A3D] hover:underline flex items-center gap-1"
+                  className="text-[#6110ff] hover:underline flex items-center gap-1"
                 >
                   Install MetaMask <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
             )}
             
-            <div className="pt-3 border-t border-[#23103A]/10">
-              <p className="text-xs text-[#5C5566] mb-2">Or copy address manually:</p>
+            <div className="pt-3 border-t border-[#1a1a1a]/10">
+              <p className="text-xs text-[#666666] mb-2">Or copy address manually:</p>
               <div className="flex gap-2">
                 <Input 
                   value={WALLETS.ETH.address}
                   readOnly
-                  className="font-mono text-xs rounded-none border-[#23103A]/20"
+                  className="font-mono text-xs rounded-none border-[#1a1a1a]/20"
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => copyToClipboard('ETH', WALLETS.ETH.address)}
-                  className="flex-shrink-0 rounded-none border-[#23103A]/20"
+                  className="flex-shrink-0 rounded-none border-[#1a1a1a]/20"
                 >
                   {copiedWallet === 'ETH' ? (
                     <Check className="h-4 w-4 text-green-500" />
@@ -352,18 +352,18 @@ export default function CryptoDonationButton({ variant = 'default', className = 
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#23103A]">BTC Wallet Address</label>
+              <label className="text-sm font-medium text-[#1a1a1a]">BTC Wallet Address</label>
               <div className="flex gap-2">
                 <Input 
                   value={WALLETS.BTC.address}
                   readOnly
-                  className="font-mono text-xs rounded-none border-[#23103A]/20"
+                  className="font-mono text-xs rounded-none border-[#1a1a1a]/20"
                 />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => copyToClipboard('BTC', WALLETS.BTC.address)}
-                  className="flex-shrink-0 rounded-none border-[#23103A]/20"
+                  className="flex-shrink-0 rounded-none border-[#1a1a1a]/20"
                 >
                   {copiedWallet === 'BTC' ? (
                     <Check className="h-4 w-4 text-green-500" />
@@ -378,15 +378,15 @@ export default function CryptoDonationButton({ variant = 'default', className = 
               href={`${WALLETS.BTC.explorer}${WALLETS.BTC.address}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-sm text-[#D35A3D] hover:underline"
+              className="flex items-center gap-1 text-sm text-[#6110ff] hover:underline"
             >
               View on Blockchain.com <ExternalLink className="h-3 w-3" />
             </a>
           </TabsContent>
         </Tabs>
         
-        <div className="mt-4 pt-4 border-t border-[#23103A]/10 text-center">
-          <Badge variant="outline" className="text-xs font-mono rounded-none border-[#23103A]/20 text-[#5C5566]">
+        <div className="mt-4 pt-4 border-t border-[#1a1a1a]/10 text-center">
+          <Badge variant="outline" className="text-xs font-mono rounded-none border-[#1a1a1a]/20 text-[#666666]">
             100% goes to journalism
           </Badge>
         </div>
