@@ -7,13 +7,12 @@ import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Newsletter from '@/components/Newsletter';
-import CryptoDonation from '@/components/CryptoDonation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, X, Sparkles, Crown, Star, Zap, Wallet, CreditCard, Loader2 } from 'lucide-react';
+import { Check, X, Sparkles, Crown, Star, Zap, CreditCard, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function PricingPage() {
@@ -144,7 +143,7 @@ export default function PricingPage() {
   const faqs = [
     {
       question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards (Visa, MasterCard, American Express) through Stripe. We also accept cryptocurrency donations (ETH, BTC, USDC, ADA) via MetaMask.'
+      answer: 'We accept all major credit cards (Visa, MasterCard, American Express) through Stripe, our secure payment processor.'
     },
     {
       question: 'Can I cancel my subscription anytime?',
@@ -163,8 +162,8 @@ export default function PricingPage() {
       answer: 'We offer a 30-day money-back guarantee for all paid plans. Contact support for assistance.'
     },
     {
-      question: 'Can I donate cryptocurrency?',
-      answer: 'Yes! We accept ETH, BTC, USDC, and ADA donations through MetaMask. Click the "Donate Crypto" button to contribute.'
+      question: 'How do I contact support?',
+      answer: 'Email us at contact@latamreportero.com or reach out via our social media channels.'
     }
   ];
 
@@ -237,16 +236,6 @@ export default function PricingPage() {
               Your subscription directly supports journalists across Latin America. 
               Choose the plan that works for you.
             </p>
-          </div>
-        </section>
-
-        {/* Crypto Donation Option */}
-        <section className="py-6 border-b">
-          <div className="container">
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-sm text-muted-foreground">Prefer to donate?</span>
-              <CryptoDonation variant="button" />
-            </div>
           </div>
         </section>
 

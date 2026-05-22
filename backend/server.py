@@ -177,6 +177,11 @@ SUBSCRIPTION_PLANS = {
 async def root():
     return {"message": "Hello World"}
 
+# Health check endpoint for deployment
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "latam-reportero-backend"}
+
 # ============================================
 # AUTH ENDPOINTS (MongoDB + JWT)
 # ============================================
