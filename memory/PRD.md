@@ -13,6 +13,13 @@ A solutions-oriented journalism platform for Latin America. Automated pipeline: 
 
 ## What's Been Implemented
 
+### P0 — Header Refresh + AI De-emphasis (2026-05-22)
+- Header rebuilt as a modern editorial nav: cream background with backdrop blur, serif wordmark `LATAM.`, uppercase tracked nav links (Briefs / Watch / Deep Dives / Community / About).
+- Removed the bulky solid-purple nav block and the prominent dark "Ask AI" search strip.
+- Removed the AI / HUMAN content-mode toggle from the visible chrome.
+- AI search collapsed into a single magnifier icon → click expands a clean dropdown search panel; placeholder rewritten to "Search briefs, deep dives, regions…" (no AI framing).
+- Purple `#6110ff` reserved for the Subscribe CTA + accent dot in wordmark.
+
 ### P0 — Social-First / Curated-Voice Homepage Redesign (2026-05-22)
 - New backend endpoints:
   - `GET /api/sanity/homepage?language=en` — grouped object with `hero`, `morningBriefs`, `pressReviews`, `deepDives`, `videoPosts`, `latest`
