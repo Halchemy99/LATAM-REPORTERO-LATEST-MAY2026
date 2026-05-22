@@ -4,11 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import {
-  SocialBar,
-  VideoHighlightsSection,
-  SocialSidebarWidget,
-} from '@/components/SocialVideo';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
@@ -23,7 +19,6 @@ import {
   Sparkles,
   Play,
 } from 'lucide-react';
-import Link from 'next/link';
 
 // ---------- Content type metadata ----------
 const CONTENT_TYPE_META = {
@@ -371,7 +366,6 @@ export default function HomePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F7F5F2]" data-testid="home-loading">
-        <SocialBar />
         <Header />
         <div className="container py-12">
           <div className="animate-pulse space-y-6">
@@ -400,25 +394,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F7F5F2]" data-testid="home-page">
-      <SocialBar />
       <Header />
 
       {/* HERO: Editor's curated voice */}
       <HeroEditor article={hero} />
-
-      <main className="container pb-12">
-        {/* WATCH NOW — Social Video Strip moved high */}
-        <section className="mb-12" data-testid="section-watch">
-          <SectionHeader
-            icon={Play}
-            title="Watch Now"
-            subtitle="60-second stories from TikTok, Reels & Shorts"
-            href="/watch"
-          />
-        </section>
-      </main>
-
-      <VideoHighlightsSection />
 
       <main className="container py-12">
         {/* CURATED VOICE */}
@@ -533,7 +512,31 @@ export default function HomePage() {
               </Link>
             </div>
           ) : (
-            <SocialSidebarWidget />
+            <div
+              className="bg-white border border-[#1a1a1a]/10 p-6"
+              data-testid="member-thanks"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-[#6110ff]">
+                  Member
+                </span>
+              </div>
+              <h3 className="font-serif text-xl font-semibold text-[#1a1a1a] mb-2">
+                Welcome back.
+              </h3>
+              <p className="text-sm text-[#666666] mb-4">
+                Your support keeps this newswire independent. Manage your account
+                or jump back into the latest briefs.
+              </p>
+              <Link href="/dashboard">
+                <Button
+                  variant="outline"
+                  className="rounded-none border-[#1a1a1a]/20 text-sm"
+                >
+                  Your account
+                </Button>
+              </Link>
+            </div>
           )}
 
           <div className="bg-white border border-[#1a1a1a]/10 p-6">

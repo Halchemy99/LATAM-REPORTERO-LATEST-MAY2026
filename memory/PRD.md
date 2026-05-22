@@ -13,6 +13,19 @@ A solutions-oriented journalism platform for Latin America. Automated pipeline: 
 
 ## What's Been Implemented
 
+### P0 — Footer Refresh + Hide Pre-Launch Socials (2026-05-22)
+- Footer rebuilt in editorial tone matching the new header: cream background, "The Wire for Latin America" mark, large Cormorant headline + black Subscribe CTA, 4 clean columns (Brand · Sections · Newsroom · Community), slim mono bottom bar.
+- Tagline retuned to wire-service positioning: "A wire service for the next generation… built for how people actually read in 2026."
+- Removed every reference to live socials (YouTube / TikTok / Instagram / LinkedIn) site-wide until those channels launch:
+  - Footer purple "Get news in 60 seconds" banner — removed
+  - Footer social icon row — removed
+  - Homepage top `SocialBar` strip — removed
+  - Homepage `VideoHighlightsSection` (mock TikTok/Reels/Shorts cards) — removed
+  - Homepage "Watch Now" section header — removed
+  - Sidebar `SocialSidebarWidget` for members — replaced with a "Welcome back / Your account" card
+  - Header `Watch` nav link — removed
+- AI search retained as a magnifier icon → clean dropdown (per user feedback that it's still useful).
+
 ### P0 — Header Refresh + AI De-emphasis (2026-05-22)
 - Header rebuilt as a modern editorial nav: cream background with backdrop blur, serif wordmark `LATAM.`, uppercase tracked nav links (Briefs / Watch / Deep Dives / Community / About).
 - Removed the bulky solid-purple nav block and the prominent dark "Ask AI" search strip.

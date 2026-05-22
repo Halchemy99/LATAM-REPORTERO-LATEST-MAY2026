@@ -1,187 +1,155 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslation } from '@/lib/providers';
-import { Mail, MessageCircle, Play, ExternalLink } from 'lucide-react';
+import { Mail, MessageCircle, ArrowRight } from 'lucide-react';
 
-const TikTokIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-  </svg>
-);
+const SECTIONS = [
+  { label: 'Morning Brief', href: '/?type=morning-brief' },
+  { label: 'Press Review', href: '/?type=press-review' },
+  { label: 'Deep Dives', href: '/solutions?type=deep-dive' },
+  { label: 'Regions', href: '/' },
+];
 
-const InstagramIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-  </svg>
-);
+const NEWSROOM = [
+  { label: 'Methodology', href: '/transparency' },
+  { label: 'Editorial Standards', href: '/transparency' },
+  { label: 'Funding & Independence', href: '/transparency' },
+  { label: 'AI Disclosure', href: '/transparency' },
+];
 
-const YouTubeIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-  </svg>
-);
-
-const LinkedInIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-  </svg>
-);
-
-const SOCIAL_LINKS = {
-  instagram: 'https://www.instagram.com/latamreportero/',
-  tiktok: 'https://www.tiktok.com/@latamreportero',
-  youtube: 'https://www.youtube.com/@LatamReportero',
-  linkedin: 'https://www.linkedin.com/company/latam-reportero/',
-};
+const COMMUNITY = [
+  { label: 'Pitch a story', href: '/submit' },
+  { label: 'Membership', href: '/pricing' },
+  { label: 'Create account', href: '/auth/signup' },
+];
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#1a1a1a] text-white" data-testid="footer">
-      {/* Social Video CTA - NEW */}
-      <div className="bg-gradient-to-r from-[#6110ff] to-[#600fff]">
-        <div className="container py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-white">
-              <Play className="h-6 w-6" />
-              <div>
-                <p className="font-bold">Get news in 60 seconds</p>
-                <p className="text-sm text-white/80">Follow us for daily video updates</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <a 
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-lg font-medium text-sm hover:bg-white/90 transition-colors"
-              >
-                <YouTubeIcon className="h-5 w-5 text-red-600" />
-                YouTube
-              </a>
-              <a 
-                href={SOCIAL_LINKS.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-white/30 transition-colors"
-              >
-                <TikTokIcon className="h-5 w-5" />
-                TikTok
-              </a>
-              <a 
-                href={SOCIAL_LINKS.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-white/30 transition-colors"
-              >
-                <InstagramIcon className="h-5 w-5" />
-                Instagram
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer */}
-      <div className="container py-12">
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-8">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-4">
-            <h2 className="text-xl font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              LATAM <span className="text-[#6110ff]">Reportero</span>
-            </h2>
-            <p className="text-sm text-white/60 leading-relaxed max-w-xs mb-5" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Independent, solutions-oriented journalism for Latin America. 
-              Transparent. Community-driven. Every story follows Problem &rarr; Solutions &rarr; Impact.
+    <footer
+      className="bg-[#F7F5F2] border-t border-[#1a1a1a]/10"
+      data-testid="footer"
+    >
+      {/* Subscribe band */}
+      <div className="border-b border-[#1a1a1a]/10">
+        <div className="container py-10 lg:py-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-7">
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6110ff] mb-2">
+              The Wire for Latin America
             </p>
-            {/* Social */}
-            <div className="flex items-center gap-3">
-              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#6110ff] transition-colors" aria-label="YouTube">
-                <YouTubeIcon className="h-4 w-4" />
-              </a>
-              <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#6110ff] transition-colors" aria-label="TikTok">
-                <TikTokIcon className="h-4 w-4" />
-              </a>
-              <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#6110ff] transition-colors" aria-label="Instagram">
-                <InstagramIcon className="h-4 w-4" />
-              </a>
-              <a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#6110ff] transition-colors" aria-label="LinkedIn">
-                <LinkedInIcon className="h-4 w-4" />
-              </a>
-              <a href="mailto:contact@latamreportero.com" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#6110ff] transition-colors" aria-label="Email">
-                <Mail className="h-4 w-4" />
-              </a>
-            </div>
+            <h2
+              className="font-serif text-2xl lg:text-3xl font-semibold text-[#1a1a1a] leading-tight"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              Get the Morning Brief in your inbox.
+              <span className="block text-[#666666] font-normal text-lg lg:text-xl mt-1">
+                Latin America, before your coffee. Weekday mornings.
+              </span>
+            </h2>
           </div>
-
-          {/* Journalism */}
-          <div className="md:col-span-2">
-            <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Journalism</h3>
-            <ul className="space-y-2">
-              <li><Link href="/" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">All Stories</Link></li>
-              <li><Link href="/?category=politics" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Investigations</Link></li>
-              <li><Link href="/?category=environment" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Environment</Link></li>
-              <li><Link href="/?category=economy" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Economy</Link></li>
-              <li><Link href="/watch" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors flex items-center gap-1"><Play className="h-3 w-3" /> Videos</Link></li>
-            </ul>
-          </div>
-
-          {/* Community */}
-          <div className="md:col-span-2">
-            <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Community</h3>
-            <ul className="space-y-2">
-              <li><Link href="/community" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Join Network</Link></li>
-              <li><Link href="/pricing" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Membership</Link></li>
-              <li><Link href="/auth/signup" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Create Account</Link></li>
-              <li>
-                <a href="https://signal.group" target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors inline-flex items-center gap-1">
-                  <MessageCircle className="h-3 w-3" /> Signal
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* About */}
-          <div className="md:col-span-2">
-            <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Transparency</h3>
-            <ul className="space-y-2">
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Editorial Standards</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Our Funding</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">Data & Privacy</Link></li>
-              <li><Link href="/transparency" className="text-sm text-white/70 hover:text-[#6110ff] transition-colors">AI Disclosure</Link></li>
-            </ul>
-          </div>
-
-          {/* Subscribe */}
-          <div className="col-span-2 md:col-span-2">
-            <h3 className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/50 mb-4">Stay Informed</h3>
-            <p className="text-sm text-white/60 mb-3">Solutions journalism delivered weekly.</p>
+          <div className="lg:col-span-5">
             <Link href="/auth/signup">
-              <button className="w-full h-9 px-4 text-xs font-medium bg-[#6110ff] hover:bg-[#4a0dd6] text-white transition-colors rounded" data-testid="footer-subscribe-btn">
-                Subscribe Free
+              <button
+                className="group flex items-center justify-between w-full bg-[#1a1a1a] hover:bg-[#6110ff] text-white px-5 py-4 transition-colors"
+                data-testid="footer-subscribe-btn"
+              >
+                <span className="text-sm font-medium uppercase tracking-[0.1em]">
+                  Subscribe — free to start
+                </span>
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
+            <p className="text-[11px] text-[#666666] mt-2">
+              No spam. Cancel anytime. Read by editors, founders & analysts across LATAM.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10">
-        <div className="container py-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-            <p className="text-[11px] text-white/40" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-              &copy; {new Date().getFullYear()} LATAM Reportero. Independent journalism for Latin America.
-            </p>
-            <div className="flex items-center gap-5 text-[11px] text-white/40" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-              <Link href="/transparency" className="hover:text-white/70 transition-colors">Terms</Link>
-              <Link href="/transparency" className="hover:text-white/70 transition-colors">Privacy</Link>
-              <Link href="/transparency" className="hover:text-white/70 transition-colors">AI Policy</Link>
-            </div>
+      {/* Main columns */}
+      <div className="container py-12 grid grid-cols-2 md:grid-cols-12 gap-8">
+        {/* Brand */}
+        <div className="col-span-2 md:col-span-4">
+          <Link href="/" className="inline-block">
+            <span
+              className="text-2xl font-bold tracking-tight text-[#1a1a1a]"
+              style={{ fontFamily: 'Cormorant Garamond, serif' }}
+            >
+              LATAM<span className="text-[#6110ff]">.</span>
+            </span>
+            <span className="ml-2 text-[10px] font-mono uppercase tracking-[0.2em] text-[#666666]">
+              Reportero
+            </span>
+          </Link>
+          <p className="text-sm text-[#666666] leading-relaxed max-w-xs mt-4">
+            A wire service for the next generation. Curated briefs, press reviews
+            and original reporting on Latin America — built for how people actually
+            read in 2026.
+          </p>
+          <a
+            href="mailto:hello@latamreportero.com"
+            className="inline-flex items-center gap-2 text-sm text-[#1a1a1a] hover:text-[#6110ff] transition-colors mt-5"
+            data-testid="footer-email-link"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            hello@latamreportero.com
+          </a>
+        </div>
+
+        <FooterColumn title="Sections" items={SECTIONS} testid="footer-sections" />
+        <FooterColumn title="Newsroom" items={NEWSROOM} testid="footer-newsroom" />
+        <FooterColumn title="Community" items={COMMUNITY} testid="footer-community" />
+      </div>
+
+      {/* Bottom bar */}
+      <div className="border-t border-[#1a1a1a]/10">
+        <div className="container py-5 flex flex-col md:flex-row justify-between items-center gap-3">
+          <p className="text-[11px] font-mono text-[#666666]">
+            &copy; {year} LATAM Reportero · Independent newswire, Latin America
+          </p>
+          <div className="flex items-center gap-5 text-[11px] font-mono text-[#666666]">
+            <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
+              Terms
+            </Link>
+            <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
+              Privacy
+            </Link>
+            <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
+              AI Policy
+            </Link>
+            <a
+              href="mailto:tips@latamreportero.com"
+              className="flex items-center gap-1 hover:text-[#1a1a1a] transition-colors"
+            >
+              <MessageCircle className="h-3 w-3" />
+              Tips
+            </a>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({ title, items, testid }) {
+  return (
+    <div className="md:col-span-2 lg:col-span-2 xl:col-span-2" data-testid={testid}>
+      <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6110ff] mb-4">
+        {title}
+      </h3>
+      <ul className="space-y-2.5">
+        {items.map((item) => (
+          <li key={item.label}>
+            <Link
+              href={item.href}
+              className="text-sm text-[#1a1a1a]/80 hover:text-[#6110ff] transition-colors"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

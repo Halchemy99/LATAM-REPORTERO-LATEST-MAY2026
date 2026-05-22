@@ -27,7 +27,6 @@ import {
   Mic,
   MicOff,
   ArrowRight,
-  Play,
 } from 'lucide-react';
 
 const REGIONS = {
@@ -62,7 +61,6 @@ const REGIONS = {
 
 const NAV_ITEMS = [
   { href: '/', label: 'Briefs' },
-  { href: '/watch', label: 'Watch' },
   { href: '/solutions?type=deep-dive', label: 'Deep Dives' },
   { href: '/community', label: 'Community' },
   { href: '/transparency', label: 'About' },
@@ -259,10 +257,9 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6110ff] transition-colors px-3 py-2 flex items-center gap-1"
+                className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6110ff] transition-colors px-3 py-2"
                 data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
               >
-                {item.label === 'Watch' && <Play className="h-3 w-3" />}
                 {item.label}
               </Link>
             ))}
