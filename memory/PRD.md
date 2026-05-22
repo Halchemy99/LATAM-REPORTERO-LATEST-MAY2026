@@ -13,6 +13,25 @@ A solutions-oriented journalism platform for Latin America. Automated pipeline: 
 
 ## What's Been Implemented
 
+### P0 — Social-First / Curated-Voice Homepage Redesign (2026-05-22)
+- New backend endpoints:
+  - `GET /api/sanity/homepage?language=en` — grouped object with `hero`, `morningBriefs`, `pressReviews`, `deepDives`, `videoPosts`, `latest`
+  - `GET /api/sanity/articles/by-type?content_type=<...>` — filter by `contentType`
+- Supported `contentType` values pushed via `/api/make/create-draft-direct`:
+  `morning-brief`, `press-review`, `deep-dive`, `video-post`, `article` (legacy wire)
+- Homepage (`frontend/app/page.js`) restructured to reflect editorial pivot:
+  1. **Hero** — latest Morning Brief / Press Review (editor's voice, dark band)
+  2. **Watch Now** — social video strip moved high (TikTok/Reels/Shorts)
+  3. **Morning Brief + Press Review** — two-column curated digests
+  4. **Deep Dives** — original long-form (with "Pitch a story" empty state)
+  5. **Subscriber CTA + Community** row
+  6. **Also on the Wire** — AI-tagged aggregated headlines, de-emphasized at bottom
+- Pytest suite: `backend/tests/test_homepage_endpoints.py` (6 tests passing)
+
+### P0 — Make.com Direct-Draft Webhook (2026-04-xx)
+- `/api/make/process-article` — receives wire payload, AI-rewrites, drafts to Sanity (legacy)
+- `/api/make/create-draft-direct` — bypasses AI rewrite, pushes curated copy straight to Sanity. Used for human briefs, press reviews, guest posts.
+
 ### P0 — Sanity.io CMS Integration (2026-03-27)
 - Backend proxy endpoints: `/api/sanity/articles`, `/api/sanity/articles/all`, `/api/sanity/article/{slug}`
 - Homepage fetches live articles from Sanity (by language)
@@ -50,9 +69,24 @@ A solutions-oriented journalism platform for Latin America. Automated pipeline: 
 
 ## Prioritized Backlog
 
+### P1 — Guest Contributor Flow (Strategic Pivot)
+- Sanity `contributor` profiles (name, slug, bio, photo, social links)
+- Story submission flow + editorial review queue
+- Human bylines on Deep Dives + author archive pages
+
+### P1 — Story page upgrade (`/story/[slug]`)
+- Embedded social video + "Go Deeper" written context from Sanity
+- Pull related Morning Briefs / Press Reviews
+
 ### P1 — Content Gating & Paywall Enhancement
-- Human-written articles gated behind subscriber paywall (partially done)
+- AI Search gating: paywall enforcement on frontend for human-tagged/original articles (backend done)
 - Community WhatsApp links locked for non-subscribers
+
+### P2 — Daily Briefing Email (SendGrid/Resend integration)
+- Auto-deliver Morning Brief to subscribers each weekday
+- Weekly Press Review on Fridays
+
+### P2 — WhatsApp / Signal premium community gating
 
 ### P2 — Full Dynamic Sanity Components
 - Charts, Maps, Inline annotations in article renderer
@@ -75,8 +109,12 @@ A solutions-oriented journalism platform for Latin America. Automated pipeline: 
 - `POST /api/auth/signup` — Register new user
 - `POST /api/auth/login` — Login
 - `GET /api/auth/me` — Current user (requires Bearer token)
+- `GET /api/sanity/homepage?language=en` — Grouped homepage payload (hero + per-content-type buckets)
+- `GET /api/sanity/articles/by-type?content_type=morning-brief` — Articles filtered by `contentType`
 - `GET /api/sanity/articles?language=en` — Fetch articles by language
 - `GET /api/sanity/article/{slug}` — Fetch single article
+- `POST /api/make/process-article` — Make.com → AI rewrite → Sanity draft (legacy wire flow)
+- `POST /api/make/create-draft-direct` — Make.com → Sanity draft, no AI (curated flow)
 - `POST /api/comments` — Create comment (paid roles only)
 - `GET /api/comments/{slug}` — Get comments for article
 - `POST /api/ai-search` — AI-powered article search

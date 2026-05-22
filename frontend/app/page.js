@@ -4,344 +4,585 @@ import { useState, useEffect } from 'react';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { SocialBar, VideoHighlightsSection, SocialSidebarWidget } from '@/components/SocialVideo';
+import {
+  SocialBar,
+  VideoHighlightsSection,
+  SocialSidebarWidget,
+} from '@/components/SocialVideo';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  ArrowRight, Clock, Bot, User, Users, Play, Lock,
-  TrendingUp, FileText, Sparkles
+import {
+  ArrowRight,
+  Clock,
+  Bot,
+  Users,
+  Lock,
+  Newspaper,
+  Coffee,
+  Layers,
+  Link2,
+  Sparkles,
+  Play,
 } from 'lucide-react';
 import Link from 'next/link';
 
-function StoryCard({ article, size = 'medium', showVideo = false }) {
-  const isAI = article.isAiGenerated;
-  
-  const sizeClasses = {
-    large: 'col-span-2 row-span-2',
-    medium: 'col-span-1',
-    small: 'col-span-1',
-    list: 'col-span-full'
-  };
+// ---------- Content type metadata ----------
+const CONTENT_TYPE_META = {
+  'morning-brief': {
+    label: 'Morning Brief',
+    icon: Coffee,
+    color: '#6110ff',
+    description: 'Today, distilled in 5 minutes.',
+  },
+  'press-review': {
+    label: 'Press Review',
+    icon: Newspaper,
+    color: '#6110ff',
+    description: 'What the region is reading — curated.',
+  },
+  'deep-dive': {
+    label: 'Deep Dive',
+    icon: Layers,
+    color: '#1a1a1a',
+    description: 'Original reporting & analysis.',
+  },
+  'video-post': {
+    label: 'Watch',
+    icon: Play,
+    color: '#6110ff',
+    description: 'Story-led, video-first.',
+  },
+  article: {
+    label: 'Wire',
+    icon: Bot,
+    color: '#666666',
+    description: 'Aggregated newsfeed.',
+  },
+};
 
+function getMeta(contentType) {
+  return CONTENT_TYPE_META[contentType] || CONTENT_TYPE_META.article;
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return '';
+  }
+}
+
+// ---------- Reusable badges ----------
+function ContentTypeTag({ contentType, dark = false }) {
+  const meta = getMeta(contentType);
+  const Icon = meta.icon;
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono uppercase tracking-[0.12em] ${
+        dark ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'
+      }`}
+      data-testid={`content-type-tag-${contentType}`}
+    >
+      <Icon className="h-3 w-3" style={{ color: meta.color }} />
+      {meta.label}
+    </span>
+  );
+}
+
+function Byline({ article, className = '' }) {
+  const author = article.authorName || 'LATAM Reportero';
+  const date = formatDate(article.publishedAt);
+  return (
+    <div className={`flex items-center gap-2 text-xs text-[#666666] ${className}`}>
+      <span className="font-medium">{author}</span>
+      {date && (
+        <>
+          <span className="opacity-30">&bull;</span>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {date}
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ---------- Hero (Editor's Pick) ----------
+function HeroEditor({ article }) {
+  if (!article) return null;
+  const meta = getMeta(article.contentType);
+  const HeroIcon = meta.icon;
   const slug = typeof article.slug === 'object' ? article.slug.current : article.slug;
-  const readTime = article.readTime || 5;
-  const category = article.category || 'general';
-  const region = article.region || 'latam';
-  const authorName = 'LATAM Reportero';
-  const image = article.featuredImage || null;
+  const image = article.featuredImage;
 
   return (
-    <article 
-      className={`group ${sizeClasses[size]} border-b border-[#1a1a1a]/10 pb-4 hover:bg-[#1a1a1a]/[0.02] transition-colors`}
-      data-testid={`story-card-${article._id}`}
+    <section
+      className="relative bg-[#1a1a1a] text-white overflow-hidden mb-10"
+      data-testid="homepage-hero"
+    >
+      <div className="container py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="lg:col-span-7 order-2 lg:order-1">
+          <div className="flex items-center gap-3 mb-5 flex-wrap">
+            <ContentTypeTag contentType={article.contentType} dark />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50">
+              {meta.description}
+            </span>
+          </div>
+          <Link href={`/article/${slug}`} className="group block">
+            <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl leading-[1.05] font-semibold mb-4 group-hover:text-[#cbb3ff] transition-colors">
+              {article.title}
+            </h1>
+            {article.standfirst && (
+              <p className="text-base lg:text-lg text-white/75 mb-5 leading-relaxed max-w-2xl">
+                {article.standfirst}
+              </p>
+            )}
+          </Link>
+          <div className="flex items-center gap-4 flex-wrap">
+            <Byline article={article} className="!text-white/70" />
+            <Link href={`/article/${slug}`}>
+              <Button
+                className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none text-sm gap-2"
+                data-testid="hero-read-now"
+              >
+                Read now <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <div className="lg:col-span-5 order-1 lg:order-2">
+          <div className="relative aspect-[4/3] w-full overflow-hidden border-l-4 border-[#6110ff]">
+            {image ? (
+              <img
+                src={image}
+                alt={article.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-[#6110ff] to-[#1a1a1a] flex items-center justify-center">
+                <HeroIcon className="h-16 w-16 text-white/40" />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="absolute top-0 left-0 right-0 h-1 bg-[#6110ff]" />
+    </section>
+  );
+}
+
+// ---------- Section header ----------
+function SectionHeader({ icon: Icon, title, subtitle, href, accent = '#6110ff' }) {
+  return (
+    <div className="flex items-end justify-between mb-5 pb-2 border-b-2 border-[#1a1a1a]">
+      <div className="flex items-center gap-3">
+        <Icon className="h-5 w-5" style={{ color: accent }} />
+        <div>
+          <h2 className="text-sm font-mono uppercase tracking-[0.15em] text-[#1a1a1a] font-semibold">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-[11px] text-[#666666] mt-0.5">{subtitle}</p>
+          )}
+        </div>
+      </div>
+      {href && (
+        <Link
+          href={href}
+          className="text-xs font-mono uppercase tracking-wider text-[#6110ff] hover:underline flex items-center gap-1"
+        >
+          See all <ArrowRight className="h-3 w-3" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+// ---------- Cards ----------
+function BriefCard({ article }) {
+  const slug = typeof article.slug === 'object' ? article.slug.current : article.slug;
+  return (
+    <article
+      className="group border-l-2 border-[#6110ff]/30 hover:border-[#6110ff] pl-4 py-2 transition-colors"
+      data-testid={`brief-card-${article._id}`}
     >
       <Link href={`/article/${slug}`} className="block">
-        {(size === 'large' || size === 'medium') && image && (
-          <div className="relative aspect-[16/10] overflow-hidden mb-3">
+        <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#666666] mb-1">
+          {formatDate(article.publishedAt)}
+          {article.region && (
+            <>
+              <span className="opacity-30 mx-1.5">|</span>
+              {article.region}
+            </>
+          )}
+        </div>
+        <h3 className="font-serif text-base md:text-lg font-semibold text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors leading-snug">
+          {article.title}
+        </h3>
+        {article.standfirst && (
+          <p className="text-sm text-[#666666] line-clamp-2 mt-1.5">
+            {article.standfirst}
+          </p>
+        )}
+      </Link>
+    </article>
+  );
+}
+
+function DeepDiveCard({ article }) {
+  const slug = typeof article.slug === 'object' ? article.slug.current : article.slug;
+  const image = article.featuredImage;
+  return (
+    <article
+      className="group flex flex-col bg-white border border-[#1a1a1a]/10 hover:border-[#6110ff] transition-colors"
+      data-testid={`deep-dive-card-${article._id}`}
+    >
+      <Link href={`/article/${slug}`} className="block">
+        {image && (
+          <div className="relative aspect-[16/10] overflow-hidden">
             <img
               src={image}
               alt={article.title}
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
             />
-            {showVideo && (
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                  <Play className="h-5 w-5 text-[#1a1a1a] ml-0.5" />
-                </div>
-              </div>
-            )}
-            <div className="absolute top-2 left-2">
-              {isAI ? (
-                <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-[10px] uppercase tracking-wider gap-1">
-                  <Bot className="h-3 w-3" />
-                  AI
-                </Badge>
-              ) : (
-                <Badge className="bg-emerald-600 text-white rounded-none font-mono text-[10px] uppercase tracking-wider gap-1">
-                  <User className="h-3 w-3" />
-                  Human
-                </Badge>
-              )}
+            <div className="absolute top-3 left-3">
+              <ContentTypeTag contentType="deep-dive" />
             </div>
           </div>
         )}
-        
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#6110ff]">
-            {category}
-          </span>
-          <span className="text-[#1a1a1a]/30">|</span>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#666666]">
-            {region}
-          </span>
-          {(size === 'small' || size === 'list') && (
-            <>
-              <span className="text-[#1a1a1a]/30">|</span>
-              {isAI ? (
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#6110ff] flex items-center gap-1">
-                  <Bot className="h-3 w-3" />
-                  AI
-                </span>
-              ) : (
-                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-600 flex items-center gap-1">
-                  <User className="h-3 w-3" />
-                  Human
-                </span>
-              )}
-            </>
+        <div className="p-4">
+          {!image && (
+            <div className="mb-2">
+              <ContentTypeTag contentType="deep-dive" />
+            </div>
           )}
-        </div>
-        
-        <h3 className={`font-serif font-semibold text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors leading-tight mb-2 ${
-          size === 'large' ? 'text-2xl md:text-3xl' : 
-          size === 'medium' ? 'text-lg md:text-xl' : 
-          'text-base'
-        }`}>
-          {article.title}
-        </h3>
-        
-        {(size === 'large' || size === 'medium') && article.standfirst && (
-          <p className="text-sm text-[#666666] line-clamp-2 mb-2">
-            {article.standfirst}
-          </p>
-        )}
-        
-        <div className="flex items-center gap-2 text-xs text-[#666666]">
-          <span>{authorName}</span>
-          <span className="text-[#1a1a1a]/30">&bull;</span>
-          <span className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {readTime} min
-          </span>
+          <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#6110ff] mb-1.5">
+            {article.category || 'Original'}
+          </div>
+          <h3 className="font-serif text-lg font-semibold text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors leading-snug mb-2">
+            {article.title}
+          </h3>
+          {article.standfirst && (
+            <p className="text-sm text-[#666666] line-clamp-2 mb-3">
+              {article.standfirst}
+            </p>
+          )}
+          <Byline article={article} />
         </div>
       </Link>
     </article>
   );
 }
 
-function TopicSection({ title, icon: Icon, articles }) {
-  if (!articles || articles.length === 0) return null;
-  
+function WireCard({ article }) {
+  const slug = typeof article.slug === 'object' ? article.slug.current : article.slug;
   return (
-    <section className="mb-8">
-      <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-[#1a1a1a]">
-        <Icon className="h-4 w-4 text-[#6110ff]" />
-        <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold">
-          {title}
-        </h2>
-      </div>
-      <div className="space-y-3">
-        {articles.slice(0, 4).map((article) => (
-          <StoryCard 
-            key={article._id} 
-            article={article} 
-            size="small"
-          />
-        ))}
-      </div>
-    </section>
+    <article
+      className="group flex gap-3 py-3 border-b border-[#1a1a1a]/10"
+      data-testid={`wire-card-${article._id}`}
+    >
+      <Link href={`/article/${slug}`} className="flex gap-3 w-full">
+        {article.featuredImage && (
+          <div className="w-24 h-20 flex-shrink-0 overflow-hidden">
+            <img
+              src={article.featuredImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-1">
+            <Bot className="h-3 w-3 text-[#666666]" />
+            <span>{article.category || 'wire'}</span>
+            <span className="opacity-30">|</span>
+            <span>{formatDate(article.publishedAt)}</span>
+          </div>
+          <h4 className="text-sm font-medium text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors line-clamp-2 leading-snug">
+            {article.title}
+          </h4>
+        </div>
+      </Link>
+    </article>
   );
 }
 
+function EmptyStateMini({ icon: Icon, text }) {
+  return (
+    <div className="border border-dashed border-[#1a1a1a]/20 p-6 text-center bg-white/40">
+      <Icon className="h-6 w-6 text-[#6110ff] mx-auto mb-2" />
+      <p className="text-sm text-[#666666]">{text}</p>
+    </div>
+  );
+}
+
+// ---------- Page ----------
 export default function HomePage() {
-  const { t, locale } = useTranslation();
+  const { locale } = useTranslation();
   const { isSubscribed } = useUserRole();
-  const [articles, setArticles] = useState([]);
+  const [data, setData] = useState({
+    hero: null,
+    morningBriefs: [],
+    pressReviews: [],
+    deepDives: [],
+    videoPosts: [],
+    latest: [],
+  });
   const [loading, setLoading] = useState(true);
   const API_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    let cancelled = false;
+    const fetchHomepage = async () => {
       setLoading(true);
       try {
-        const resp = await fetch(`${API_URL}/api/sanity/articles?language=${locale}&limit=20`);
+        const resp = await fetch(
+          `${API_URL}/api/sanity/homepage?language=${locale}`
+        );
         if (resp.ok) {
-          const data = await resp.json();
-          if (data.articles && data.articles.length > 0) {
-            setArticles(data.articles);
-          } else {
-            const allResp = await fetch(`${API_URL}/api/sanity/articles/all?limit=20`);
-            if (allResp.ok) {
-              const allData = await allResp.json();
-              setArticles(allData.articles || []);
-            }
-          }
+          const json = await resp.json();
+          if (cancelled) return;
+          const hero = json.hero || (json.latest && json.latest[0]) || null;
+          setData({
+            hero,
+            morningBriefs: json.morningBriefs || [],
+            pressReviews: json.pressReviews || [],
+            deepDives: json.deepDives || [],
+            videoPosts: json.videoPosts || [],
+            latest: json.latest || [],
+          });
         }
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-        setArticles([]);
+      } catch (err) {
+        if (!cancelled) console.error('Error fetching homepage:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-    fetchArticles();
+    fetchHomepage();
+    return () => {
+      cancelled = true;
+    };
   }, [locale, API_URL]);
-
-  const topStories = articles.slice(0, 5);
-  const latestNews = articles.slice(5, 15);
-  const investigations = articles.filter(a => {
-    const cat = (a.category || '').toLowerCase();
-    return cat.includes('politic') || cat.includes('investigation') || cat.includes('human-rights');
-  });
-  const environment = articles.filter(a => {
-    const cat = (a.category || '').toLowerCase();
-    return cat.includes('environ') || cat.includes('climate') || cat.includes('energy');
-  });
-  const economy = articles.filter(a => {
-    const cat = (a.category || '').toLowerCase();
-    return cat.includes('econom') || cat.includes('finance') || cat.includes('technology');
-  });
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F5F2]">
+      <div className="min-h-screen bg-[#F7F5F2]" data-testid="home-loading">
+        <SocialBar />
         <Header />
-        <div className="container py-8">
-          <div className="animate-pulse space-y-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-24 bg-[#1a1a1a]/10 rounded" />
-            ))}
+        <div className="container py-12">
+          <div className="animate-pulse space-y-6">
+            <div className="h-64 bg-[#1a1a1a]/10 rounded" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="h-32 bg-[#1a1a1a]/10 rounded" />
+              <div className="h-32 bg-[#1a1a1a]/10 rounded" />
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
+  const { hero, morningBriefs, pressReviews, deepDives, latest } = data;
+
+  const shownIds = new Set(
+    [
+      hero?._id,
+      ...morningBriefs.map((a) => a._id),
+      ...pressReviews.map((a) => a._id),
+      ...deepDives.map((a) => a._id),
+    ].filter(Boolean)
+  );
+  const wireFeed = latest.filter((a) => !shownIds.has(a._id)).slice(0, 8);
+
   return (
-    <div className="min-h-screen bg-[#F7F5F2]">
+    <div className="min-h-screen bg-[#F7F5F2]" data-testid="home-page">
       <SocialBar />
       <Header />
-      
-      <main className="container py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          {/* Left Column - Main Stories */}
-          <div className="lg:col-span-8">
-            <section className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#1a1a1a]">
-                <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold">
-                  Top Stories
-                </h2>
-                <Link href="/solutions" className="text-xs font-mono uppercase tracking-wider text-[#6110ff] hover:underline flex items-center gap-1">
-                  All Stories <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {topStories[0] && (
-                  <div className="md:col-span-2">
-                    <StoryCard 
-                      article={topStories[0]} 
-                      size="large"
-                    />
-                  </div>
-                )}
-                
-                {topStories.slice(1, 5).map((article, idx) => (
-                  <StoryCard 
-                    key={article._id} 
-                    article={article} 
-                    size="medium"
-                    showVideo={idx === 1}
-                  />
-                ))}
-              </div>
-            </section>
 
-            <section className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#1a1a1a]">
-                <h2 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-[#6110ff]" />
-                  Latest
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                {latestNews.map((article) => (
-                  <StoryCard 
-                    key={article._id} 
-                    article={article} 
-                    size="small"
-                  />
+      {/* HERO: Editor's curated voice */}
+      <HeroEditor article={hero} />
+
+      <main className="container pb-12">
+        {/* WATCH NOW — Social Video Strip moved high */}
+        <section className="mb-12" data-testid="section-watch">
+          <SectionHeader
+            icon={Play}
+            title="Watch Now"
+            subtitle="60-second stories from TikTok, Reels & Shorts"
+            href="/watch"
+          />
+        </section>
+      </main>
+
+      <VideoHighlightsSection />
+
+      <main className="container py-12">
+        {/* CURATED VOICE */}
+        <section
+          className="mb-14 grid grid-cols-1 lg:grid-cols-2 gap-10"
+          data-testid="section-curated"
+        >
+          <div>
+            <SectionHeader
+              icon={Coffee}
+              title="Morning Brief"
+              subtitle="Latin America, distilled before coffee"
+              href="/solutions?type=morning-brief"
+            />
+            {morningBriefs.length > 0 ? (
+              <div className="space-y-5">
+                {morningBriefs.map((a) => (
+                  <BriefCard key={a._id} article={a} />
                 ))}
               </div>
-            </section>
+            ) : (
+              <EmptyStateMini
+                icon={Coffee}
+                text="Tomorrow's brief is coming. Subscribe to get it by email."
+              />
+            )}
           </div>
 
-          {/* Right Sidebar */}
-          <aside className="lg:col-span-4 space-y-6">
-            {/* Social Video Widget - NEW */}
-            <SocialSidebarWidget />
-            
-            {!isSubscribed && (
-              <div className="bg-[#1a1a1a] text-white p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Lock className="h-4 w-4 text-[#6110ff]" />
-                  <span className="text-xs font-mono uppercase tracking-wider">Subscriber Exclusive</span>
-                </div>
-                <h3 className="font-serif text-lg font-semibold mb-2">
-                  Human-Written Journalism
-                </h3>
-                <p className="text-sm text-white/70 mb-4">
-                  Access investigative stories written by our journalists across Latin America.
-                </p>
-                <Link href="/pricing">
-                  <Button className="w-full bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none text-sm">
-                    Subscribe Now
-                  </Button>
-                </Link>
+          <div>
+            <SectionHeader
+              icon={Newspaper}
+              title="Press Review"
+              subtitle="What we're reading across the region"
+              href="/solutions?type=press-review"
+            />
+            {pressReviews.length > 0 ? (
+              <div className="space-y-5">
+                {pressReviews.map((a) => (
+                  <BriefCard key={a._id} article={a} />
+                ))}
               </div>
+            ) : (
+              <EmptyStateMini
+                icon={Link2}
+                text="Fresh press reviews land every weekday afternoon."
+              />
             )}
+          </div>
+        </section>
 
-            <TopicSection 
-              title="Investigations"
-              icon={FileText}
-              articles={investigations}
-            />
-
-            <TopicSection 
-              title="Environment"
-              icon={Sparkles}
-              articles={environment}
-            />
-
-            <TopicSection 
-              title="Economy"
-              icon={TrendingUp}
-              articles={economy}
-            />
-
-            <div className="bg-[#F7F5F2] border border-[#1a1a1a]/10 p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Users className="h-4 w-4 text-[#6110ff]" />
-                <span className="text-xs font-mono uppercase tracking-wider text-[#1a1a1a]">Community</span>
-              </div>
-              <h3 className="font-serif text-lg font-semibold text-[#1a1a1a] mb-2">
-                Join the Conversation
-              </h3>
-              <p className="text-sm text-[#666666] mb-4">
-                Connect with readers and journalists in regional WhatsApp & Signal groups.
+        {/* DEEP DIVES */}
+        <section className="mb-14" data-testid="section-deep-dives">
+          <SectionHeader
+            icon={Layers}
+            title="Deep Dives"
+            subtitle="Original investigations & long-form analysis"
+            href="/solutions?type=deep-dive"
+            accent="#1a1a1a"
+          />
+          {deepDives.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {deepDives.map((a) => (
+                <DeepDiveCard key={a._id} article={a} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white border border-dashed border-[#1a1a1a]/20 p-8 text-center">
+              <Layers className="h-8 w-8 text-[#6110ff] mx-auto mb-3" />
+              <p className="text-[#1a1a1a] font-serif text-lg mb-2">
+                Original reporting is in the works.
               </p>
-              <Link href="/community">
-                <Button variant="outline" className="w-full rounded-none border-[#1a1a1a]/20 text-sm">
-                  Explore Community
+              <p className="text-sm text-[#666666] mb-4">
+                Want to contribute? We&apos;re opening up to guest reporters across LATAM.
+              </p>
+              <Link href="/submit">
+                <Button
+                  variant="outline"
+                  className="rounded-none border-[#1a1a1a]/20 text-sm"
+                  data-testid="pitch-cta"
+                >
+                  Pitch a story
                 </Button>
               </Link>
             </div>
-          </aside>
-        </div>
+          )}
+        </section>
 
-        {/* Empty State */}
-        {articles.length === 0 && !loading && (
-          <div className="text-center py-16">
-            <p className="text-[#666666] text-lg mb-4">No articles available yet.</p>
-            <p className="text-[#666666] text-sm">Content is being generated. Check back soon.</p>
+        {/* SUBSCRIBER + COMMUNITY ROW */}
+        <section className="mb-14 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {!isSubscribed ? (
+            <div
+              className="bg-[#1a1a1a] text-white p-6"
+              data-testid="subscriber-cta"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Lock className="h-4 w-4 text-[#6110ff]" />
+                <span className="text-xs font-mono uppercase tracking-wider">
+                  Subscriber Exclusive
+                </span>
+              </div>
+              <h3 className="font-serif text-xl font-semibold mb-2">
+                Daily Brief in your inbox
+              </h3>
+              <p className="text-sm text-white/70 mb-4">
+                Weekday Morning Briefs + the weekly Press Review, delivered before
+                you start scrolling.
+              </p>
+              <Link href="/pricing">
+                <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none text-sm">
+                  Subscribe — from $5/mo
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <SocialSidebarWidget />
+          )}
+
+          <div className="bg-white border border-[#1a1a1a]/10 p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="h-4 w-4 text-[#6110ff]" />
+              <span className="text-xs font-mono uppercase tracking-wider text-[#1a1a1a]">
+                Community
+              </span>
+            </div>
+            <h3 className="font-serif text-xl font-semibold text-[#1a1a1a] mb-2">
+              Join the conversation
+            </h3>
+            <p className="text-sm text-[#666666] mb-4">
+              Regional WhatsApp & Signal groups for readers, contributors, and our
+              newsroom.
+            </p>
+            <Link href="/community">
+              <Button
+                variant="outline"
+                className="rounded-none border-[#1a1a1a]/20 text-sm"
+              >
+                Explore community
+              </Button>
+            </Link>
           </div>
+        </section>
+
+        {/* WIRE FEED */}
+        {wireFeed.length > 0 && (
+          <section className="mb-8" data-testid="section-wire">
+            <SectionHeader
+              icon={Sparkles}
+              title="Also on the Wire"
+              subtitle="Aggregated headlines — AI-tagged, not our voice"
+              accent="#666666"
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+              {wireFeed.map((a) => (
+                <WireCard key={a._id} article={a} />
+              ))}
+            </div>
+            <p className="text-[11px] text-[#666666] mt-4 italic">
+              Wire items are pulled from public RSS sources and shown for context.
+              Our editorial voice lives in Morning Briefs, Press Reviews and Deep
+              Dives above.
+            </p>
+          </section>
         )}
       </main>
-
-      {/* Video Highlights Section - Between main content and footer */}
-      <VideoHighlightsSection />
 
       <Footer />
     </div>

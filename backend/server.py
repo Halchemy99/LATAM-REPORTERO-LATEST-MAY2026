@@ -990,6 +990,50 @@ async def get_all_sanity_articles(limit: int = 50):
     articles = await _sanity_query(query)
     return {"articles": articles}
 
+@api_router.get("/sanity/articles/by-type")
+async def get_sanity_articles_by_type(
+    content_type: str,
+    language: str = "en",
+    limit: int = 10,
+    status: str = "published"
+):
+    """Fetch articles filtered by contentType (morning-brief, press-review, deep-dive, video-post, article)."""
+    conditions = ['_type == "article"', f'language == "{language}"', f'contentType == "{content_type}"']
+    if status and status != 'all':
+        conditions.append(f'status == "{status}"')
+    filter_str = " && ".join(conditions)
+    query = (
+        f'*[{filter_str}] | order(publishedAt desc) [0...{limit}] '
+        '{_id, title, "slug": slug.current, language, standfirst, category, region, '
+        'isAiGenerated, contentType, authorName, authorSlug, tags, status, publishedAt, createdAt, '
+        '"featuredImage": featuredImage.asset->url}'
+    )
+    articles = await _sanity_query(query)
+    return {"articles": articles, "content_type": content_type}
+
+@api_router.get("/sanity/homepage")
+async def get_sanity_homepage(language: str = "en"):
+    """Fetch grouped content for the homepage in a single call."""
+    base_fields = (
+        '{_id, title, "slug": slug.current, language, standfirst, category, region, '
+        'isAiGenerated, contentType, authorName, authorSlug, tags, publishedAt, '
+        '"featuredImage": featuredImage.asset->url}'
+    )
+    pub = f'_type == "article" && status == "published" && language == "{language}"'
+    query = (
+        '{'
+        f'"hero": *[{pub} && contentType in ["morning-brief", "press-review"]] | order(publishedAt desc) [0] {base_fields},'
+        f'"morningBriefs": *[{pub} && contentType == "morning-brief"] | order(publishedAt desc) [0...4] {base_fields},'
+        f'"pressReviews": *[{pub} && contentType == "press-review"] | order(publishedAt desc) [0...4] {base_fields},'
+        f'"deepDives": *[{pub} && contentType == "deep-dive"] | order(publishedAt desc) [0...4] {base_fields},'
+        f'"videoPosts": *[{pub} && contentType == "video-post"] | order(publishedAt desc) [0...4] {base_fields},'
+        f'"latest": *[{pub}] | order(publishedAt desc) [0...10] {base_fields}'
+        '}'
+    )
+    result = await _sanity_query(query)
+    # _sanity_query returns the value of "result" key. For object queries, it's a dict.
+    return result if isinstance(result, dict) else {}
+
 @api_router.get("/sanity/article/{slug}")
 async def get_sanity_article(slug: str):
     """Fetch a single article by slug from Sanity"""
@@ -1300,6 +1344,167 @@ Rewrite in solutions journalism format. Return ONLY valid JSON.""")
         logger.error(f"Make.com webhook error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+class DirectDraftRequest(BaseModel):
+    """Request for creating draft directly in Sanity (no AI processing)"""
+    title: str
+    content: str  # HTML body content
+    standfirst: Optional[str] = None  # Summary/subtitle
+    category: Optional[str] = "general"
+    region: Optional[str] = "latam"
+    language: Optional[str] = "en"
+    author_name: Optional[str] = None
+    author_slug: Optional[str] = None
+    image_url: Optional[str] = None
+    content_type: Optional[str] = "article"  # article, press-review, digest, link-roundup
+    tags: Optional[List[str]] = None
+    source_links: Optional[List[Dict[str, str]]] = None  # For link roundups: [{"title": "...", "url": "..."}]
+
+
+@api_router.post("/make/create-draft-direct", response_model=MakeArticleResponse)
+async def make_create_draft_direct(request: DirectDraftRequest):
+    """
+    Create a draft directly in Sanity WITHOUT AI processing.
+    
+    Use this for:
+    - Press reviews (your own voice)
+    - Link roundups
+    - Daily digests
+    - Guest contributor pieces
+    - Any content that's already publication-ready
+    
+    Webhook URL: {YOUR_DOMAIN}/api/make/create-draft-direct
+    """
+    try:
+        if not SANITY_API_TOKEN:
+            raise HTTPException(status_code=500, detail="Sanity API token not configured")
+        
+        logger.info(f"Direct draft webhook received: {request.title[:50]}...")
+        
+        # Generate unique article ID
+        article_id = str(uuid.uuid4())[:16]
+        
+        # Generate slug from title
+        slug_base = request.title.lower()
+        slug_base = ''.join(c if c.isalnum() or c == ' ' else '' for c in slug_base)
+        slug = '-'.join(slug_base.split()[:10]) + f"-{request.language}"
+        
+        # Build body content - if source_links provided, append them
+        body_content = request.content
+        if request.source_links:
+            links_html = "<h3>Sources & Links</h3><ul>"
+            for link in request.source_links:
+                links_html += f'<li><a href="{link.get("url", "#")}" target="_blank">{link.get("title", "Link")}</a></li>'
+            links_html += "</ul>"
+            body_content += links_html
+        
+        # Create article document for Sanity
+        sanity_doc = {
+            "_type": "article",
+            "title": request.title,
+            "slug": {"_type": "slug", "current": slug},
+            "standfirst": (request.standfirst or "")[:200],
+            "body": body_content,
+            "language": request.language,
+            "category": request.category or "general",
+            "region": request.region or "latam",
+            "contentType": request.content_type,
+            "isAiGenerated": False,  # Human-written content
+            "status": "draft",
+            "publishedAt": datetime.now(timezone.utc).isoformat(),
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Add author if provided
+        if request.author_name:
+            sanity_doc["authorName"] = request.author_name
+        if request.author_slug:
+            sanity_doc["authorSlug"] = request.author_slug
+            
+        # Add tags if provided
+        if request.tags:
+            sanity_doc["tags"] = request.tags
+        
+        # Upload image to Sanity if provided
+        if request.image_url:
+            try:
+                async with httpx.AsyncClient() as http_client:
+                    img_response = await http_client.get(request.image_url, timeout=30)
+                    if img_response.status_code == 200:
+                        upload_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/assets/images/{SANITY_DATASET}"
+                        content_type = img_response.headers.get('content-type', 'image/jpeg')
+                        
+                        upload_response = await http_client.post(
+                            upload_url,
+                            headers={
+                                "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                                "Content-Type": content_type
+                            },
+                            content=img_response.content
+                        )
+                        
+                        if upload_response.status_code == 200:
+                            asset_data = upload_response.json()
+                            asset_id = asset_data.get('document', {}).get('_id')
+                            if asset_id:
+                                sanity_doc["featuredImage"] = {
+                                    "_type": "image",
+                                    "asset": {"_type": "reference", "_ref": asset_id}
+                                }
+                                logger.info(f"Image uploaded to Sanity: {asset_id}")
+            except Exception as img_error:
+                logger.warning(f"Failed to upload image: {img_error}")
+        
+        # Create article in Sanity
+        sanity_url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/data/mutate/{SANITY_DATASET}"
+        
+        async with httpx.AsyncClient() as http_client:
+            response = await http_client.post(
+                sanity_url,
+                headers={
+                    "Authorization": f"Bearer {SANITY_API_TOKEN}",
+                    "Content-Type": "application/json"
+                },
+                json={"mutations": [{"create": sanity_doc}]}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Sanity create error: {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to create draft in Sanity")
+            
+            result = response.json()
+            sanity_id = result.get('results', [{}])[0].get('id', '')
+        
+        logger.info(f"Direct draft created in Sanity: {sanity_id} - {slug}")
+        
+        # Log to MongoDB for tracking
+        await db.make_webhook_logs.insert_one({
+            "id": article_id,
+            "sanity_id": sanity_id,
+            "title": request.title,
+            "slug": slug,
+            "content_type": request.content_type,
+            "is_ai_generated": False,
+            "status": "created",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        return MakeArticleResponse(
+            success=True,
+            article_id=article_id,
+            sanity_id=sanity_id,
+            title=request.title,
+            slug=slug,
+            message=f"Draft created directly in Sanity (type: {request.content_type})"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Direct draft webhook error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.get("/make/status")
 async def make_status():
     """Check Make.com integration status and recent activity"""
@@ -1317,7 +1522,10 @@ async def make_status():
             "llm_configured": bool(EMERGENT_LLM_KEY),
             "recent_articles": len(recent_logs),
             "recent_logs": recent_logs,
-            "webhook_url": "/api/make/process-article"
+            "webhooks": {
+                "process_article": "/api/make/process-article (AI rewrite → Sanity)",
+                "create_draft_direct": "/api/make/create-draft-direct (Direct → Sanity, no AI)"
+            }
         }
     except Exception as e:
         logger.error(f"Make status error: {e}")
