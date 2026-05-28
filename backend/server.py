@@ -10,8 +10,59 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+# Drop-in replacements for emergentintegrations (private package not on PyPI)
+from openai import AsyncOpenAI as _AsyncOpenAI
+import stripe as _stripe
+
+class UserMessage:
+    def __init__(self, text): self.text = text
+
+class LlmChat:
+    def __init__(self, api_key, session_id=None, system_message=""):
+        self.client = _AsyncOpenAI(api_key=api_key)
+        self.model_name = "gpt-4o"
+        self.messages = []
+        if system_message:
+            self.messages.append({"role": "system", "content": system_message})
+    def with_model(self, provider, model):
+        self.model_name = model; return self
+    async def send_message(self, user_message):
+        self.messages.append({"role": "user", "content": user_message.text})
+        completion = await self.client.chat.completions.create(model=self.model_name, messages=self.messages)
+        response = completion.choices[0].message.content
+        self.messages.append({"role": "assistant", "content": response})
+        return response
+
+class CheckoutSessionRequest:
+    def __init__(self, amount, currency, success_url, cancel_url, metadata=None):
+        self.amount = amount; self.currency = currency
+        self.success_url = success_url; self.cancel_url = cancel_url
+        self.metadata = metadata or {}
+
+class CheckoutSessionResponse:
+    def __init__(self, session_id, url): self.session_id = session_id; self.url = url
+
+class CheckoutStatusResponse:
+    def __init__(self, payment_status, status): self.payment_status = payment_status; self.status = status
+
+class StripeCheckout:
+    def __init__(self, api_key, webhook_url=None):
+        _stripe.api_key = api_key
+    async def create_checkout_session(self, request):
+        session = _stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{"price_data": {"currency": request.currency, "product_data": {"name": request.metadata.get("plan_name", "Subscription")}, "unit_amount": request.amount}, "quantity": 1}],
+            mode="payment", success_url=request.success_url, cancel_url=request.cancel_url, metadata=request.metadata)
+        return CheckoutSessionResponse(session_id=session.id, url=session.url)
+    async def get_checkout_status(self, session_id):
+        session = _stripe.checkout.Session.retrieve(session_id)
+        return CheckoutStatusResponse(payment_status=session.payment_status, status=session.status)
+
+class OpenAITextToSpeech:
+    def __init__(self, api_key): self.client = _AsyncOpenAI(api_key=api_key)
+    async def generate_speech(self, text, model="tts-1-hd", voice="nova", **kwargs):
+        response = await self.client.audio.speech.create(model=model, voice=voice, input=text)
+        return response.content
 import jwt
 import bcrypt
 
@@ -749,7 +800,7 @@ async def stripe_webhook(request: Request):
 async def transcribe_audio(audio: UploadFile = File(...)):
     """Transcribe audio using OpenAI Whisper via Emergent"""
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        pass  # LlmChat/UserMessage already defined at module level
         
         if not EMERGENT_LLM_KEY:
             raise HTTPException(status_code=500, detail="LLM API key not configured")
@@ -1037,7 +1088,7 @@ async def get_sanity_homepage(language: str = "en"):
 @api_router.get("/sanity/article/{slug}")
 async def get_sanity_article(slug: str):
     """Fetch a single article by slug from Sanity"""
-    query = f'*[_type == "article" && slug.current == "{slug}"][0] {{_id, title, "slug": slug.current, language, standfirst, body, category, region, sourceUrl, sourceFeed, isAiGenerated, status, publishedAt, createdAt, "featuredImage": featuredImage.asset->url}}'
+    query = f'*[_type == "article" && slug.current == "{slug}"][0] {{_id, title, "slug": slug.current, language, standfirst, body, category, region, sourceUrl, sourceFeed, isAiGenerated, aiDisclosure, status, publishedAt, createdAt, "featuredImage": featuredImage.asset->url, "authorName": author->name, "authorVerified": author->isVerified, "authorVerificationLevel": author->verificationLevel}}'
     article = await _sanity_query(query)
     return {"article": article}
 
@@ -1537,7 +1588,7 @@ app.include_router(api_router)
 # ============================================
 # TTS (Text-to-Speech) ENDPOINT
 # ============================================
-from emergentintegrations.llm.openai import OpenAITextToSpeech
+# OpenAITextToSpeech defined at top of file
 from fastapi.responses import Response
 import base64
 
