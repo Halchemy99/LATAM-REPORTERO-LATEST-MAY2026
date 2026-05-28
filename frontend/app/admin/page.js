@@ -40,7 +40,7 @@ export default function AdminPage() {
       <main className="flex-1 py-12">
         <div className="container max-w-4xl">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+            <h1 className="text-4xl font-bold mb-3" >
               Content Management
             </h1>
             <p className="text-muted-foreground text-lg">
@@ -53,7 +53,7 @@ export default function AdminPage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-[#6110ff]" />
+                  <FileText className="h-5 w-5 text-[#6111ff]" />
                   Sanity Studio
                 </CardTitle>
                 <CardDescription>
@@ -72,7 +72,7 @@ export default function AdminPage() {
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
-                  <Button className="w-full bg-[#6110ff] hover:bg-[#4a0dd6]">
+                  <Button className="w-full bg-[#6111ff] hover:bg-[#4a0dd6]">
                     Open Sanity Studio
                     <ExternalLink className="h-4 w-4 ml-2" />
                   </Button>
@@ -84,7 +84,7 @@ export default function AdminPage() {
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-[#6110ff]" />
+                  <Settings className="h-5 w-5 text-[#6111ff]" />
                   Make.com Automation
                 </CardTitle>
                 <CardDescription>
@@ -103,7 +103,7 @@ export default function AdminPage() {
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
-                  <Button variant="outline" className="w-full border-[#6110ff] text-[#6110ff] hover:bg-[#6110ff]/5">
+                  <Button variant="outline" className="w-full border-[#6111ff] text-[#6111ff] hover:bg-[#6111ff]/5">
                     Open Make.com
                     <ExternalLink className="h-4 w-4 ml-2" />
                   </Button>
@@ -116,7 +116,7 @@ export default function AdminPage() {
           <Card className="mt-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-[#6110ff]" />
+                <BarChart3 className="h-5 w-5 text-[#6111ff]" />
                 Quick Links
               </CardTitle>
             </CardHeader>

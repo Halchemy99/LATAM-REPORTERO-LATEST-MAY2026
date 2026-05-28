@@ -163,7 +163,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <div className="text-center mt-6">
-                <Link href="/solutions">
+                <Link href="/investigations">
                   <Button variant="outline">View All Articles</Button>
                 </Link>
               </div>
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                     <Bookmark className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                     <h3 className="text-lg font-semibold mb-2">No Bookmarks Yet</h3>
                     <p className="text-muted-foreground mb-4">Save articles to read later by clicking the bookmark icon.</p>
-                    <Link href="/solutions">
+                    <Link href="/investigations">
                       <Button>Explore Articles</Button>
                     </Link>
                   </CardContent>

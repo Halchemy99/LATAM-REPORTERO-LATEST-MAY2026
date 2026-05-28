@@ -178,7 +178,7 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 onClick={() => handleToggle('ai')}
                 className={`px-3 h-7 rounded-none text-xs font-mono uppercase tracking-wider ${
                   mode === 'ai' 
-                    ? 'bg-[#6110ff] text-white hover:bg-[#5a2fc2]' 
+                    ? 'bg-[#6111ff] text-white hover:bg-[#5a2fc2]' 
                     : 'hover:bg-[#1a1a1a]/10 text-[#666666]'
                 }`}
                 data-testid="content-mode-ai"
@@ -209,7 +209,7 @@ export default function ContentModeToggle({ isSubscribed, userRole }) {
                 <User className="h-3 w-3 mr-1" />
                 Human
                 {!canViewHuman && (
-                  <Lock className="h-2.5 w-2.5 absolute -top-0.5 -right-0.5 text-[#6110ff]" />
+                  <Lock className="h-2.5 w-2.5 absolute -top-0.5 -right-0.5 text-[#6111ff]" />
                 )}
               </Button>
             </TooltipTrigger>

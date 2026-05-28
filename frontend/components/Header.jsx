@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import GlobalSearchBar from '@/components/GlobalSearchBar';
 import {
   Menu,
   User,
@@ -21,11 +22,6 @@ import {
   Bookmark,
   ChevronDown,
   MapPin,
-  Search,
-  X,
-  Loader2,
-  Mic,
-  MicOff,
   ArrowRight,
 } from 'lucide-react';
 
@@ -61,22 +57,15 @@ const REGIONS = {
 
 const NAV_ITEMS = [
   { href: '/', label: 'Briefs' },
-  { href: '/solutions?type=deep-dive', label: 'Deep Dives' },
+  { href: '/investigations', label: 'Deep Dives' },
   { href: '/community', label: 'Community' },
-  { href: '/transparency', label: 'About' },
+  { href: '/about', label: 'About' },
 ];
 
-export default function Header() {
+export default function Header({ showSearch = true }) {
   const { locale } = useTranslation();
   const { user, role, logout } = useUserRole();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [results, setResults] = useState(null);
-  const inputRef = useRef(null);
-  const searchWrapRef = useRef(null);
   const { token } = useUserRole();
 
   const handleLogout = () => {
@@ -84,131 +73,20 @@ export default function Header() {
     window.location.href = '/';
   };
 
-  // Close search results / dropdown on outside click
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target)) {
-        setResults(null);
-        setSearchOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  // Autofocus when search opens
-  useEffect(() => {
-    if (searchOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  const placeholders = {
-    en: 'Search briefs, deep dives, regions…',
-    es: 'Buscar boletines, reportajes, regiones…',
-    pt: 'Buscar boletins, reportagens, regiões…',
-  };
-
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    setIsProcessing(true);
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const resp = await fetch(`${baseUrl}/api/ai-search`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ query }),
-      });
-      if (resp.ok) setResults(await resp.json());
-    } catch (err) {
-      console.error('Search error:', err);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSearch();
-    if (e.key === 'Escape') {
-      setResults(null);
-      setSearchOpen(false);
-    }
-  };
-
-  const startVoiceInput = async () => {
-    if (!navigator.mediaDevices?.getUserMedia) return;
-    try {
-      setIsListening(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      const audioChunks = [];
-
-      mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        setIsListening(false);
-        setIsProcessing(true);
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.webm');
-        try {
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
-          const resp = await fetch(`${baseUrl}/api/transcribe`, {
-            method: 'POST',
-            body: formData,
-          });
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data.text) {
-              setQuery(data.text);
-              const searchResp = await fetch(`${baseUrl}/api/ai-search`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: data.text }),
-              });
-              if (searchResp.ok) setResults(await searchResp.json());
-            }
-          }
-        } catch (err) {
-          console.error('Voice error:', err);
-        } finally {
-          setIsProcessing(false);
-        }
-        stream.getTracks().forEach((t) => t.stop());
-      };
-
-      mediaRecorder.start();
-      setTimeout(() => {
-        if (mediaRecorder.state === 'recording') mediaRecorder.stop();
-      }, 5000);
-    } catch (err) {
-      setIsListening(false);
-    }
-  };
-
   return (
     <header
-      className="sticky top-0 z-50 w-full bg-[#F7F5F2]/95 backdrop-blur-md border-b border-[#1a1a1a]/10"
+      className="sticky top-0 z-50 w-full bg-[#F9F6F6]/95 backdrop-blur-md border-b border-[#1a1a1a]/10"
       data-testid="header"
     >
       <div className="container">
         <div className="flex h-14 lg:h-16 items-center justify-between gap-6">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 group flex-shrink-0"
-            data-testid="logo-link"
-          >
-            <span
-              className="text-xl lg:text-2xl font-bold tracking-tight text-[#1a1a1a]"
-              style={{ fontFamily: 'Cormorant Garamond, serif' }}
-            >
-              LATAM<span className="text-[#6110ff]">.</span>
-            </span>
-            <span className="hidden md:inline text-[10px] font-mono uppercase tracking-[0.2em] text-[#666666] border-l border-[#1a1a1a]/15 pl-2">
-              Reportero
-            </span>
+          <Link href="/" className="flex-shrink-0" data-testid="logo-link">
+            <img
+              src="/brand/logo-purple.png"
+              alt="LATAM Reportero"
+              className="h-9 w-auto"
+            />
           </Link>
 
           {/* Primary Nav */}
@@ -219,7 +97,7 @@ export default function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6110ff] transition-colors px-3 py-2"
+                  className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6111ff] transition-colors px-3 py-2"
                   data-testid="nav-regions"
                 >
                   <MapPin className="h-3 w-3" />
@@ -241,7 +119,7 @@ export default function Header() {
                         <DropdownMenuItem key={country.slug} asChild>
                           <Link
                             href={`/region/${country.slug}`}
-                            className="text-xs text-[#1a1a1a] hover:text-[#6110ff] cursor-pointer py-1"
+                            className="text-xs text-[#1a1a1a] hover:text-[#6111ff] cursor-pointer py-1"
                           >
                             {country.name}
                           </Link>
@@ -257,7 +135,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6110ff] transition-colors px-3 py-2"
+                className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6111ff] transition-colors px-3 py-2"
                 data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
               >
                 {item.label}
@@ -267,132 +145,13 @@ export default function Header() {
 
           {/* Right cluster */}
           <div className="flex items-center gap-1 flex-shrink-0">
-            {/* Search icon → expands inline */}
-            <div className="relative" ref={searchWrapRef}>
-              <button
-                onClick={() => setSearchOpen((v) => !v)}
-                className="p-2 text-[#1a1a1a] hover:text-[#6110ff] transition-colors"
-                aria-label="Search"
-                data-testid="search-icon-btn"
-              >
-                <Search className="h-4 w-4" />
-              </button>
-
-              {searchOpen && (
-                <div
-                  className="absolute right-0 top-full mt-2 w-[92vw] sm:w-[420px] bg-white border border-[#1a1a1a]/10 shadow-lg z-50"
-                  data-testid="search-panel"
-                >
-                  <div className="flex items-center gap-2 px-3 py-2.5 border-b border-[#1a1a1a]/10">
-                    <Search className="h-3.5 w-3.5 text-[#666666]" />
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={placeholders[locale] || placeholders.en}
-                      className="flex-1 bg-transparent text-sm text-[#1a1a1a] placeholder:text-[#666666]/70 focus:outline-none"
-                      data-testid="search-input"
-                    />
-                    {isProcessing && (
-                      <Loader2 className="h-3.5 w-3.5 text-[#6110ff] animate-spin" />
-                    )}
-                    {query && !isProcessing && (
-                      <button
-                        onClick={() => {
-                          setQuery('');
-                          setResults(null);
-                        }}
-                        className="text-[#666666] hover:text-[#1a1a1a]"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    <button
-                      onClick={
-                        isListening ? () => setIsListening(false) : startVoiceInput
-                      }
-                      disabled={isProcessing}
-                      className={`p-1 rounded-sm transition-colors ${
-                        isListening
-                          ? 'bg-[#6110ff] text-white'
-                          : 'text-[#666666] hover:text-[#1a1a1a]'
-                      }`}
-                      title="Voice search"
-                      data-testid="voice-search-btn"
-                    >
-                      {isListening ? (
-                        <MicOff className="h-3.5 w-3.5" />
-                      ) : (
-                        <Mic className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  </div>
-                  <div className="px-3 py-2 flex items-center justify-between bg-[#F7F5F2]/60">
-                    <span className="text-[9px] font-mono uppercase tracking-[0.15em] text-[#666666]">
-                      Press Enter to search
-                    </span>
-                    <button
-                      onClick={handleSearch}
-                      disabled={!query.trim() || isProcessing}
-                      className="text-[10px] font-mono uppercase tracking-wider text-[#6110ff] hover:underline disabled:opacity-40"
-                      data-testid="search-submit-btn"
-                    >
-                      Search
-                    </button>
-                  </div>
-                  {results && (
-                    <div className="border-t border-[#1a1a1a]/5 max-h-[60vh] overflow-y-auto">
-                      {results.articles?.length > 0 ? (
-                        <div className="p-3 space-y-3">
-                          {results.answer && (
-                            <p className="text-xs text-[#666666] leading-relaxed line-clamp-4">
-                              {results.answer}
-                            </p>
-                          )}
-                          <div className="space-y-2">
-                            {results.articles.slice(0, 5).map((article) => (
-                              <Link
-                                key={article.id || article.slug}
-                                href={`/article/${article.slug}`}
-                                onClick={() => {
-                                  setResults(null);
-                                  setSearchOpen(false);
-                                }}
-                                className="flex items-start gap-2 p-2 hover:bg-[#6110ff]/5 transition-colors group"
-                              >
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-[9px] font-mono uppercase text-[#6110ff] mb-0.5">
-                                    {article.category}
-                                  </p>
-                                  <h4 className="text-xs font-medium text-[#1a1a1a] line-clamp-2 group-hover:text-[#6110ff]">
-                                    {article.title}
-                                  </h4>
-                                </div>
-                                <ArrowRight className="h-3 w-3 text-[#1a1a1a]/20 group-hover:text-[#6110ff] flex-shrink-0 mt-1" />
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="p-3 text-xs text-[#666666]">
-                          No results for &ldquo;{query}&rdquo;
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
             <LanguageSelector />
 
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="flex items-center gap-1 text-xs text-[#1a1a1a] hover:text-[#6110ff] px-2 py-2"
+                    className="flex items-center gap-1 text-xs text-[#1a1a1a] hover:text-[#6111ff] px-2 py-2"
                     data-testid="user-menu-btn"
                   >
                     <User className="h-4 w-4" />
@@ -424,7 +183,7 @@ export default function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="cursor-pointer text-[#6110ff] text-xs"
+                    className="cursor-pointer text-[#6111ff] text-xs"
                   >
                     <LogOut className="mr-2 h-3.5 w-3.5" />
                     Sign Out
@@ -435,19 +194,19 @@ export default function Header() {
               <div className="hidden sm:flex items-center gap-1">
                 <Link href="/auth/login">
                   <button
-                    className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6110ff] transition-colors px-3 py-2"
+                    className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6111ff] transition-colors px-3 py-2"
                     data-testid="login-btn"
                   >
                     Log In
                   </button>
                 </Link>
-                <Link href="/auth/signup">
+                <Link href="/newsletter">
                   <Button
                     size="sm"
-                    className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none h-8 px-3 text-[11px] font-medium uppercase tracking-[0.1em]"
-                    data-testid="signup-btn"
+                    className="bg-[#1a1a1a] hover:bg-[#6111ff] text-white rounded-none h-8 px-4 text-[11px] font-medium uppercase tracking-[0.1em] transition-colors"
+                    data-testid="newsletter-btn"
                   >
-                    Subscribe
+                    Free Newsletter →
                   </Button>
                 </Link>
               </div>
@@ -457,7 +216,7 @@ export default function Header() {
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="lg:hidden">
                 <button
-                  className="p-2 text-[#1a1a1a] hover:text-[#6110ff] transition-colors"
+                  className="p-2 text-[#1a1a1a] hover:text-[#6111ff] transition-colors"
                   aria-label="Menu"
                   data-testid="mobile-menu-btn"
                 >
@@ -466,15 +225,14 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-[280px] bg-[#F7F5F2] p-0"
+                className="w-[280px] bg-[#F9F6F6] p-0"
               >
                 <div className="p-4 border-b border-[#1a1a1a]/10">
-                  <span
-                    className="text-lg font-bold text-[#1a1a1a]"
-                    style={{ fontFamily: 'Cormorant Garamond, serif' }}
-                  >
-                    LATAM<span className="text-[#6110ff]">.</span>
-                  </span>
+                  <img
+                    src="/brand/logo-purple.png"
+                    alt="LATAM Reportero"
+                    className="h-7 w-auto"
+                  />
                 </div>
                 <nav className="p-4 space-y-1">
                   <p className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-2 px-2">
@@ -485,7 +243,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block px-2 py-2 text-sm text-[#1a1a1a] hover:bg-[#6110ff]/5 hover:text-[#6110ff]"
+                      className="block px-2 py-2 text-sm text-[#1a1a1a] hover:bg-[#6111ff]/5 hover:text-[#6111ff]"
                     >
                       {item.label}
                     </Link>
@@ -505,11 +263,11 @@ export default function Header() {
                       </Button>
                     </Link>
                     <Link
-                      href="/auth/signup"
+                      href="/newsletter"
                       onClick={() => setMobileOpen(false)}
                     >
-                      <Button className="w-full rounded-none bg-[#6110ff] hover:bg-[#4a0dd6] text-sm">
-                        Subscribe
+                      <Button className="w-full rounded-none bg-[#1a1a1a] hover:bg-[#6111ff] text-sm transition-colors">
+                        Free Newsletter →
                       </Button>
                     </Link>
                   </div>
@@ -519,6 +277,8 @@ export default function Header() {
           </div>
         </div>
       </div>
+      {/* AI Search bar — shown on all pages except homepage */}
+      {showSearch && <GlobalSearchBar locale={locale} />}
     </header>
   );
 }

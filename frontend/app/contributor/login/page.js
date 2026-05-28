@@ -158,7 +158,7 @@ export default function ContributorLoginPage() {
                   <div>
                     <h4 className="font-medium">Publish Your Stories</h4>
                     <p className="text-sm text-muted-foreground">
-                      Share solutions-oriented journalism with our growing audience
+                      Share original reporting with our growing audience
                     </p>
                   </div>
                 </div>

@@ -48,7 +48,7 @@ export function SocialBar() {
     <div className="bg-black text-white py-1.5">
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-1 text-xs">
-          <Play className="h-3 w-3 text-[#6110ff]" />
+          <Play className="h-3 w-3 text-[#6111ff]" />
           <span className="text-white/70">Watch the latest:</span>
         </div>
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export function SocialBar() {
             href={SOCIAL_LINKS.youtube} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs hover:text-[#6110ff] transition-colors"
+            className="flex items-center gap-1.5 text-xs hover:text-[#6111ff] transition-colors"
           >
             <YouTubeIcon className="h-4 w-4" />
             <span className="hidden sm:inline">YouTube</span>
@@ -65,7 +65,7 @@ export function SocialBar() {
             href={SOCIAL_LINKS.tiktok} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs hover:text-[#6110ff] transition-colors"
+            className="flex items-center gap-1.5 text-xs hover:text-[#6111ff] transition-colors"
           >
             <TikTokIcon className="h-4 w-4" />
             <span className="hidden sm:inline">TikTok</span>
@@ -74,7 +74,7 @@ export function SocialBar() {
             href={SOCIAL_LINKS.instagram} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs hover:text-[#6110ff] transition-colors"
+            className="flex items-center gap-1.5 text-xs hover:text-[#6111ff] transition-colors"
           >
             <InstagramIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Instagram</span>
@@ -83,7 +83,7 @@ export function SocialBar() {
             href={SOCIAL_LINKS.linkedin} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs hover:text-[#6110ff] transition-colors"
+            className="flex items-center gap-1.5 text-xs hover:text-[#6111ff] transition-colors"
           >
             <LinkedInIcon className="h-4 w-4" />
             <span className="hidden sm:inline">LinkedIn</span>
@@ -118,7 +118,7 @@ export function VideoCard({ platform, title, thumbnail, videoUrl, views, date })
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#6110ff] to-[#600fff] flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-[#6111ff] to-[#600fff] flex items-center justify-center">
             <PlatformIcon className="h-12 w-12 text-white/50" />
           </div>
         )}
@@ -126,7 +126,7 @@ export function VideoCard({ platform, title, thumbnail, videoUrl, views, date })
         {/* Play overlay */}
         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
-            <Play className="h-6 w-6 text-[#6110ff] ml-1" />
+            <Play className="h-6 w-6 text-[#6111ff] ml-1" />
           </div>
         </div>
         
@@ -138,7 +138,7 @@ export function VideoCard({ platform, title, thumbnail, videoUrl, views, date })
       </div>
       
       <div className="mt-2">
-        <h4 className="text-sm font-medium line-clamp-2 group-hover:text-[#6110ff] transition-colors">
+        <h4 className="text-sm font-medium line-clamp-2 group-hover:text-[#6111ff] transition-colors">
           {title}
         </h4>
         {(views || date) && (
@@ -153,85 +153,222 @@ export function VideoCard({ platform, title, thumbnail, videoUrl, views, date })
   );
 }
 
+// ---------- Cinematic Watch Section — Vice/editorial level ----------
+const PLATFORM_META = {
+  tiktok: {
+    Icon: TikTokIcon,
+    label: 'TikTok',
+    bg: 'bg-[#010101]',
+    href: SOCIAL_LINKS.tiktok,
+  },
+  instagram: {
+    Icon: InstagramIcon,
+    label: 'Reels',
+    bg: 'bg-gradient-to-br from-purple-700 to-pink-500',
+    href: SOCIAL_LINKS.instagram,
+  },
+  youtube: {
+    Icon: YouTubeIcon,
+    label: 'Shorts',
+    bg: 'bg-[#FF0000]',
+    href: SOCIAL_LINKS.youtube,
+  },
+};
+
+function WatchCard({ platform, title, thumbnail, videoUrl, reporter, verified }) {
+  const meta = PLATFORM_META[platform] || PLATFORM_META.tiktok;
+  const Icon = meta.Icon;
+
+  return (
+    <a
+      href={videoUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block relative"
+      data-testid={`watch-card-${platform}`}
+    >
+      {/* Portrait frame */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#111]">
+        {thumbnail ? (
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 brightness-75 group-hover:brightness-90"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-b from-[#1a1a1a] to-[#000]" />
+        )}
+
+        {/* Bottom gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+        {/* Platform chip — top left */}
+        <div className={`absolute top-3 left-3 ${meta.bg} text-white flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider`}>
+          <Icon className="h-2.5 w-2.5" />
+          {meta.label}
+        </div>
+
+        {/* Play button — center, shows on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+            <Play className="h-5 w-5 text-white ml-0.5" />
+          </div>
+        </div>
+
+        {/* Text — pinned to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="text-white text-sm font-semibold leading-snug mb-1.5 line-clamp-3"
+            style={{ fontSize: '0.95rem' }}>
+            {title}
+          </p>
+          {reporter && (
+            <div className="flex items-center gap-1.5">
+              <span className="text-white/55 text-[10px] font-mono uppercase tracking-wider">
+                {reporter}
+              </span>
+              {verified && (
+                <span title="ID Verified Journalist"
+                  className="inline-flex items-center justify-center h-3 w-3 rounded-full bg-[#6111ff] flex-shrink-0">
+                  <svg viewBox="0 0 10 10" fill="none" className="w-full h-full p-[1.5px]">
+                    <polyline points="2,5.5 4,7.5 8,3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </a>
+  );
+}
+
 // Video Highlights Section - For homepage
 export function VideoHighlightsSection() {
-  // Sample video data - in production, fetch from YouTube/TikTok APIs
   const videos = [
     {
-      platform: 'youtube',
-      title: 'Breaking: Major climate agreement reached in Brazil',
-      thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.youtube,
-      views: '12K',
-      date: '2 days ago'
-    },
-    {
       platform: 'tiktok',
-      title: 'What you need to know about Mexico\'s new policy',
-      thumbnail: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=700&fit=crop',
+      title: 'Inside the Amazon: the deforestation fight no one is covering',
+      thumbnail: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=700&fit=crop',
       videoUrl: SOCIAL_LINKS.tiktok,
-      views: '45K',
-      date: '1 day ago'
+      reporter: 'Ana Lima',
+      verified: true,
     },
     {
       platform: 'instagram',
-      title: 'Inside the Amazon: Solutions for deforestation',
-      thumbnail: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=700&fit=crop',
+      title: "Argentina's economy in 60 seconds. What you need to know now",
+      thumbnail: 'https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=400&h=700&fit=crop',
       videoUrl: SOCIAL_LINKS.instagram,
-      views: '8.5K',
-      date: '3 days ago'
+      reporter: 'Matías Romero',
+      verified: true,
+    },
+    {
+      platform: 'tiktok',
+      title: "Mexico City's water crisis is getting worse. Here's why.",
+      thumbnail: 'https://images.unsplash.com/photo-1568632234180-0e6c08735d01?w=400&h=700&fit=crop',
+      videoUrl: SOCIAL_LINKS.tiktok,
+      reporter: 'Carlos Vega',
+      verified: false,
     },
     {
       platform: 'youtube',
-      title: 'Argentina economy explained in 60 seconds',
-      thumbnail: 'https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=400&h=700&fit=crop',
+      title: "Colombia's peace process. One reporter on the ground",
+      thumbnail: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&h=700&fit=crop',
       videoUrl: SOCIAL_LINKS.youtube,
-      views: '23K',
-      date: '5 days ago'
+      reporter: 'Valentina Cruz',
+      verified: true,
+    },
+    {
+      platform: 'tiktok',
+      title: "Venezuela. What's actually happening on the streets right now",
+      thumbnail: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=700&fit=crop',
+      videoUrl: SOCIAL_LINKS.tiktok,
+      reporter: 'Pedro Díaz',
+      verified: true,
+    },
+    {
+      platform: 'instagram',
+      title: "Chile's lithium boom and who isn't benefiting",
+      thumbnail: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=700&fit=crop',
+      videoUrl: SOCIAL_LINKS.instagram,
+      reporter: 'Sofía Herrera',
+      verified: true,
+    },
+    {
+      platform: 'youtube',
+      title: 'Peru: election chaos explained simply',
+      thumbnail: 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=400&h=700&fit=crop',
+      videoUrl: SOCIAL_LINKS.youtube,
+      reporter: 'José Quispe',
+      verified: false,
+    },
+    {
+      platform: 'tiktok',
+      title: 'Brazil election: what the numbers really show',
+      thumbnail: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=400&h=700&fit=crop',
+      videoUrl: SOCIAL_LINKS.tiktok,
+      reporter: 'Camila Santos',
+      verified: true,
     },
   ];
 
   return (
-    <section className="py-8 border-t border-b border-gray-200">
+    <section className="bg-[#0d0d0d] py-10 lg:py-14" data-testid="watch-section">
       <div className="container">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <div className="w-8 h-8 rounded-full bg-[#6110ff] flex items-center justify-center">
-                <Play className="h-4 w-4 text-white" />
-              </div>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-                Watch Now
-              </h2>
-              <p className="text-xs text-gray-500">Latest videos from our social channels</p>
-            </div>
+        {/* Header row */}
+        <div className="flex items-end justify-between mb-7 pb-4 border-b border-white/10">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6111ff] mb-1.5">
+              Story-driven · 60 seconds
+            </p>
+            <h2 className="text-2xl lg:text-3xl font-semibold text-white leading-none"
+              >
+              Watch
+            </h2>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <YouTubeIcon className="h-5 w-5 text-red-600" />
-            </a>
-            <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <TikTokIcon className="h-5 w-5" />
-            </a>
-            <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <InstagramIcon className="h-5 w-5 text-pink-600" />
-            </a>
-            <Link href="/watch">
-              <Button variant="outline" size="sm" className="ml-2 border-[#6110ff] text-[#6110ff] hover:bg-[#6110ff] hover:text-white">
-                View All
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </Button>
+          <div className="flex items-center gap-3">
+            {[
+              { Icon: TikTokIcon, href: SOCIAL_LINKS.tiktok, label: 'TikTok' },
+              { Icon: InstagramIcon, href: SOCIAL_LINKS.instagram, label: 'Reels' },
+              { Icon: YouTubeIcon, href: SOCIAL_LINKS.youtube, label: 'Shorts' },
+            ].map(({ Icon, href, label }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-white/40 hover:text-white transition-colors text-[11px] font-mono uppercase tracking-wider">
+                <Icon className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{label}</span>
+              </a>
+            ))}
+            <Link href="/watch"
+              className="hidden md:flex items-center gap-1 text-[11px] font-mono uppercase tracking-wider text-[#6111ff] hover:text-white transition-colors ml-2">
+              All videos <ExternalLink className="h-3 w-3" />
             </Link>
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {videos.map((video, idx) => (
-            <VideoCard key={idx} {...video} />
+
+        {/* Cards grid — 4 wide on desktop, 2 rows of 4 = 8 */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 lg:gap-3">
+          {videos.map((v, i) => (
+            <WatchCard key={i} {...v} />
           ))}
+        </div>
+
+        {/* Footer follow CTA */}
+        <div className="mt-7 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/35 font-mono uppercase tracking-wider">
+            Follow @latamreportero for daily video journalism
+          </p>
+          <div className="flex items-center gap-3">
+            {[
+              { Icon: TikTokIcon, href: SOCIAL_LINKS.tiktok, label: 'Follow on TikTok' },
+              { Icon: InstagramIcon, href: SOCIAL_LINKS.instagram, label: 'Follow on Instagram' },
+              { Icon: YouTubeIcon, href: SOCIAL_LINKS.youtube, label: 'Subscribe on YouTube' },
+            ].map(({ Icon, href, label }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-white/15 text-white/60 hover:border-white/40 hover:text-white transition-all text-[10px] font-mono uppercase tracking-wider">
+                <Icon className="h-3 w-3" />
+                <span className="hidden sm:inline">{label.split(' on ')[1] || label.split(' ')[2]}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -243,7 +380,7 @@ export function SocialSidebarWidget() {
   return (
     <div className="bg-black text-white rounded-lg p-4">
       <div className="flex items-center gap-2 mb-4">
-        <Play className="h-5 w-5 text-[#6110ff]" />
+        <Play className="h-5 w-5 text-[#6111ff]" />
         <h3 className="font-bold text-sm uppercase tracking-wider">Watch & Follow</h3>
       </div>
       
@@ -304,7 +441,7 @@ export function SocialSidebarWidget() {
 // Follow CTA Banner - Can be used between sections
 export function FollowBanner() {
   return (
-    <div className="bg-gradient-to-r from-[#6110ff] to-[#600fff] text-white py-4">
+    <div className="bg-gradient-to-r from-[#6111ff] to-[#600fff] text-white py-4">
       <div className="container flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Play className="h-6 w-6" />

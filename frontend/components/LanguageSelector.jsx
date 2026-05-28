@@ -122,7 +122,7 @@ export default function LanguageSelector({ variant = 'dropdown' }) {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                {selectedIndigenous?.nativeName} — Coming Soon
+                {selectedIndigenous?.nativeName}. Coming Soon
               </DialogTitle>
               <DialogDescription className="pt-4 space-y-4">
                 <p>
@@ -221,7 +221,7 @@ export default function LanguageSelector({ variant = 'dropdown' }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              {selectedIndigenous?.nativeName} — Coming Soon
+              {selectedIndigenous?.nativeName}. Coming Soon
             </DialogTitle>
             <DialogDescription className="pt-4 space-y-4">
               <p>

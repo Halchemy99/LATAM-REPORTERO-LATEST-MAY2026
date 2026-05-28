@@ -103,54 +103,53 @@ export default function Newsletter({ variant = 'default', className = '' }) {
   // Hero variant - large, prominent
   if (variant === 'hero') {
     return (
-      <div className={`text-center text-white ${className}`} style={{ background: 'linear-gradient(135deg, #6111ff 0%, #8c52ff 100%)' }} data-testid="newsletter-hero">
-        <div className="max-w-2xl mx-auto px-6 py-16">
-          <Mail className="h-12 w-12 mx-auto mb-6 opacity-80" />
-          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Raleway, sans-serif' }}>
-            Stay Informed
+      <div className={`bg-[#1a1a1a] text-white ${className}`} data-testid="newsletter-hero">
+        <div className="max-w-2xl mx-auto px-6 py-14 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#6111ff] text-white text-[10px] font-mono uppercase tracking-[0.15em] mb-6">
+            <Mail className="h-3 w-3" />
+            Always Free · No Paywall
+          </div>
+          <h2 className="text-3xl md:text-4xl font-semibold mb-3 leading-tight" >
+            Latin America in your inbox,<br />every morning.
           </h2>
-          <p className="text-lg mb-8 opacity-90" style={{ fontFamily: 'Source Serif 4, serif' }}>
-            Get solutions-oriented journalism delivered weekly. 
-            Stories that matter for Latin America.
+          <p className="text-base mb-8 text-white/65 leading-relaxed" style={{ fontFamily: 'Source Serif 4, serif' }}>
+            The Morning Brief + weekly Press Review. Weekday mornings.
+            No account required. Cancel anytime.
           </p>
-          
+
           {isSubscribed ? (
-            <div className="flex items-center justify-center gap-3 text-lg">
-              <CheckCircle className="h-6 w-6" />
-              <span>Thanks for subscribing! Check your inbox.</span>
+            <div className="flex items-center justify-center gap-3 text-base">
+              <CheckCircle className="h-5 w-5 text-[#6111ff]" />
+              <span>You&apos;re in. First brief arrives tomorrow morning.</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
               <Input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 h-12"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-11 rounded-none focus-visible:ring-0 focus-visible:border-white/50"
                 data-testid="newsletter-email-hero"
               />
-              <Button 
-                type="submit" 
-                size="lg"
+              <Button
+                type="submit"
                 disabled={isLoading}
-                className="whitespace-nowrap h-12 bg-white text-[#6111ff] hover:bg-white/90"
+                className="whitespace-nowrap h-11 rounded-none bg-[#6111ff] hover:bg-[#4a0dd6] text-white text-[11px] font-mono uppercase tracking-wider px-6"
                 data-testid="newsletter-submit-hero"
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <>
-                    Subscribe
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
+                  <>Get it free <ArrowRight className="ml-1.5 h-4 w-4" /></>
                 )}
               </Button>
             </form>
           )}
-          
-          <p className="text-sm mt-4 opacity-70">
-            Join 10,000+ readers. Unsubscribe anytime.
+
+          <p className="text-[11px] mt-4 text-white/35 font-mono uppercase tracking-wider">
+            Read by editors, founders & analysts across LATAM
           </p>
         </div>
       </div>
@@ -166,7 +165,7 @@ export default function Newsletter({ variant = 'default', className = '' }) {
           Subscribe to our newsletter
         </h3>
         <p className="text-muted-foreground mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
-          Get the latest solutions journalism from Latin America delivered to your inbox every week.
+          Latin America, explained. Free in your inbox every weekday morning.
         </p>
         
         {isSubscribed ? (

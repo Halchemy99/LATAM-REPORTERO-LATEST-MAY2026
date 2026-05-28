@@ -57,7 +57,7 @@ export default function SignupPage() {
 
   if (isLoading || user) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+      <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-[#666666]">Loading...</div>
@@ -68,16 +68,16 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+    <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
       
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" >
               Join LATAM Reportero
             </h1>
-            <p className="text-sm text-[#666666]">Create your account to access solutions journalism</p>
+            <p className="text-sm text-[#666666]">Create your account to join the LATAM Reportero community</p>
           </div>
 
           <div className="bg-white border border-[#1a1a1a]/10 p-6">
@@ -167,13 +167,13 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full rounded-none bg-[#6110ff] hover:bg-[#4a0dd6] h-10 text-white" disabled={loading} data-testid="signup-submit">
+              <Button type="submit" className="w-full rounded-none bg-[#6111ff] hover:bg-[#4a0dd6] h-10 text-white" disabled={loading} data-testid="signup-submit">
                 {loading ? 'Creating account...' : 'Create Account'}
               </Button>
 
               <p className="text-center text-sm text-[#666666]">
                 Already have an account?{' '}
-                <Link href="/auth/login" className="text-[#6110ff] hover:underline font-medium">
+                <Link href="/auth/login" className="text-[#6111ff] hover:underline font-medium">
                   Sign in
                 </Link>
               </p>

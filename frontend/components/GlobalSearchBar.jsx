@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2, Mic, MicOff, Search, X, ArrowRight } from 'lucide-react';
+import { Loader2, Mic, MicOff, Search, X, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function GlobalSearchBar({ locale = 'en' }) {
   const [query, setQuery] = useState('');
@@ -28,9 +28,9 @@ export default function GlobalSearchBar({ locale = 'en' }) {
   }, []);
 
   const placeholders = {
-    en: "Search stories, regions, topics...",
-    es: "Buscar historias, regiones, temas...",
-    pt: "Pesquisar histórias, regiões, tópicos..."
+    en: "Ask anything. What's happening in Colombia? Who is covering Brazil's economy?",
+    es: "Pregunta lo que quieras. ¿Qué pasa en Colombia? ¿Quién cubre la economía de Brasil?",
+    pt: "Pergunte qualquer coisa. O que acontece na Colômbia? Quem cubre a economia do Brasil?"
   };
 
   // Voice recognition using OpenAI Whisper
@@ -152,11 +152,15 @@ export default function GlobalSearchBar({ locale = 'en' }) {
   };
 
   return (
-    <div className="w-full bg-[#1a1a1a] border-b border-[#1a1a1a]" data-testid="global-search-bar">
+    <div className="w-full bg-[#1a1a1a] border-b border-white/5" data-testid="global-search-bar">
       <div className="container">
         <div className="flex items-center h-10 gap-2">
-          {/* Search Icon */}
-          <Search className="h-3.5 w-3.5 text-white/50 flex-shrink-0" />
+          {/* AI badge */}
+          <span className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 bg-[#6111ff]/20 border border-[#6111ff]/30 text-[#8c52ff] text-[9px] font-mono uppercase tracking-wider flex-shrink-0">
+            <Sparkles className="h-2.5 w-2.5" />
+            AI
+          </span>
+          <Search className="sm:hidden h-3.5 w-3.5 text-white/40 flex-shrink-0" />
           
           {/* Input */}
           <input
@@ -192,7 +196,7 @@ export default function GlobalSearchBar({ locale = 'en' }) {
             disabled={isProcessing}
             className={`p-1.5 rounded transition-colors ${
               isListening 
-                ? 'bg-[#6110ff] text-white' 
+                ? 'bg-[#6111ff] text-white' 
                 : 'text-white/50 hover:text-white hover:bg-white/10'
             }`}
             title="Voice search"
@@ -205,13 +209,14 @@ export default function GlobalSearchBar({ locale = 'en' }) {
             )}
           </button>
           
-          {/* Search button */}
+          {/* Ask AI button */}
           <button
             onClick={() => handleSearch()}
             disabled={!query.trim() || isProcessing}
-            className="px-3 py-1 text-xs font-mono uppercase tracking-wider text-white/70 hover:text-white transition-colors disabled:opacity-50"
+            className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#8c52ff] hover:text-white transition-colors disabled:opacity-40 whitespace-nowrap"
+            data-testid="global-search-submit"
           >
-            Search
+            Ask AI
           </button>
         </div>
       </div>
@@ -224,10 +229,15 @@ export default function GlobalSearchBar({ locale = 'en' }) {
         >
           <div className="container py-4">
             {results.articles && results.articles.length > 0 ? (
-              <div className="space-y-3">
-                <p className="text-sm text-[#666666]">{results.answer}</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {results.articles.slice(0, 3).map((article) => (
+              <div className="space-y-4">
+                {results.answer && (
+                  <div className="flex gap-3 p-3 bg-[#6111ff]/5 border-l-2 border-[#6111ff]">
+                    <Sparkles className="h-4 w-4 text-[#6111ff] flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-[#1a1a1a] leading-relaxed">{results.answer}</p>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {results.articles.slice(0, 6).map((article) => (
                     <a
                       key={article.id}
                       href={`/article/${article.slug}`}
@@ -235,27 +245,30 @@ export default function GlobalSearchBar({ locale = 'en' }) {
                       className="flex items-start gap-3 p-3 hover:bg-[#1a1a1a]/5 transition-colors group"
                     >
                       {article.image && (
-                        <img 
-                          src={article.image} 
+                        <img
+                          src={article.image}
                           alt=""
-                          className="w-16 h-12 object-cover flex-shrink-0"
+                          className="w-14 h-10 object-cover flex-shrink-0"
                         />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-mono uppercase text-[#6110ff] mb-1">
+                        <p className="text-[9px] font-mono uppercase text-[#6111ff] mb-0.5 tracking-wider">
                           {article.category}
                         </p>
-                        <h4 className="text-sm font-medium text-[#1a1a1a] line-clamp-2 group-hover:text-[#6110ff]">
+                        <h4 className="text-xs font-medium text-[#1a1a1a] line-clamp-2 group-hover:text-[#6111ff] leading-snug">
                           {article.title}
                         </h4>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-[#1a1a1a]/30 group-hover:text-[#6110ff] flex-shrink-0" />
+                      <ArrowRight className="h-3.5 w-3.5 text-[#1a1a1a]/20 group-hover:text-[#6111ff] flex-shrink-0 mt-1" />
                     </a>
                   ))}
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-[#666666]">No results found for "{query}"</p>
+              <div className="flex items-center gap-2 py-1">
+                <Sparkles className="h-3.5 w-3.5 text-[#6111ff]" />
+                <p className="text-sm text-[#666666]">No results found for &ldquo;{query}&rdquo;</p>
+              </div>
             )}
           </div>
         </div>
@@ -264,7 +277,7 @@ export default function GlobalSearchBar({ locale = 'en' }) {
       {/* Error message */}
       {error && (
         <div className="container">
-          <p className="text-xs text-[#6110ff] py-1">{error}</p>
+          <p className="text-xs text-[#6111ff] py-1">{error}</p>
         </div>
       )}
     </div>

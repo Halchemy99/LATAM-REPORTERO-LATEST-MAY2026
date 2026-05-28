@@ -6,7 +6,7 @@
 
 import { createClient } from '@sanity/client';
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 's5taeh5v';
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
 const apiVersion = '2025-03-01';
 
@@ -108,10 +108,14 @@ export const getArticleBySlugQuery = `
   sourceUrl,
   sourceFeed,
   isAiGenerated,
+  aiDisclosure,
   status,
   publishedAt,
   createdAt,
-  "featuredImage": featuredImage.asset->url
+  "featuredImage": featuredImage.asset->url,
+  "authorName": author->name,
+  "authorVerified": author->isVerified,
+  "authorVerificationLevel": author->verificationLevel
 }
 `;
 

@@ -1,256 +1,220 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import Header from '@/components/Header';
-import GlobalSearchBar from '@/components/GlobalSearchBar';
 import Footer from '@/components/Footer';
-import { 
-  Shield, FileText, Bot, User, Users, Wallet, 
-  ArrowRight, CheckCircle, AlertCircle
+import { Button } from '@/components/ui/button';
+import {
+  Shield,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
+  Mail,
+  FileText,
+  Bot,
+  User,
+  Edit3,
 } from 'lucide-react';
 
 export default function TransparencyPage() {
   return (
-    <div className="min-h-screen bg-[#F7F5F2]">
+    <div className="min-h-screen bg-[#F9F6F6]">
       <Header />
-      <GlobalSearchBar />
-      
+
       <main className="container py-12">
         {/* Hero */}
-        <div className="max-w-3xl mb-16">
-          <Badge className="mb-4 bg-[#1a1a1a] text-white rounded-none font-mono text-xs uppercase tracking-wider">
-            Editorial Standards
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-serif font-semibold text-[#1a1a1a] mb-6 leading-tight">
-            Transparency
-          </h1>
-          <p className="text-xl text-[#666666] leading-relaxed">
-            LATAM Reportero is independently funded. No wire copy. No press releases. 
-            Every story tagged <strong>Human</strong>, <strong>AI-Assisted</strong>, or <strong>AI</strong> so 
-            you know exactly what you're reading.
+        <div className="max-w-3xl mb-14">
+          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#6111ff] mb-3">
+            Transparency Report
           </p>
-          <div className="mt-8">
-            <Link href="/transparency/editorial">
-              <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
-                Read our editorial standards
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          <h1
+            className="font-serif text-4xl md:text-5xl font-semibold text-[#1a1a1a] mb-5 leading-tight"
+            
+          >
+            How we operate, and who we answer to.
+          </h1>
+          <p className="text-lg text-[#666666] leading-relaxed">
+            LATAM Reportero is independently owned. We answer to our readers. Not advertisers. Not governments. Not investors. This page explains exactly how we fund our work, how we make editorial decisions, and what we do when we get things wrong.
+          </p>
         </div>
 
-        {/* Content Source Tagging */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-serif font-semibold text-[#1a1a1a] mb-6">
-            How We Tag Content
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Human */}
-            <div className="bg-white border border-[#1a1a1a]/10 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-emerald-100 flex items-center justify-center">
-                  <User className="h-5 w-5 text-emerald-600" />
-                </div>
-                <Badge className="bg-emerald-600 text-white rounded-none font-mono text-xs uppercase">
-                  Human
-                </Badge>
-              </div>
-              <h3 className="font-semibold text-[#1a1a1a] mb-2">Human-Written</h3>
-              <p className="text-sm text-[#666666]">
-                Written entirely by human journalists. Researched, verified, and edited 
-                through our traditional editorial process. Available to subscribers.
-              </p>
-            </div>
-
-            {/* AI-Assisted */}
-            <div className="bg-white border border-[#1a1a1a]/10 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-100 flex items-center justify-center">
-                  <Users className="h-5 w-5 text-amber-600" />
-                </div>
-                <Badge className="bg-amber-600 text-white rounded-none font-mono text-xs uppercase">
-                  AI-Assisted
-                </Badge>
-              </div>
-              <h3 className="font-semibold text-[#1a1a1a] mb-2">AI-Assisted</h3>
-              <p className="text-sm text-[#666666]">
-                Written by human journalists with AI tools for research, translation, 
-                or initial drafts. Final content reviewed and approved by editors.
-              </p>
-            </div>
-
-            {/* AI */}
-            <div className="bg-white border border-[#1a1a1a]/10 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-purple-100 flex items-center justify-center">
-                  <Bot className="h-5 w-5 text-purple-600" />
-                </div>
-                <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-xs uppercase">
-                  AI
-                </Badge>
-              </div>
-              <h3 className="font-semibold text-[#1a1a1a] mb-2">AI-Generated</h3>
-              <p className="text-sm text-[#666666]">
-                Generated by AI from verified news sources. Transformed into our 
-                solutions journalism format. Always cites original sources. Free to read.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* Funding */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-serif font-semibold text-[#1a1a1a] mb-6">
-            Our Funding
+        <section className="mb-14">
+          <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
+            <Shield className="h-5 w-5 text-[#6111ff]" />
+            Funding & Independence
           </h2>
           <div className="bg-white border border-[#1a1a1a]/10 p-8">
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-10">
               <div>
-                <h3 className="font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-[#6110ff]" />
-                  Independence Guaranteed
+                <h3 className="font-semibold text-[#1a1a1a] mb-4 text-sm font-mono uppercase tracking-wider">
+                  How we're funded
                 </h3>
-                <ul className="space-y-3 text-[#666666]">
+                <ul className="space-y-3 text-[#444444] text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>100% reader-funded through subscriptions and donations</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>No corporate ownership or investor pressure</span>
+                    <span>Reader-supported through free newsletter and community memberships</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>No advertising revenue or sponsored content</span>
+                    <span>No corporate ownership or investor equity</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>Editorial decisions made solely by our team</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-amber-500" />
-                  What We Don't Do
-                </h3>
-                <ul className="space-y-3 text-[#666666]">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 font-bold">✕</span>
-                    <span>No wire copy or press release republishing</span>
+                    <span>No advertising revenue or sponsored content. Ever.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-red-500 font-bold">✕</span>
-                    <span>No pay-for-play or sponsored journalism</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 font-bold">✕</span>
-                    <span>No data selling or user tracking for ads</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 font-bold">✕</span>
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                     <span>No political party or government funding</span>
                   </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span>Editorial decisions made solely by our editorial team</span>
+                  </li>
                 </ul>
               </div>
-            </div>
-            <div className="mt-8 pt-8 border-t border-[#1a1a1a]/10 flex flex-col sm:flex-row gap-4">
-              <Link href="/pricing">
-                <Button className="bg-[#1a1a1a] hover:bg-[#160A26] text-white rounded-none gap-2">
-                  <Wallet className="h-4 w-4" />
-                  Support Our Journalism
-                </Button>
-              </Link>
-              <Link href="/transparency/funding">
-                <Button variant="outline" className="rounded-none border-[#1a1a1a]/20 gap-2">
-                  View Financial Details
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+              <div>
+                <h3 className="font-semibold text-[#1a1a1a] mb-4 text-sm font-mono uppercase tracking-wider">
+                  What we never do
+                </h3>
+                <ul className="space-y-3 text-[#444444] text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
+                    <span>Republish wire copy or press releases without original reporting</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
+                    <span>Accept pay-for-play or sponsored journalism</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
+                    <span>Sell user data or track readers for advertising purposes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
+                    <span>Take funding from organisations we cover</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
+                    <span>Suppress or alter coverage under commercial pressure</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Editorial Process */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-serif font-semibold text-[#1a1a1a] mb-6">
-            Our Editorial Process
+        {/* AI disclosure */}
+        <section className="mb-14">
+          <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
+            <Bot className="h-5 w-5 text-[#6111ff]" />
+            AI Disclosure
+          </h2>
+          <div className="bg-white border border-[#1a1a1a]/10 p-8 space-y-5 text-[#444444] text-sm leading-relaxed">
+            <p>
+              We use AI tools in our workflow. We do not use them to replace editorial judgment. Here is exactly what we use AI for, and where we draw the line:
+            </p>
+            <div className="grid md:grid-cols-3 gap-6 pt-2">
+              <div className="border-t-2 border-emerald-500 pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <User className="h-4 w-4 text-emerald-600" />
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-700">Human-written</span>
+                </div>
+                <p className="text-sm text-[#666666]">
+                  All Morning Briefs and Deep Dives are written and edited by human journalists. AI may have been used for research or translation assistance. That&apos;s disclosed in the byline.
+                </p>
+              </div>
+              <div className="border-t-2 border-amber-500 pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Edit3 className="h-4 w-4 text-amber-600" />
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-amber-700">AI-assisted</span>
+                </div>
+                <p className="text-sm text-[#666666]">
+                  Some pieces use AI for initial research aggregation or draft structure, then receive full human editing, fact-checking, and editorial review before publication.
+                </p>
+              </div>
+              <div className="border-t-2 border-[#6111ff] pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Bot className="h-4 w-4 text-[#6111ff]" />
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-[#6111ff]">Wire / aggregated</span>
+                </div>
+                <p className="text-sm text-[#666666]">
+                  Wire items in our feed are AI-aggregated from public sources and clearly labelled. They represent our monitoring function, not our editorial voice.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Editorial standards */}
+        <section className="mb-14">
+          <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
+            <FileText className="h-5 w-5 text-[#6111ff]" />
+            Editorial Standards
           </h2>
           <div className="space-y-4">
-            <div className="flex gap-4 items-start">
-              <div className="w-8 h-8 bg-[#1a1a1a] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
-                1
+            {[
+              {
+                n: '1',
+                title: 'Source verification',
+                body: 'Every claim traces back to a primary source. A named person, an official document, or a verified publication. We do not publish anonymised allegations without corroboration.',
+              },
+              {
+                n: '2',
+                title: 'Context, not crisis',
+                body: 'Every piece is written assuming the reader has never visited the country in question. We explain institutions, name political parties, and give the minimum historical context needed to understand the story. We do not write about a crisis without explaining what caused it.',
+              },
+              {
+                n: '3',
+                title: 'No assumed knowledge',
+                body: 'A name, a place, or a political party that has not appeared in this piece before is explained when it first appears. Readers should be able to understand any article with no prior reading of LATAM Reportero.',
+              },
+              {
+                n: '4',
+                title: 'Multilingual publishing',
+                body: 'Content is published in English. Spanish and Portuguese versions use AI-assisted translation reviewed for accuracy. When translations are published, this is disclosed.',
+              },
+              {
+                n: '5',
+                title: 'Corrections policy',
+                body: 'When we make a factual error, we correct it promptly and note the correction in the article. We do not silently edit published pieces. Email editorial@latamreportero.com to flag an error.',
+              },
+            ].map((item) => (
+              <div key={item.n} className="flex gap-4 items-start bg-white border border-[#1a1a1a]/10 p-5">
+                <div className="w-7 h-7 bg-[#1a1a1a] text-white flex items-center justify-center font-mono text-xs flex-shrink-0">
+                  {item.n}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-[#1a1a1a] mb-1 text-sm">{item.title}</h3>
+                  <p className="text-sm text-[#666666] leading-relaxed">{item.body}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-[#1a1a1a]">Source Verification</h3>
-                <p className="text-[#666666]">
-                  All stories—whether human or AI-generated—trace back to verified primary sources. 
-                  AI content pulls from reputable news outlets (Reuters, AP, NYT, Guardian, major LATAM publications).
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-8 h-8 bg-[#1a1a1a] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold text-[#1a1a1a]">Solutions Framework</h3>
-                <p className="text-[#666666]">
-                  Every story follows our Problem → Solution → Impact structure. We don't just report problems—we 
-                  investigate what's being done to solve them.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-8 h-8 bg-[#1a1a1a] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold text-[#1a1a1a]">Editorial Review</h3>
-                <p className="text-[#666666]">
-                  AI-generated drafts go through human editorial review before publication. 
-                  Human-written stories follow our standard fact-checking and editing process.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-8 h-8 bg-[#1a1a1a] text-white flex items-center justify-center font-mono text-sm flex-shrink-0">
-                4
-              </div>
-              <div>
-                <h3 className="font-semibold text-[#1a1a1a]">Multilingual Publishing</h3>
-                <p className="text-[#666666]">
-                  All content is available in English, Spanish, and Portuguese. Translations are done by 
-                  professional AI (DeepL) and reviewed for accuracy.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
         {/* Contact */}
         <section className="bg-[#1a1a1a] text-white p-8">
           <div className="max-w-2xl">
-            <h2 className="text-2xl font-serif font-semibold mb-4">
-              Questions or Concerns?
+            <h2 className="font-serif text-2xl font-semibold mb-3">
+              Questions, corrections, or tips?
             </h2>
-            <p className="text-white/80 mb-6">
-              We welcome feedback on our editorial approach. If you spot an error, have questions 
-              about our methodology, or want to discuss our coverage, reach out.
+            <p className="text-white/70 mb-6 leading-relaxed">
+              We take corrections seriously and welcome feedback on our reporting. If you have a tip, a pitch, or want to discuss our coverage, reach out directly.
             </p>
-            <div className="flex gap-4">
-              <a href="mailto:editorial@latamreportero.com">
-                <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none">
-                  Contact Editorial Team
+            <div className="flex flex-wrap gap-3">
+              <a href="mailto:contacto@latamreportero.com">
+                <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
+                  <Mail className="h-4 w-4" />
+                  contacto@latamreportero.com
                 </Button>
               </a>
-              <Link href="/transparency/corrections">
-                <Button variant="outline" className="rounded-none border-white/30 text-white hover:bg-white/10">
-                  View Corrections
+              <a href="mailto:tips@latamreportero.com">
+                <Button variant="outline" className="rounded-none border-white/30 text-white hover:bg-white/10 gap-2">
+                  tips@latamreportero.com
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </section>

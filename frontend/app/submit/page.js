@@ -104,7 +104,7 @@ export default function SubmitStoryPage() {
             <PenTool className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold">{t('contributor.submitStory')}</h1>
-              <p className="text-muted-foreground">Follow the Problem → Solutions → Impact format</p>
+              <p className="text-muted-foreground">Explain what happened, why it matters, and what it means for the region</p>
             </div>
           </div>
 
@@ -196,20 +196,20 @@ export default function SubmitStoryPage() {
               </CardContent>
             </Card>
 
-            {/* Solutions Section */}
+            {/* Context Section */}
             <Card className="border-l-4 border-l-blue-500">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-700">
                   <Lightbulb className="h-5 w-5" />
-                  {t('article.solutions')} *
+                  Context and background *
                 </CardTitle>
                 <CardDescription>
-                  What solutions are being implemented or proposed?
+                  What context does a reader need to understand this story? What history, institutions, or prior events matter?
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Textarea
-                  placeholder="What solutions exist? Who is implementing them? How do they work?..."
+                  placeholder="What background is essential? Who are the key people or institutions? What led to this situation?..."
                   value={formData.solutions}
                   onChange={(e) => handleChange('solutions', e.target.value)}
                   rows={6}
@@ -227,7 +227,7 @@ export default function SubmitStoryPage() {
                   {t('article.impact')} *
                 </CardTitle>
                 <CardDescription>
-                  What measurable impact have these solutions had?
+                  Why does this matter beyond the immediate event? What are the broader implications for the region?
                 </CardDescription>
               </CardHeader>
               <CardContent>

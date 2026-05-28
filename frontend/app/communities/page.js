@@ -95,7 +95,7 @@ export default function CommunitiesPage() {
                     </div>
                     
                     <p className="text-sm text-muted-foreground mb-4">
-                      Connect with readers and journalists covering {community.name}. Share insights and discuss the latest solutions-oriented stories.
+                      Connect with readers and journalists covering {community.name}. Share insights and discuss the region&apos;s most important stories.
                     </p>
 
                     <div className="flex gap-2">

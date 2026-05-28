@@ -24,29 +24,29 @@ SEED_USERS = [
     {
         "id": str(uuid.uuid4()),
         "name": "Admin User",
-        "email": "oket.hoxha@gmail.com",
-        "password": "emergent2030",
+        "email": os.environ.get("ADMIN_EMAIL", "admin@latamreportero.com"),
+        "password": os.environ.get("ADMIN_PASSWORD", "change-me-before-use"),
         "role": "admin"
     },
     {
         "id": str(uuid.uuid4()),
         "name": "Demo Subscriber",
         "email": "demo@latamreportero.com",
-        "password": "demo123",
+        "password": os.environ.get("DEMO_PASSWORD", "change-me-before-use"),
         "role": "paid"
     },
     {
         "id": str(uuid.uuid4()),
         "name": "Free User",
         "email": "free@latamreportero.com",
-        "password": "free123",
+        "password": os.environ.get("FREE_PASSWORD", "change-me-before-use"),
         "role": "free"
     },
     {
         "id": str(uuid.uuid4()),
         "name": "Editor User",
         "email": "editor@latamreportero.com",
-        "password": "editor123",
+        "password": os.environ.get("EDITOR_PASSWORD", "change-me-before-use"),
         "role": "editor"
     },
 ]

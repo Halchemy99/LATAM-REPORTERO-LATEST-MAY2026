@@ -286,9 +286,9 @@ export default function NewDraftPage() {
             {/* Content Sections */}
             <Card>
               <CardHeader>
-                <CardTitle>Content (Problem / Solutions / Impact)</CardTitle>
+                <CardTitle>Content sections</CardTitle>
                 <CardDescription>
-                  Structure your article using the solutions-oriented journalism format
+                  Structure your article: what happened, context and background, and why it matters
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -318,10 +318,10 @@ export default function NewDraftPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="solutions" className="text-green-600">Solutions Section</Label>
+                  <Label htmlFor="solutions" className="text-green-600">Context and background</Label>
                   <Textarea
                     id="solutions"
-                    placeholder="What solutions are being implemented?"
+                    placeholder="What context, background, or history does the reader need?"
                     value={formData.solutions_section}
                     onChange={(e) => handleChange('solutions_section', e.target.value)}
                     rows={4}

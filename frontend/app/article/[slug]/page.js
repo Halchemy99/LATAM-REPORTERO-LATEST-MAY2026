@@ -15,8 +15,9 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Bookmark, Share2, Heart, MessageCircle, Clock,
-  Bot, User, Send, Lock, ArrowLeft
+  Send, Lock, ArrowLeft,
 } from 'lucide-react';
+import VerifiedBadge from '@/components/VerifiedBadge';
 import { toast } from 'sonner';
 
 export default function ArticlePage() {
@@ -157,12 +158,28 @@ export default function ArticlePage() {
   };
 
   const needsUpgrade = article && !article.isAiGenerated && !canAccessHumanContent;
+
+  // Real read time: extract all text from Portable Text body, count words, ÷ 200
+  const readTime = (() => {
+    if (!article?.body) return 5;
+    const extractText = (blocks) => {
+      if (!Array.isArray(blocks)) return '';
+      return blocks.flatMap(block => {
+        if (block._type === 'block' && Array.isArray(block.children)) {
+          return block.children.map(span => span.text || '').join(' ');
+        }
+        return '';
+      }).join(' ');
+    };
+    const wordCount = extractText(article.body).trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(wordCount / 200));
+  })();
   const articleSlug = article?.slug ? (typeof article.slug === 'object' ? article.slug.current : article.slug) : '';
   const canComment = user && (isSubscribed || ['contributor', 'editor', 'admin'].includes(role));
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+      <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
         <Header />
         <main className="flex-1 container py-8">
           <Skeleton className="h-8 w-3/4 mb-4" />
@@ -176,7 +193,7 @@ export default function ArticlePage() {
 
   if (!article) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+      <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
         <Header />
         <main className="flex-1 container py-8">
           <div className="text-center py-20">
@@ -192,7 +209,7 @@ export default function ArticlePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+    <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
       
       <main className="flex-1">
@@ -205,7 +222,7 @@ export default function ArticlePage() {
             </Link>
             
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-xs uppercase tracking-wider">
+              <Badge className="bg-[#6111ff] text-white rounded-none font-mono text-xs uppercase tracking-wider">
                 {article.category || 'General'}
               </Badge>
               {article.region && (
@@ -213,15 +230,9 @@ export default function ArticlePage() {
                   {article.region}
                 </Badge>
               )}
-              {article.isAiGenerated ? (
-                <Badge className="bg-[#6110ff] text-white rounded-none font-mono text-xs uppercase tracking-wider gap-1">
-                  <Bot className="h-3 w-3" />
-                  AI Generated
-                </Badge>
-              ) : (
-                <Badge className="bg-emerald-600 text-white rounded-none font-mono text-xs uppercase tracking-wider gap-1">
-                  <User className="h-3 w-3" />
-                  Human Written
+              {article.aiDisclosure && (
+                <Badge variant="outline" className="text-white/60 border-white/20 rounded-none font-mono text-xs uppercase tracking-wider">
+                  {article.aiDisclosure}
                 </Badge>
               )}
             </div>
@@ -236,12 +247,20 @@ export default function ArticlePage() {
               </p>
             )}
             
-            <div className="flex items-center gap-4 mt-6 text-sm text-white/60">
-              <span>LATAM Reportero</span>
+            <div className="flex items-center gap-4 mt-6 text-sm text-white/60 flex-wrap">
+              <span className="flex items-center gap-1.5">
+                <span>{article.authorName || 'LATAM Reportero'}</span>
+                {(article.authorVerified || article.authorVerificationLevel) && (
+                  <VerifiedBadge
+                    level={article.authorVerificationLevel || 'id-verified'}
+                    size="sm"
+                  />
+                )}
+              </span>
               <span className="text-white/30">&bull;</span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                5 min read
+                {readTime} min read
               </span>
               {article.publishedAt && (
                 <>
@@ -264,7 +283,7 @@ export default function ArticlePage() {
                     <Heart className={`h-5 w-5 ${liked ? 'fill-red-500 text-red-500' : 'text-[#666666]'}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleBookmark} className="rounded-none" data-testid="bookmark-btn">
-                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-[#6110ff] text-[#6110ff]' : 'text-[#666666]'}`} />
+                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-[#6111ff] text-[#6111ff]' : 'text-[#666666]'}`} />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-none" data-testid="share-btn">
                     <Share2 className="h-5 w-5 text-[#666666]" />
@@ -277,15 +296,15 @@ export default function ArticlePage() {
 
               {/* Paywall for Human Content */}
               {needsUpgrade ? (
-                <Card className="border-[#6110ff]/30 bg-white">
+                <Card className="border-[#6111ff]/30 bg-white">
                   <CardContent className="p-8 text-center">
-                    <Lock className="h-12 w-12 mx-auto mb-4 text-[#6110ff]" />
+                    <Lock className="h-12 w-12 mx-auto mb-4 text-[#6111ff]" />
                     <h3 className="text-xl font-serif font-bold mb-2 text-[#1a1a1a]">Premium Content</h3>
                     <p className="text-[#666666] mb-6">
                       This human-written article requires a paid subscription to read.
                     </p>
                     <Link href="/pricing">
-                      <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none">Upgrade to Read</Button>
+                      <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none">Upgrade to Read</Button>
                     </Link>
                   </CardContent>
                 </Card>
@@ -298,7 +317,7 @@ export default function ArticlePage() {
               {/* Comments Section */}
               <section className="mt-8 bg-white border border-[#1a1a1a]/10 p-6" data-testid="comments-section">
                 <h3 className="text-lg font-serif font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-[#6110ff]" />
+                  <MessageCircle className="h-5 w-5 text-[#6111ff]" />
                   Comments ({comments.length})
                 </h3>
                 
@@ -318,14 +337,14 @@ export default function ArticlePage() {
                 ) : (
                   <div className="mb-6 p-4 bg-[#1a1a1a]/5 border border-[#1a1a1a]/10" data-testid="comment-gate">
                     <div className="flex items-center gap-2 text-sm text-[#666666]">
-                      <Lock className="h-4 w-4 text-[#6110ff]" />
+                      <Lock className="h-4 w-4 text-[#6111ff]" />
                       {!user ? (
                         <span>
-                          <Link href="/auth/login" className="text-[#6110ff] hover:underline">Log in</Link> and subscribe to leave comments.
+                          <Link href="/auth/login" className="text-[#6111ff] hover:underline">Log in</Link> and subscribe to leave comments.
                         </span>
                       ) : (
                         <span>
-                          Only subscribers can comment. <Link href="/pricing" className="text-[#6110ff] hover:underline">Subscribe now</Link>.
+                          Only subscribers can comment. <Link href="/pricing" className="text-[#6111ff] hover:underline">Subscribe now</Link>.
                         </span>
                       )}
                     </div>
@@ -365,7 +384,7 @@ export default function ArticlePage() {
                       const relSlug = typeof related.slug === 'object' ? related.slug.current : related.slug;
                       return (
                         <Link key={related._id} href={`/article/${relSlug}`} className="block group">
-                          <h4 className="text-sm font-serif font-medium text-[#1a1a1a] group-hover:text-[#6110ff] transition-colors line-clamp-2 mb-1">
+                          <h4 className="text-sm font-serif font-medium text-[#1a1a1a] group-hover:text-[#6111ff] transition-colors line-clamp-2 mb-1">
                             {related.title}
                           </h4>
                           <span className="text-xs text-[#666666] font-mono uppercase tracking-wider">

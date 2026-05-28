@@ -47,14 +47,14 @@ export default function WatchPage() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-[#6110ff] via-[#600fff] to-purple-900 text-white py-16">
+        <div className="bg-gradient-to-br from-[#6111ff] via-[#600fff] to-purple-900 text-white py-16">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-sm mb-6">
                 <Play className="h-4 w-4" />
                 Video Hub
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4" >
                 Watch LATAM Reportero
               </h1>
               <p className="text-lg text-white/80 mb-8">
@@ -112,7 +112,7 @@ export default function WatchPage() {
               <Button
                 variant={activeTab === 'all' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('all')}
-                className={activeTab === 'all' ? 'bg-[#6110ff] hover:bg-[#4a0dd6]' : ''}
+                className={activeTab === 'all' ? 'bg-[#6111ff] hover:bg-[#4a0dd6]' : ''}
               >
                 <Video className="h-4 w-4 mr-2" />
                 All Videos
@@ -181,7 +181,7 @@ export default function WatchPage() {
         <div className="bg-black text-white py-16">
           <div className="container">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+              <h2 className="text-3xl font-bold mb-4" >
                 Never Miss an Update
               </h2>
               <p className="text-white/70 mb-8">

@@ -17,12 +17,20 @@ module.exports = {
             }
         },
         extend: {
+            fontFamily: {
+                // Brand typography — per brand guidelines (Muller Bold → Outfit, Marcellus subheading, Times New Roman body)
+                'display': ['Outfit', 'system-ui', 'sans-serif'],
+                'serif': ['Marcellus', 'Georgia', 'serif'],
+                'body': ['"Times New Roman"', 'Times', 'serif'],
+                'sans': ['Inter', 'system-ui', 'sans-serif'],
+                'mono': ['"IBM Plex Mono"', 'Menlo', 'monospace'],
+            },
             colors: {
-                // Brand colors - Purple theme
-                'brand-purple': '#6110ff',
+                // Brand colors — exact spec: #6111FF primary, #8C52FF light purple
+                'brand-purple': '#6111ff',
                 'brand-purple-alt': '#600fff',
                 'brand-purple-dark': '#4a0dd6',
-                'brand-purple-light': '#8b5cf6',
+                'brand-purple-light': '#8c52ff',
                 
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',

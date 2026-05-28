@@ -104,7 +104,7 @@ export default function CommunityPage() {
   const hasAccess = isSubscribed || ['contributor', 'editor', 'admin'].includes(role);
 
   return (
-    <div className="min-h-screen bg-[#F7F5F2]">
+    <div className="min-h-screen bg-[#F9F6F6]">
       <Header />
       <GlobalSearchBar />
       
@@ -126,10 +126,10 @@ export default function CommunityPage() {
 
         {/* Access Gate for Non-Subscribers */}
         {!hasAccess && (
-          <div className="bg-white border-2 border-[#6110ff]/30 p-8 mb-12">
+          <div className="bg-white border-2 border-[#6111ff]/30 p-8 mb-12">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-[#6110ff]/10 flex items-center justify-center flex-shrink-0">
-                <Lock className="h-6 w-6 text-[#6110ff]" />
+              <div className="w-12 h-12 bg-[#6111ff]/10 flex items-center justify-center flex-shrink-0">
+                <Lock className="h-6 w-6 text-[#6111ff]" />
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-semibold text-[#1a1a1a] mb-2">
@@ -154,7 +154,7 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <Link href="/pricing">
-                  <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
+                  <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
                     <Crown className="h-4 w-4" />
                     Subscribe to Access Community
                   </Button>
@@ -202,7 +202,7 @@ export default function CommunityPage() {
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <MapPin className="h-4 w-4 text-[#6110ff]" />
+                  <MapPin className="h-4 w-4 text-[#6111ff]" />
                   <h3 className="font-semibold text-[#1a1a1a]">{group.region}</h3>
                 </div>
                 <p className="text-sm text-[#666666] mb-3 line-clamp-2">
@@ -245,7 +245,7 @@ export default function CommunityPage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex gap-3">
-              <Shield className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
+              <Shield className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-medium text-[#1a1a1a] mb-1">Respect & Civility</h3>
                 <p className="text-sm text-[#666666]">
@@ -254,7 +254,7 @@ export default function CommunityPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <MessageCircle className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
+              <MessageCircle className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-medium text-[#1a1a1a] mb-1">Stay On Topic</h3>
                 <p className="text-sm text-[#666666]">
@@ -263,7 +263,7 @@ export default function CommunityPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <Users className="h-5 w-5 text-[#6110ff] flex-shrink-0 mt-0.5" />
+              <Users className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-medium text-[#1a1a1a] mb-1">No Spam</h3>
                 <p className="text-sm text-[#666666]">
@@ -285,7 +285,7 @@ export default function CommunityPage() {
               journalism and early access to investigations.
             </p>
             <Link href="/pricing">
-              <Button className="bg-[#6110ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
+              <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
                 View Subscription Plans
                 <ArrowRight className="h-4 w-4" />
               </Button>

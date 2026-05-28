@@ -4,9 +4,9 @@ import { I18nProvider, UserRoleProvider, ContentModeProvider } from '@/lib/provi
 import { Toaster } from '@/components/ui/sonner';
 
 export const metadata = {
-  title: 'LATAM Reportero - Solutions-Oriented Journalism',
-  description: 'Solutions-oriented journalism covering Latin America. Every story follows Problem → Solutions → Impact.',
-  keywords: 'Latin America, journalism, news, solutions journalism, Mexico, Brazil, Argentina, Chile, Colombia',
+  title: 'LATAM Reportero. Latin America, Explained.',
+  description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
+  keywords: 'Latin America, journalism, news, explanatory journalism, Mexico, Brazil, Argentina, Chile, Colombia',
 };
 
 // Static error handler script - suppresses known DataCloneError from PerformanceServerTiming

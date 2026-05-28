@@ -20,7 +20,7 @@ const portableTextComponents = {
       <p className="text-base text-[#2C1A3D] leading-relaxed mb-4 font-serif">{children}</p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-[#6110ff] pl-4 my-6 italic text-[#666666] font-serif">
+      <blockquote className="border-l-4 border-[#6111ff] pl-4 my-6 italic text-[#666666] font-serif">
         {children}
       </blockquote>
     ),
@@ -33,7 +33,7 @@ const portableTextComponents = {
         href={value?.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-[#6110ff] underline hover:text-[#4a0dd6] transition-colors"
+        className="text-[#6111ff] underline hover:text-[#4a0dd6] transition-colors"
       >
         {children}
       </a>

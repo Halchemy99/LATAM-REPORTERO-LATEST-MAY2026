@@ -103,7 +103,7 @@ export default function BookmarksPage() {
                 <p className="text-muted-foreground mb-4 text-center">
                   Start saving articles you want to read later by clicking the bookmark icon.
                 </p>
-                <Link href="/solutions">
+                <Link href="/investigations">
                   <Button>Browse Articles</Button>
                 </Link>
               </CardContent>

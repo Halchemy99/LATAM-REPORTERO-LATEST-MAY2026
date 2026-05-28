@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   if (isLoading || user) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+      <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-[#666666]">Loading...</div>
@@ -56,13 +56,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5F2]">
+    <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
       
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" >
               Welcome Back
             </h1>
             <p className="text-sm text-[#666666]">Sign in to access your account</p>
@@ -124,7 +124,7 @@ export default function LoginPage() {
 
               <p className="text-center text-sm text-[#666666]">
                 Don&apos;t have an account?{' '}
-                <Link href="/auth/signup" className="text-[#6110ff] hover:underline font-medium">
+                <Link href="/auth/signup" className="text-[#6111ff] hover:underline font-medium">
                   Create one
                 </Link>
               </p>
