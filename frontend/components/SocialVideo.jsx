@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/providers';
 import { Play, ExternalLink } from 'lucide-react';
+import VideoModal from '@/components/VideoModal';
 
 // Social media URLs
 export const SOCIAL_LINKS = {
@@ -173,16 +175,25 @@ const PLATFORM_META = {
   },
 };
 
-function WatchCard({ platform, title, thumbnail, videoUrl, reporter, verified }) {
+function WatchCard({ platform, title, thumbnail, videoUrl, videoId, reporter, verified, onClick }) {
   const meta = PLATFORM_META[platform] || PLATFORM_META.tiktok;
   const Icon = meta.Icon;
+  const isPlayable = platform === 'youtube' && videoId;
+
+  const handleClick = (e) => {
+    if (isPlayable) {
+      e.preventDefault();
+      onClick?.({ platform, videoId, title });
+    }
+  };
 
   return (
     <a
       href={videoUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block relative"
+      onClick={handleClick}
+      className="group block relative cursor-pointer"
       data-testid={`watch-card-${platform}`}
     >
       {/* Portrait frame */}
@@ -240,77 +251,33 @@ function WatchCard({ platform, title, thumbnail, videoUrl, reporter, verified })
   );
 }
 
-// Video Highlights Section - For homepage
+// Video Highlights Section - For homepage (fetches live YouTube videos)
 export function VideoHighlightsSection() {
   const { t } = useTranslation();
-  const videos = [
-    {
-      platform: 'tiktok',
-      title: 'Inside the Amazon: the deforestation fight no one is covering',
-      thumbnail: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.tiktok,
-      reporter: 'Ana Lima',
-      verified: true,
-    },
-    {
-      platform: 'instagram',
-      title: "Argentina's economy in 60 seconds. What you need to know now",
-      thumbnail: 'https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.instagram,
-      reporter: 'Matías Romero',
-      verified: true,
-    },
-    {
-      platform: 'tiktok',
-      title: "Mexico City's water crisis is getting worse. Here's why.",
-      thumbnail: 'https://images.unsplash.com/photo-1568632234180-0e6c08735d01?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.tiktok,
-      reporter: 'Carlos Vega',
-      verified: false,
-    },
-    {
-      platform: 'youtube',
-      title: "Colombia's peace process. One reporter on the ground",
-      thumbnail: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.youtube,
-      reporter: 'Valentina Cruz',
-      verified: true,
-    },
-    {
-      platform: 'tiktok',
-      title: "Venezuela. What's actually happening on the streets right now",
-      thumbnail: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.tiktok,
-      reporter: 'Pedro Díaz',
-      verified: true,
-    },
-    {
-      platform: 'instagram',
-      title: "Chile's lithium boom and who isn't benefiting",
-      thumbnail: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.instagram,
-      reporter: 'Sofía Herrera',
-      verified: true,
-    },
-    {
-      platform: 'youtube',
-      title: 'Peru: election chaos explained simply',
-      thumbnail: 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.youtube,
-      reporter: 'José Quispe',
-      verified: false,
-    },
-    {
-      platform: 'tiktok',
-      title: 'Brazil election: what the numbers really show',
-      thumbnail: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=400&h=700&fit=crop',
-      videoUrl: SOCIAL_LINKS.tiktok,
-      reporter: 'Camila Santos',
-      verified: true,
-    },
-  ];
+  const [videos, setVideos] = useState([]);
+  const [activeModal, setActiveModal] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/videos/youtube?maxResults=8')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.videos) {
+          setVideos(
+            data.videos.map((v) => ({
+              platform: 'youtube',
+              title: v.title,
+              thumbnail: v.thumbnail,
+              videoId: v.id,
+              videoUrl: `https://www.youtube.com/watch?v=${v.id}`,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
+    <>
     <section className="bg-[#0d0d0d] py-10 lg:py-14" data-testid="watch-section">
       <div className="container">
         {/* Header row */}
@@ -346,7 +313,7 @@ export function VideoHighlightsSection() {
         {/* Cards grid — 4 wide on desktop, 2 rows of 4 = 8 */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 lg:gap-3">
           {videos.map((v, i) => (
-            <WatchCard key={i} {...v} />
+            <WatchCard key={v.videoId || i} {...v} onClick={setActiveModal} />
           ))}
         </div>
 
@@ -371,6 +338,15 @@ export function VideoHighlightsSection() {
         </div>
       </div>
     </section>
+
+    {activeModal && (
+      <VideoModal
+        platform={activeModal.platform}
+        videoId={activeModal.videoId}
+        onClose={() => setActiveModal(null)}
+      />
+    )}
+    </>
   );
 }
 

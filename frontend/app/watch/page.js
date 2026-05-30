@@ -1,53 +1,143 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { SocialBar, VideoCard, SOCIAL_LINKS, InstagramIcon, TikTokIcon, YouTubeIcon } from '@/components/SocialVideo';
+import { SocialBar, SOCIAL_LINKS, InstagramIcon, TikTokIcon, YouTubeIcon } from '@/components/SocialVideo';
+import VideoModal from '@/components/VideoModal';
 import { Button } from '@/components/ui/button';
-import { Play, ExternalLink, Video } from 'lucide-react';
+import { Play, ExternalLink, Video, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/providers';
+
+// TikTok / Instagram videos are added manually via the admin panel or this config.
+// Format: { platform, title, videoUrl, thumbnailUrl }
+const MANUAL_SOCIAL_VIDEOS = [];
+
+function VideoCard({ platform, title, thumbnail, videoId, videoUrl, views, date, onClick }) {
+  const PlatformIcon =
+    platform === 'youtube' ? YouTubeIcon
+    : platform === 'tiktok' ? TikTokIcon
+    : InstagramIcon;
+
+  const platformColors = {
+    youtube: 'bg-red-600',
+    tiktok: 'bg-black',
+    instagram: 'bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400',
+  };
+
+  const isPlayable = platform === 'youtube' && videoId;
+
+  const handleClick = (e) => {
+    if (isPlayable) {
+      e.preventDefault();
+      onClick?.({ platform, videoId, title });
+    }
+  };
+
+  const Wrapper = isPlayable ? 'button' : 'a';
+  const wrapperProps = isPlayable
+    ? { onClick: handleClick, className: 'group block w-full text-left' }
+    : { href: videoUrl, target: '_blank', rel: 'noopener noreferrer', className: 'group block' };
+
+  return (
+    <Wrapper {...wrapperProps}>
+      <div className="relative aspect-[9/16] overflow-hidden bg-gray-100">
+        {thumbnail ? (
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#6111ff] to-[#600fff] flex items-center justify-center">
+            <PlatformIcon className="h-12 w-12 text-white/50" />
+          </div>
+        )}
+
+        {/* Play overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="w-14 h-14 flex items-center justify-center bg-white/90">
+            <Play className="h-6 w-6 text-[#6111ff] ml-1" />
+          </div>
+        </div>
+
+        {/* Platform badge */}
+        <div
+          className={`absolute top-2 left-2 ${platformColors[platform]} text-white px-2 py-0.5 text-[10px] font-mono uppercase flex items-center gap-1`}
+        >
+          <PlatformIcon className="h-3 w-3" />
+          {platform === 'youtube' ? 'YouTube' : platform === 'tiktok' ? 'TikTok' : 'Reels'}
+        </div>
+
+        {/* "Opens externally" badge for non-embeddable */}
+        {!isPlayable && (
+          <div className="absolute top-2 right-2 bg-black/50 text-white/70 px-1.5 py-0.5 text-[9px] font-mono uppercase flex items-center gap-0.5">
+            <ExternalLink className="h-2.5 w-2.5" />
+          </div>
+        )}
+      </div>
+
+      <div className="mt-2">
+        <h4 className="text-sm font-medium line-clamp-2 group-hover:text-[#6111ff] transition-colors text-left">
+          {title}
+        </h4>
+        {(views || date) && (
+          <p className="text-xs text-gray-500 mt-1">
+            {views && <span>{views} views</span>}
+            {views && date && <span> · </span>}
+            {date && <span>{date}</span>}
+          </p>
+        )}
+      </div>
+    </Wrapper>
+  );
+}
 
 export default function WatchPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
+  const [youtubeVideos, setYoutubeVideos] = useState([]);
+  const [loadingYoutube, setLoadingYoutube] = useState(true);
+  const [activeModal, setActiveModal] = useState(null); // { platform, videoId, title }
 
-  // Sample video data - in production, fetch from APIs
+  useEffect(() => {
+    const fetchYoutube = async () => {
+      try {
+        const res = await fetch('/api/videos/youtube?maxResults=16');
+        const data = await res.json();
+        if (data.videos) setYoutubeVideos(data.videos);
+      } catch {
+        // silently fall back to empty
+      } finally {
+        setLoadingYoutube(false);
+      }
+    };
+    fetchYoutube();
+  }, []);
+
+  // Merge YouTube + manual social videos
   const allVideos = [
-    // YouTube
-    { platform: 'youtube', title: 'Breaking: Climate summit reaches historic agreement', thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.youtube, views: '45K', date: '1 day ago' },
-    { platform: 'youtube', title: 'Mexico\'s renewable energy revolution explained', thumbnail: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.youtube, views: '32K', date: '2 days ago' },
-    { platform: 'youtube', title: 'Interview: Leading economist on Argentina\'s future', thumbnail: 'https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.youtube, views: '28K', date: '3 days ago' },
-    { platform: 'youtube', title: 'How Brazil is fighting deforestation', thumbnail: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.youtube, views: '67K', date: '4 days ago' },
-    // TikTok
-    { platform: 'tiktok', title: 'Venezuela update: What\'s happening now', thumbnail: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.tiktok, views: '120K', date: '6 hours ago' },
-    { platform: 'tiktok', title: 'Colombia peace process in 60 seconds', thumbnail: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.tiktok, views: '89K', date: '1 day ago' },
-    { platform: 'tiktok', title: 'Why Chile is leading on lithium', thumbnail: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.tiktok, views: '56K', date: '2 days ago' },
-    { platform: 'tiktok', title: 'Peru election explained simply', thumbnail: 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.tiktok, views: '78K', date: '3 days ago' },
-    // Instagram
-    { platform: 'instagram', title: 'Behind the scenes: Our newsroom', thumbnail: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.instagram, views: '34K', date: '12 hours ago' },
-    { platform: 'instagram', title: 'This week in LATAM: Top 5 stories', thumbnail: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.instagram, views: '42K', date: '1 day ago' },
-    { platform: 'instagram', title: 'Solutions spotlight: Water in Mexico City', thumbnail: 'https://images.unsplash.com/photo-1568632234180-0e6c08735d01?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.instagram, views: '29K', date: '2 days ago' },
-    { platform: 'instagram', title: 'Reporter diary: Amazon rainforest', thumbnail: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=700&fit=crop', videoUrl: SOCIAL_LINKS.instagram, views: '51K', date: '4 days ago' },
+    ...youtubeVideos.map((v) => ({
+      platform: 'youtube',
+      title: v.title,
+      thumbnail: v.thumbnail,
+      videoId: v.id,
+      videoUrl: `https://www.youtube.com/watch?v=${v.id}`,
+      date: new Date(v.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    })),
+    ...MANUAL_SOCIAL_VIDEOS,
   ];
 
-  const filteredVideos = activeTab === 'all' 
-    ? allVideos 
-    : allVideos.filter(v => v.platform === activeTab);
-
-  const stats = {
-    youtube: { followers: '125K', label: 'Subscribers' },
-    tiktok: { followers: '340K', label: 'Followers' },
-    instagram: { followers: '89K', label: 'Followers' },
-  };
+  const filteredVideos =
+    activeTab === 'all' ? allVideos : allVideos.filter((v) => v.platform === activeTab);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SocialBar />
       <Header />
-      
+
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Hero */}
         <div className="bg-gradient-to-br from-[#6111ff] via-[#600fff] to-purple-900 text-white py-16">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
@@ -61,10 +151,10 @@ export default function WatchPage() {
               <p className="text-lg text-white/80 mb-8">
                 {t('watch.subtitle')}
               </p>
-              
-              {/* Platform buttons */}
+
+              {/* Platform follow buttons */}
               <div className="flex flex-wrap justify-center gap-4">
-                <a 
+                <a
                   href={SOCIAL_LINKS.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -73,10 +163,10 @@ export default function WatchPage() {
                   <YouTubeIcon className="h-6 w-6 text-red-600" />
                   <div className="text-left">
                     <div className="font-bold">YouTube</div>
-                    <div className="text-xs text-gray-500">{stats.youtube.followers} {stats.youtube.label}</div>
+                    <div className="text-xs text-gray-500">Subscribe</div>
                   </div>
                 </a>
-                <a 
+                <a
                   href={SOCIAL_LINKS.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -85,10 +175,10 @@ export default function WatchPage() {
                   <TikTokIcon className="h-6 w-6" />
                   <div className="text-left">
                     <div className="font-bold">TikTok</div>
-                    <div className="text-xs text-gray-500">{stats.tiktok.followers} {stats.tiktok.label}</div>
+                    <div className="text-xs text-gray-500">Follow</div>
                   </div>
                 </a>
-                <a 
+                <a
                   href={SOCIAL_LINKS.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -97,7 +187,7 @@ export default function WatchPage() {
                   <InstagramIcon className="h-6 w-6 text-pink-600" />
                   <div className="text-left">
                     <div className="font-bold">Instagram</div>
-                    <div className="text-xs text-gray-500">{stats.instagram.followers} {stats.instagram.label}</div>
+                    <div className="text-xs text-gray-500">Follow</div>
                   </div>
                 </a>
               </div>
@@ -105,11 +195,11 @@ export default function WatchPage() {
           </div>
         </div>
 
-        {/* Video Grid Section */}
+        {/* Video grid */}
         <div className="container py-12">
-          {/* Filter Tabs */}
+          {/* Filter tabs */}
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button
                 variant={activeTab === 'all' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('all')}
@@ -124,7 +214,7 @@ export default function WatchPage() {
                 className={activeTab === 'youtube' ? 'bg-red-600 hover:bg-red-700' : ''}
               >
                 <YouTubeIcon className="h-4 w-4 mr-2" />
-                {t('watch.shorts')}
+                YouTube
               </Button>
               <Button
                 variant={activeTab === 'tiktok' ? 'default' : 'outline'}
@@ -140,26 +230,65 @@ export default function WatchPage() {
                 className={activeTab === 'instagram' ? 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600' : ''}
               >
                 <InstagramIcon className="h-4 w-4 mr-2" />
-                {t('watch.interviews')}
+                Instagram
               </Button>
             </div>
-            
+
             <div className="text-sm text-gray-500">
               {filteredVideos.length} {t('videos')}
             </div>
           </div>
 
-          {/* Video Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {filteredVideos.map((video, idx) => (
-              <VideoCard key={idx} {...video} />
-            ))}
-          </div>
+          {/* Loading state */}
+          {loadingYoutube && activeTab !== 'tiktok' && activeTab !== 'instagram' && (
+            <div className="flex items-center justify-center py-20 text-gray-400">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              <span className="text-sm font-mono">Loading videos…</span>
+            </div>
+          )}
 
-          {/* Load More */}
+          {/* Empty state for TikTok/Instagram */}
+          {!loadingYoutube &&
+            filteredVideos.length === 0 &&
+            (activeTab === 'tiktok' || activeTab === 'instagram') && (
+              <div className="text-center py-20">
+                <div className="text-gray-400 mb-4">
+                  {activeTab === 'tiktok' ? (
+                    <TikTokIcon className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  ) : (
+                    <InstagramIcon className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  )}
+                </div>
+                <p className="text-gray-500 mb-2">Follow us on {activeTab === 'tiktok' ? 'TikTok' : 'Instagram'}</p>
+                <a
+                  href={activeTab === 'tiktok' ? SOCIAL_LINKS.tiktok : SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[#6111ff] hover:underline text-sm"
+                >
+                  {activeTab === 'tiktok' ? SOCIAL_LINKS.tiktok : SOCIAL_LINKS.instagram}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            )}
+
+          {/* Video grid */}
+          {filteredVideos.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {filteredVideos.map((video, idx) => (
+                <VideoCard
+                  key={video.videoId || idx}
+                  {...video}
+                  onClick={setActiveModal}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Follow CTAs */}
           <div className="text-center mt-12">
             <p className="text-gray-500 mb-4">{t('Want to see more?')}</p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-3 flex-wrap">
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="gap-2">
                   <YouTubeIcon className="h-4 w-4 text-red-600" />
@@ -178,13 +307,11 @@ export default function WatchPage() {
           </div>
         </div>
 
-        {/* CTA Section */}
+        {/* CTA section */}
         <div className="bg-black text-white py-16">
           <div className="container">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4">
-                {t('Never Miss an Update')}
-              </h2>
+              <h2 className="text-3xl font-bold mb-4">{t('Never Miss an Update')}</h2>
               <p className="text-white/70 mb-8">
                 {t('Turn on notifications to get breaking news alerts and daily summaries delivered straight to your feed.')}
               </p>
@@ -221,8 +348,17 @@ export default function WatchPage() {
           </div>
         </div>
       </main>
-      
+
       <Footer />
+
+      {/* Video modal */}
+      {activeModal && (
+        <VideoModal
+          platform={activeModal.platform}
+          videoId={activeModal.videoId}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
     </div>
   );
 }
