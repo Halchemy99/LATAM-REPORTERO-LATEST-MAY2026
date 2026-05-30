@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import GlobalSearchBar from '@/components/GlobalSearchBar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -162,7 +161,6 @@ export default function InvestigationsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
-      <GlobalSearchBar />
 
       <main className="flex-1">
         {/* Page header */}

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
-import GlobalSearchBar from '@/components/GlobalSearchBar';
 import Footer from '@/components/Footer';
 import { 
   Lock, Users, MessageCircle, Shield, Crown, ExternalLink,
@@ -106,8 +105,7 @@ export default function CommunityPage() {
   return (
     <div className="min-h-screen bg-[#F9F6F6]">
       <Header />
-      <GlobalSearchBar />
-      
+
       <main className="container py-12">
         {/* Hero */}
         <div className="max-w-3xl mb-12">
@@ -213,19 +211,13 @@ export default function CommunityPage() {
                     {group.members.toLocaleString()} members
                   </span>
                   {hasAccess ? (
-                    <a
-                      href={selectedPlatform === 'whatsapp' ? group.whatsapp : group.signal}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center gap-1 text-sm font-medium ${
-                        selectedPlatform === 'whatsapp' 
-                          ? 'text-[#25D366] hover:text-[#1da851]' 
-                          : 'text-[#3A76F0] hover:text-[#2a5fc0]'
-                      }`}
+                    <Link
+                      href="/newsletter"
+                      className="flex items-center gap-1 text-sm font-medium text-[#6111ff] hover:text-[#4a0dd6]"
                     >
-                      Join
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
+                      Notify me
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-sm text-[#666666]">
                       <Lock className="h-3 w-3" />

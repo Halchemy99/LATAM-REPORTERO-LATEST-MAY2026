@@ -120,7 +120,7 @@ export default function BioPage() {
         <Link href="/community" className="flex items-center justify-between p-4 bg-white/5 border border-white/10 hover:border-white/25 transition-colors group">
           <div className="flex items-center gap-3">
             <Users className="h-4 w-4 text-[#6111ff]" />
-            <span className="text-white text-sm font-medium">Community (coming soon)</span>
+            <span className="text-white text-sm font-medium">Join the community</span>
           </div>
           <ArrowRight className="h-4 w-4 text-white/30 group-hover:text-white/70 transition-colors" />
         </Link>
