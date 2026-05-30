@@ -14,9 +14,9 @@ const SECTIONS = [
 
 const NEWSROOM = [
   { labelKey: 'footer.about', href: '/about' },
+  { labelKey: 'footer.journalists', href: '/writers' },
   { labelKey: 'transparency.editorialTitle', href: '/transparency' },
   { labelKey: 'transparency.fundingTitle', href: '/transparency/funding' },
-  { labelKey: 'transparency.title', href: '/transparency' },
 ];
 
 const COMMUNITY_LINKS = [

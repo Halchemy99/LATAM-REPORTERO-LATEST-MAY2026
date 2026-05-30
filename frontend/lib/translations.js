@@ -337,6 +337,7 @@ export const en = {
   },
   footer: {
     about: 'About',
+    journalists: 'Journalists',
     categories: 'Categories',
     community: 'Community',
     legal: 'Legal',
@@ -819,6 +820,7 @@ export const es = {
   },
   footer: {
     about: 'Acerca de',
+    journalists: 'Periodistas',
     categories: 'Categorías',
     community: 'Comunidad',
     legal: 'Legal',
@@ -1301,6 +1303,7 @@ export const pt = {
   },
   footer: {
     about: 'Sobre',
+    journalists: 'Jornalistas',
     categories: 'Categorias',
     community: 'Comunidade',
     legal: 'Legal',
