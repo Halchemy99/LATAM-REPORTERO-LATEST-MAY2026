@@ -6,8 +6,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  FileText, 
+import {
+  FileText,
   ArrowLeft,
   CheckCircle,
   AlertTriangle,
@@ -59,12 +59,12 @@ export default function EditorialTransparencyPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1 py-8">
         <div className="container max-w-4xl">
           <Link href="/transparency" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Transparency Hub
+            {t('Back to Transparency Hub')}
           </Link>
 
           <div className="flex items-center gap-3 mb-8">
@@ -72,8 +72,8 @@ export default function EditorialTransparencyPage() {
               <FileText className="h-8 w-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Editorial Standards</h1>
-              <p className="text-muted-foreground">Our commitment to accurate, fair journalism</p>
+              <h1 className="text-3xl font-bold">{t('Editorial Standards')}</h1>
+              <p className="text-muted-foreground">{t('Our commitment to accurate, fair journalism')}</p>
             </div>
           </div>
 
@@ -83,9 +83,9 @@ export default function EditorialTransparencyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Search className="h-5 w-5" />
-                  Fact-Checking Process
+                  {t('Fact-Checking Process')}
                 </CardTitle>
-                <CardDescription>Every article goes through our verification pipeline</CardDescription>
+                <CardDescription>{t('Every article goes through our verification pipeline')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -100,8 +100,8 @@ export default function EditorialTransparencyPage() {
                         )}
                       </div>
                       <div className="pb-4">
-                        <p className="font-medium">{step.title}</p>
-                        <p className="text-sm text-muted-foreground">{step.description}</p>
+                        <p className="font-medium">{t(step.title)}</p>
+                        <p className="text-sm text-muted-foreground">{t(step.description)}</p>
                       </div>
                     </div>
                   ))}
@@ -114,16 +114,16 @@ export default function EditorialTransparencyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
-                  Correction Policy
+                  {t('Correction Policy')}
                 </CardTitle>
-                <CardDescription>How we handle errors when they occur</CardDescription>
+                <CardDescription>{t('How we handle errors when they occur')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
                   {correctionPolicy.map((policy, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{policy}</span>
+                      <span>{t(policy)}</span>
                     </li>
                   ))}
                 </ul>
@@ -135,34 +135,34 @@ export default function EditorialTransparencyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Content Labeling
+                  {t('Content Labeling')}
                 </CardTitle>
-                <CardDescription>We clearly distinguish between content types</CardDescription>
+                <CardDescription>{t('We clearly distinguish between content types')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 border rounded-lg">
-                    <Badge className="mb-2">News</Badge>
+                    <Badge className="mb-2">{t('News')}</Badge>
                     <p className="text-sm text-muted-foreground">
-                      Factual reporting based on verified sources and documentation.
+                      {t('Factual reporting based on verified sources and documentation.')}
                     </p>
                   </div>
                   <div className="p-4 border rounded-lg">
-                    <Badge variant="secondary" className="mb-2">Analysis</Badge>
+                    <Badge variant="secondary" className="mb-2">{t('Analysis')}</Badge>
                     <p className="text-sm text-muted-foreground">
-                      Expert interpretation of events and data with clearly stated context.
+                      {t('Expert interpretation of events and data with clearly stated context.')}
                     </p>
                   </div>
                   <div className="p-4 border rounded-lg">
-                    <Badge variant="outline" className="mb-2">Opinion</Badge>
+                    <Badge variant="outline" className="mb-2">{t('Opinion')}</Badge>
                     <p className="text-sm text-muted-foreground">
-                      Personal viewpoints from contributors, clearly labeled as such.
+                      {t('Personal viewpoints from contributors, clearly labeled as such.')}
                     </p>
                   </div>
                   <div className="p-4 border rounded-lg">
-                    <Badge className="bg-purple-100 text-purple-800 mb-2">AI-Assisted</Badge>
+                    <Badge className="bg-purple-100 text-purple-800 mb-2">{t('AI-Assisted')}</Badge>
                     <p className="text-sm text-muted-foreground">
-                      Content created with AI tools, always reviewed by human editors.
+                      {t('Content created with AI tools, always reviewed by human editors.')}
                     </p>
                   </div>
                 </div>
@@ -174,22 +174,22 @@ export default function EditorialTransparencyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5" />
-                  Response Commitments
+                  {t('Response Commitments')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div className="text-center p-4 bg-muted rounded-lg">
                     <p className="text-3xl font-bold text-primary">24h</p>
-                    <p className="text-sm text-muted-foreground">Error corrections</p>
+                    <p className="text-sm text-muted-foreground">{t('Error corrections')}</p>
                   </div>
                   <div className="text-center p-4 bg-muted rounded-lg">
                     <p className="text-3xl font-bold text-primary">48h</p>
-                    <p className="text-sm text-muted-foreground">Reader inquiries</p>
+                    <p className="text-sm text-muted-foreground">{t('Reader inquiries')}</p>
                   </div>
                   <div className="text-center p-4 bg-muted rounded-lg">
                     <p className="text-3xl font-bold text-primary">7d</p>
-                    <p className="text-sm text-muted-foreground">Right of reply</p>
+                    <p className="text-sm text-muted-foreground">{t('Right of reply')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -201,12 +201,9 @@ export default function EditorialTransparencyPage() {
                 <div className="flex items-start gap-3">
                   <Shield className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-bold text-lg mb-2">Our Ethics Commitment</h3>
+                    <h3 className="font-bold text-lg mb-2">{t('Our Ethics Commitment')}</h3>
                     <p className="text-muted-foreground">
-                      We adhere to the highest standards of journalism ethics. Our reporters 
-                      never pay for information, always disclose conflicts of interest, and 
-                      protect the confidentiality of sources. We are members of the 
-                      International Fact-Checking Network.
+                      {t('We adhere to the highest standards of journalism ethics. Our reporters never pay for information, always disclose conflicts of interest, and protect the confidentiality of sources. We are members of the International Fact-Checking Network.')}
                     </p>
                   </div>
                 </div>

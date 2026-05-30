@@ -38,7 +38,7 @@ export default function CommunitiesPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1">
         {/* Hero */}
         <section className="py-12 bg-gradient-to-b from-primary/5 to-background">
@@ -48,7 +48,7 @@ export default function CommunitiesPage() {
               <h1 className="text-3xl md:text-4xl font-bold">{t('nav.communities')}</h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Join regional news communities to discuss stories, share insights, and connect with readers who care about Latin America.
+              {t('Join regional news communities to discuss stories, share insights, and connect with readers who care about Latin America.')}
             </p>
           </div>
         </section>
@@ -59,7 +59,7 @@ export default function CommunitiesPage() {
             <div className="relative max-w-md">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search communities..."
+                placeholder={t('Search communities...')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
@@ -86,21 +86,21 @@ export default function CommunitiesPage() {
                     <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
-                        <span>{community.members.toLocaleString()} members</span>
+                        <span>{community.members.toLocaleString()} {t('members')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <MessageSquare className="h-4 w-4" />
-                        <span>{community.activeDiscussions} active discussions</span>
+                        <span>{community.activeDiscussions} {t('active discussions')}</span>
                       </div>
                     </div>
-                    
+
                     <p className="text-sm text-muted-foreground mb-4">
-                      Connect with readers and journalists covering {community.name}. Share insights and discuss the region&apos;s most important stories.
+                      {t('Connect with readers and journalists covering')} {community.name}. {t('Share insights and discuss the region\'s most important stories.')}
                     </p>
 
                     <div className="flex gap-2">
                       <Button className="flex-1">
-                        Join Community
+                        {t('Join Community')}
                       </Button>
                       <Button variant="outline">
                         <ArrowRight className="h-4 w-4" />
@@ -114,8 +114,8 @@ export default function CommunitiesPage() {
             {filteredCommunities.length === 0 && (
               <div className="text-center py-12">
                 <Globe className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No communities found</h3>
-                <p className="text-muted-foreground">Try adjusting your search.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('No communities found')}</h3>
+                <p className="text-muted-foreground">{t('Try adjusting your search.')}</p>
               </div>
             )}
           </div>
@@ -124,13 +124,13 @@ export default function CommunitiesPage() {
         {/* CTA */}
         <section className="py-12 bg-muted/30">
           <div className="container text-center">
-            <h2 className="text-2xl font-bold mb-4">Want to start a new community?</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('Want to start a new community?')}</h2>
             <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-              Premium subscribers can create and moderate regional communities. Upgrade your account to get started.
+              {t('Premium subscribers can create and moderate regional communities. Upgrade your account to get started.')}
             </p>
             <Link href="/pricing">
               <Button size="lg">
-                View Pricing Plans
+                {t('View Pricing Plans')}
               </Button>
             </Link>
           </div>

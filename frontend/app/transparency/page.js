@@ -33,7 +33,7 @@ export default function TransparencyPage() {
             {t('transparency.subtitle')}
           </h1>
           <p className="text-lg text-[#666666] leading-relaxed">
-            LATAM Reportero is independently owned. We answer to our readers. Not advertisers. Not governments. Not investors. This page explains exactly how we fund our work, how we make editorial decisions, and what we do when we get things wrong.
+            {t('LATAM Reportero is independently owned. We answer to our readers. Not advertisers. Not governments. Not investors. This page explains exactly how we fund our work, how we make editorial decisions, and what we do when we get things wrong.')}
           </p>
         </div>
 
@@ -41,61 +41,61 @@ export default function TransparencyPage() {
         <section className="mb-14">
           <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
             <Shield className="h-5 w-5 text-[#6111ff]" />
-            Funding & Independence
+            {t('Funding & Independence')}
           </h2>
           <div className="bg-white border border-[#1a1a1a]/10 p-8">
             <div className="grid md:grid-cols-2 gap-10">
               <div>
                 <h3 className="font-semibold text-[#1a1a1a] mb-4 text-sm font-mono uppercase tracking-wider">
-                  How we're funded
+                  {t("How we're funded")}
                 </h3>
                 <ul className="space-y-3 text-[#444444] text-sm">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>Reader-supported through free newsletter and community memberships</span>
+                    <span>{t('Reader-supported through free newsletter and community memberships')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>No corporate ownership or investor equity</span>
+                    <span>{t('No corporate ownership or investor equity')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>No advertising revenue or sponsored content. Ever.</span>
+                    <span>{t('No advertising revenue or sponsored content. Ever.')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>No political party or government funding</span>
+                    <span>{t('No political party or government funding')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                    <span>Editorial decisions made solely by our editorial team</span>
+                    <span>{t('Editorial decisions made solely by our editorial team')}</span>
                   </li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-semibold text-[#1a1a1a] mb-4 text-sm font-mono uppercase tracking-wider">
-                  What we never do
+                  {t('What we never do')}
                 </h3>
                 <ul className="space-y-3 text-[#444444] text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
-                    <span>Republish wire copy or press releases without original reporting</span>
+                    <span>{t('Republish wire copy or press releases without original reporting')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
-                    <span>Accept pay-for-play or sponsored journalism</span>
+                    <span>{t('Accept pay-for-play or sponsored journalism')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
-                    <span>Sell user data or track readers for advertising purposes</span>
+                    <span>{t('Sell user data or track readers for advertising purposes')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
-                    <span>Take funding from organisations we cover</span>
+                    <span>{t('Take funding from organisations we cover')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold text-base leading-none mt-0.5">✕</span>
-                    <span>Suppress or alter coverage under commercial pressure</span>
+                    <span>{t('Suppress or alter coverage under commercial pressure')}</span>
                   </li>
                 </ul>
               </div>
@@ -107,38 +107,38 @@ export default function TransparencyPage() {
         <section className="mb-14">
           <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
             <Bot className="h-5 w-5 text-[#6111ff]" />
-            AI Disclosure
+            {t('AI Disclosure')}
           </h2>
           <div className="bg-white border border-[#1a1a1a]/10 p-8 space-y-5 text-[#444444] text-sm leading-relaxed">
             <p>
-              We use AI tools in our workflow. We do not use them to replace editorial judgment. Here is exactly what we use AI for, and where we draw the line:
+              {t('We use AI tools in our workflow. We do not use them to replace editorial judgment. Here is exactly what we use AI for, and where we draw the line:')}
             </p>
             <div className="grid md:grid-cols-3 gap-6 pt-2">
               <div className="border-t-2 border-emerald-500 pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <User className="h-4 w-4 text-emerald-600" />
-                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-700">Human-written</span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-700">{t('Human-written')}</span>
                 </div>
                 <p className="text-sm text-[#666666]">
-                  All Morning Briefs and Deep Dives are written and edited by human journalists. AI may have been used for research or translation assistance. That&apos;s disclosed in the byline.
+                  {t('All Morning Briefs and Deep Dives are written and edited by human journalists. AI may have been used for research or translation assistance. That\'s disclosed in the byline.')}
                 </p>
               </div>
               <div className="border-t-2 border-amber-500 pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Edit3 className="h-4 w-4 text-amber-600" />
-                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-amber-700">AI-assisted</span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-amber-700">{t('AI-assisted')}</span>
                 </div>
                 <p className="text-sm text-[#666666]">
-                  Some pieces use AI for initial research aggregation or draft structure, then receive full human editing, fact-checking, and editorial review before publication.
+                  {t('Some pieces use AI for initial research aggregation or draft structure, then receive full human editing, fact-checking, and editorial review before publication.')}
                 </p>
               </div>
               <div className="border-t-2 border-[#6111ff] pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Bot className="h-4 w-4 text-[#6111ff]" />
-                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-[#6111ff]">Wire / aggregated</span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-[#6111ff]">{t('Wire / aggregated')}</span>
                 </div>
                 <p className="text-sm text-[#666666]">
-                  Wire items in our feed are AI-aggregated from public sources and clearly labelled. They represent our monitoring function, not our editorial voice.
+                  {t('Wire items in our feed are AI-aggregated from public sources and clearly labelled. They represent our monitoring function, not our editorial voice.')}
                 </p>
               </div>
             </div>
@@ -149,34 +149,34 @@ export default function TransparencyPage() {
         <section className="mb-14">
           <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-6 flex items-center gap-3">
             <FileText className="h-5 w-5 text-[#6111ff]" />
-            Editorial Standards
+            {t('Editorial Standards')}
           </h2>
           <div className="space-y-4">
             {[
               {
                 n: '1',
-                title: 'Source verification',
-                body: 'Every claim traces back to a primary source. A named person, an official document, or a verified publication. We do not publish anonymised allegations without corroboration.',
+                titleKey: 'Source verification',
+                bodyKey: 'Every claim traces back to a primary source. A named person, an official document, or a verified publication. We do not publish anonymised allegations without corroboration.',
               },
               {
                 n: '2',
-                title: 'Context, not crisis',
-                body: 'Every piece is written assuming the reader has never visited the country in question. We explain institutions, name political parties, and give the minimum historical context needed to understand the story. We do not write about a crisis without explaining what caused it.',
+                titleKey: 'Context, not crisis',
+                bodyKey: 'Every piece is written assuming the reader has never visited the country in question. We explain institutions, name political parties, and give the minimum historical context needed to understand the story. We do not write about a crisis without explaining what caused it.',
               },
               {
                 n: '3',
-                title: 'No assumed knowledge',
-                body: 'A name, a place, or a political party that has not appeared in this piece before is explained when it first appears. Readers should be able to understand any article with no prior reading of LATAM Reportero.',
+                titleKey: 'No assumed knowledge',
+                bodyKey: 'A name, a place, or a political party that has not appeared in this piece before is explained when it first appears. Readers should be able to understand any article with no prior reading of LATAM Reportero.',
               },
               {
                 n: '4',
-                title: 'Multilingual publishing',
-                body: 'Content is published in English. Spanish and Portuguese versions use AI-assisted translation reviewed for accuracy. When translations are published, this is disclosed.',
+                titleKey: 'Multilingual publishing',
+                bodyKey: 'Content is published in English. Spanish and Portuguese versions use AI-assisted translation reviewed for accuracy. When translations are published, this is disclosed.',
               },
               {
                 n: '5',
-                title: 'Corrections policy',
-                body: 'When we make a factual error, we correct it promptly and note the correction in the article. We do not silently edit published pieces. Email editorial@latamreportero.com to flag an error.',
+                titleKey: 'Corrections policy',
+                bodyKey: 'When we make a factual error, we correct it promptly and note the correction in the article. We do not silently edit published pieces. Email editorial@latamreportero.com to flag an error.',
               },
             ].map((item) => (
               <div key={item.n} className="flex gap-4 items-start bg-white border border-[#1a1a1a]/10 p-5">
@@ -184,8 +184,8 @@ export default function TransparencyPage() {
                   {item.n}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#1a1a1a] mb-1 text-sm">{item.title}</h3>
-                  <p className="text-sm text-[#666666] leading-relaxed">{item.body}</p>
+                  <h3 className="font-semibold text-[#1a1a1a] mb-1 text-sm">{t(item.titleKey)}</h3>
+                  <p className="text-sm text-[#666666] leading-relaxed">{t(item.bodyKey)}</p>
                 </div>
               </div>
             ))}
@@ -196,10 +196,10 @@ export default function TransparencyPage() {
         <section className="bg-[#1a1a1a] text-white p-8">
           <div className="max-w-2xl">
             <h2 className="font-serif text-2xl font-semibold mb-3">
-              Questions, corrections, or tips?
+              {t('Questions, corrections, or tips?')}
             </h2>
             <p className="text-white/70 mb-6 leading-relaxed">
-              We take corrections seriously and welcome feedback on our reporting. If you have a tip, a pitch, or want to discuss our coverage, reach out directly.
+              {t('We take corrections seriously and welcome feedback on our reporting. If you have a tip, a pitch, or want to discuss our coverage, reach out directly.')}
             </p>
             <div className="flex flex-wrap gap-3">
               <a href="mailto:contacto@latamreportero.com">

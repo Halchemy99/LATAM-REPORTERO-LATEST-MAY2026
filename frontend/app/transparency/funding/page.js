@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import {
@@ -107,7 +108,7 @@ function LiveCounter({ value, prefix = '£', decimals = 4, className = '' }) {
   );
 }
 
-function PerMinuteTicker() {
+function PerMinuteTicker({ t }) {
   const elapsed = useElapsedThisMonth();
   const spent = elapsed * PER_SECOND;
   const perMinute = PER_SECOND * 60;
@@ -117,39 +118,39 @@ function PerMinuteTicker() {
       <div className="flex items-center gap-2 mb-4">
         <div className="w-2 h-2 rounded-full bg-[#6111ff] animate-pulse" />
         <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6111ff]">
-          Live — updating every second
+          {t('Live — updating every second')}
         </span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">Spent this month</p>
+          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">{t('Spent this month')}</p>
           <LiveCounter
             value={spent}
             decimals={2}
             className="text-3xl font-mono font-bold text-white"
           />
-          <p className="text-white/30 text-xs mt-1">of £{FUNDING.monthly_total_costs.toLocaleString()} budget</p>
+          <p className="text-white/30 text-xs mt-1">{t('of')} £{FUNDING.monthly_total_costs.toLocaleString()} {t('budget')}</p>
         </div>
         <div>
-          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">Per minute</p>
+          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">{t('Per minute')}</p>
           <span className="text-3xl font-mono font-bold text-[#6111ff]">
             £{perMinute.toFixed(5)}
           </span>
-          <p className="text-white/30 text-xs mt-1">every 60 seconds</p>
+          <p className="text-white/30 text-xs mt-1">{t('every 60 seconds')}</p>
         </div>
         <div>
-          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">Per day</p>
+          <p className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">{t('Per day')}</p>
           <span className="text-3xl font-mono font-bold text-white">
             £{(FUNDING.monthly_total_costs / 30).toFixed(2)}
           </span>
-          <p className="text-white/30 text-xs mt-1">keeping LATAM Reportero alive</p>
+          <p className="text-white/30 text-xs mt-1">{t('keeping LATAM Reportero alive')}</p>
         </div>
       </div>
     </div>
   );
 }
 
-function CostBar({ item, elapsed }) {
+function CostBar({ item, elapsed, t }) {
   const itemPerSecond = (item.monthly / SECONDS_IN_MONTH);
   const spent = elapsed * itemPerSecond;
   const Icon = item.icon;
@@ -162,8 +163,8 @@ function CostBar({ item, elapsed }) {
             <Icon className="h-4 w-4" style={{ color: item.color }} />
           </div>
           <div>
-            <h3 className="font-semibold text-[#1a1a1a] text-sm">{item.name}</h3>
-            <p className="text-xs text-[#666666] mt-0.5">{item.desc}</p>
+            <h3 className="font-semibold text-[#1a1a1a] text-sm">{t(item.name)}</h3>
+            <p className="text-xs text-[#666666] mt-0.5">{t(item.desc)}</p>
           </div>
         </div>
         <div className="text-right flex-shrink-0 ml-4">
@@ -171,7 +172,7 @@ function CostBar({ item, elapsed }) {
             £{item.monthly}/mo
           </div>
           <div className="text-xs font-mono text-[#666666]">
-            {item.percentage}% of budget
+            {item.percentage}% {t('of budget')}
           </div>
         </div>
       </div>
@@ -194,7 +195,7 @@ function CostBar({ item, elapsed }) {
           ))}
         </div>
         <div className="text-right flex-shrink-0 ml-3">
-          <div className="text-[10px] font-mono text-[#666666] uppercase tracking-wider">spent this month</div>
+          <div className="text-[10px] font-mono text-[#666666] uppercase tracking-wider">{t('spent this month')}</div>
           <LiveCounter
             value={spent}
             decimals={3}
@@ -208,6 +209,7 @@ function CostBar({ item, elapsed }) {
 }
 
 export default function FundingTransparencyPage() {
+  const { t } = useTranslation();
   const elapsed = useElapsedThisMonth();
   const totalSpent = elapsed * PER_SECOND;
   const percentSpent = Math.min((totalSpent / FUNDING.monthly_total_costs) * 100, 100);
@@ -221,20 +223,19 @@ export default function FundingTransparencyPage() {
         <div className="bg-[#1a1a1a] text-white py-12">
           <div className="container max-w-4xl">
             <Link href="/transparency" className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-white/40 hover:text-white/70 transition-colors mb-8">
-              <ArrowLeft className="h-3 w-3" /> Transparency hub
+              <ArrowLeft className="h-3 w-3" /> {t('Transparency hub')}
             </Link>
             <div className="flex items-center gap-3 mb-3">
               <TrendingUp className="h-5 w-5 text-[#6111ff]" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">
-                Financial transparency
+                {t('Financial transparency')}
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4">
-              Where your money goes
+              {t('Where your money goes')}
             </h1>
             <p className="text-white/60 max-w-2xl leading-relaxed">
-              Every penny of reader funding is tracked here in real time. No corporate owners.
-              No hidden advertisers. This is what independent journalism actually costs.
+              {t('Every penny of reader funding is tracked here in real time. No corporate owners. No hidden advertisers. This is what independent journalism actually costs.')}
             </p>
           </div>
         </div>
@@ -242,14 +243,14 @@ export default function FundingTransparencyPage() {
         <div className="container max-w-4xl py-10 space-y-6">
 
           {/* Live ticker */}
-          <PerMinuteTicker />
+          <PerMinuteTicker t={t} />
 
           {/* Month progress bar */}
           <div className="bg-white border border-[#1a1a1a]/10 p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[#1a1a1a]">{FUNDING.month} budget progress</span>
+              <span className="text-sm font-semibold text-[#1a1a1a]">{FUNDING.month} {t('budget progress')}</span>
               <span className="text-sm font-mono text-[#666666]">
-                £{totalSpent.toFixed(2)} of £{FUNDING.monthly_total_costs}
+                £{totalSpent.toFixed(2)} {t('of')} £{FUNDING.monthly_total_costs}
               </span>
             </div>
             <div className="h-2 bg-[#1a1a1a]/8 rounded-full overflow-hidden">
@@ -268,11 +269,11 @@ export default function FundingTransparencyPage() {
           <div>
             <h2 className="text-lg font-serif font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
               <Clock className="h-4 w-4 text-[#6111ff]" />
-              Real costs, broken down live
+              {t('Real costs, broken down live')}
             </h2>
             <div className="space-y-3">
               {FUNDING.costs.map(item => (
-                <CostBar key={item.name} item={item} elapsed={elapsed} />
+                <CostBar key={item.name} item={item} elapsed={elapsed} t={t} />
               ))}
             </div>
           </div>
@@ -281,19 +282,19 @@ export default function FundingTransparencyPage() {
           <div className="bg-[#1a1a1a] text-white p-8">
             <div className="flex items-center gap-2 mb-6">
               <Heart className="h-4 w-4 text-[#6111ff]" />
-              <h2 className="text-lg font-semibold">What your subscription pays for</h2>
+              <h2 className="text-lg font-semibold">{t('What your subscription pays for')}</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { amount: '£8/mo', label: 'Standard subscriber', funds: '~1.5 hours of reporting time' },
-                { amount: '£15/mo', label: 'Supporter', funds: '~3 hours + covers hosting' },
-                { amount: '£50/mo', label: 'Champion', funds: '~1 full investigative day' },
-                { amount: '£150/mo', label: 'Founding member', funds: '~3 investigation days' },
+                { amount: '£8/mo',   label: 'Standard subscriber',  funds: '~1.5 hours of reporting time' },
+                { amount: '£15/mo',  label: 'Supporter',            funds: '~3 hours + covers hosting' },
+                { amount: '£50/mo',  label: 'Champion',             funds: '~1 full investigative day' },
+                { amount: '£150/mo', label: 'Founding member',      funds: '~3 investigation days' },
               ].map(tier => (
                 <div key={tier.amount} className="border border-white/10 p-4">
                   <div className="text-2xl font-mono font-bold text-[#6111ff] mb-1">{tier.amount}</div>
-                  <div className="text-sm font-semibold text-white mb-1">{tier.label}</div>
-                  <div className="text-xs text-white/50">{tier.funds}</div>
+                  <div className="text-sm font-semibold text-white mb-1">{t(tier.label)}</div>
+                  <div className="text-xs text-white/50">{t(tier.funds)}</div>
                 </div>
               ))}
             </div>
@@ -301,11 +302,9 @@ export default function FundingTransparencyPage() {
 
           {/* Editorial independence pledge */}
           <div className="border-l-4 border-[#6111ff] bg-white p-6">
-            <h3 className="font-semibold text-[#1a1a1a] mb-2">Editorial independence — non-negotiable</h3>
+            <h3 className="font-semibold text-[#1a1a1a] mb-2">{t('Editorial independence — non-negotiable')}</h3>
             <p className="text-sm text-[#666666] leading-relaxed">
-              No single funder controls more than 30% of our revenue. Advertisers have zero editorial
-              access. Grants are unconditional. This page updates automatically — we cannot hide what
-              we spend, and we wouldn't want to.
+              {t('No single funder controls more than 30% of our revenue. Advertisers have zero editorial access. Grants are unconditional. This page updates automatically — we cannot hide what we spend, and we wouldn\'t want to.')}
             </p>
           </div>
 
@@ -313,16 +312,16 @@ export default function FundingTransparencyPage() {
           {FUNDING.monthly_reader_revenue === 0 && (
             <div className="bg-[#6111ff]/8 border border-[#6111ff]/20 p-6 text-center">
               <p className="text-sm text-[#1a1a1a] font-medium mb-1">
-                Reader revenue: £0 this month
+                {t('Reader revenue: £0 this month')}
               </p>
               <p className="text-sm text-[#666666] mb-4">
-                We're running on reserves. Be the first subscriber — 100% goes to journalism.
+                {t("We're running on reserves. Be the first subscriber — 100% goes to journalism.")}
               </p>
               <Link
                 href="/pricing"
                 className="inline-flex items-center gap-2 bg-[#6111ff] text-white text-sm font-semibold px-6 py-3 hover:bg-[#4a0dd6] transition-colors"
               >
-                Support independent LATAM journalism
+                {t('Support independent LATAM journalism')}
               </Link>
             </div>
           )}

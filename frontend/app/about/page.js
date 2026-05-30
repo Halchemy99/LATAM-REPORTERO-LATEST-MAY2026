@@ -37,13 +37,13 @@ export default function AboutPage() {
           </h2>
           <div className="space-y-4 text-[#444444] text-base leading-relaxed">
             <p>
-              Latin America contains 650 million people, 20 distinct political systems, the world&apos;s largest rainforest, and some of the most innovative journalism anywhere on earth. It is consistently undercovered in English-language media.
+              {t('Latin America contains 650 million people, 20 distinct political systems, the world\'s largest rainforest, and some of the most innovative journalism anywhere on earth. It is consistently undercovered in English-language media.')}
             </p>
             <p>
-              When it does appear in global newsrooms, it&apos;s usually through the lens of crisis. A coup, a hurricane, a cartel story. The ordinary complexity of the region&apos;s politics, its cities, its economic experiments, its cultural output — that largely doesn&apos;t make it out.
+              {t('When it does appear in global newsrooms, it\'s usually through the lens of crisis. A coup, a hurricane, a cartel story. The ordinary complexity of the region\'s politics, its cities, its economic experiments, its cultural output — that largely doesn\'t make it out.')}
             </p>
             <p>
-              We started LATAM Reportero to close that gap. Not with wire aggregation or press-release journalism, but with explanatory, contextual storytelling that assumes you&apos;re intelligent and new to the region. Every piece we publish has to answer the question: <em>&ldquo;why does this matter, and what does it mean?&rdquo;</em>
+              {t('We started LATAM Reportero to close that gap. Not with wire aggregation or press-release journalism, but with explanatory, contextual storytelling that assumes you\'re intelligent and new to the region.')}
             </p>
           </div>
         </section>

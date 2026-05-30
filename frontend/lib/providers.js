@@ -1,61 +1,162 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, {
+  createContext, useContext, useState, useEffect,
+  useCallback, useMemo, useRef
+} from 'react';
 import { en, es, pt } from './translations';
 
 // ============ I18n Provider ============
+// t() handles TWO kinds of input:
+//   1. Dot-notation keys  →  t('nav.login')         static lookup from translations.js
+//   2. Plain English text →  t('Before your coffee') auto-translated via DeepL, cached
+//
+// Runtime cache lives in localStorage so subsequent page loads are instant.
+// On locale switch we drain the queue and re-render once all strings are ready.
+
 const I18nContext = createContext();
 
-export function I18nProvider({ children }) {
-  const [locale, setLocale] = useState('en');
-  const [mounted, setMounted] = useState(false);
+const STATIC_KEY = /^[a-zA-Z_][\w]*(\.[a-zA-Z_][\w-]*)+$/;
+const CACHE_PREFIX = 'ltm_rt_';   // ltm_rt_es, ltm_rt_pt
 
+function loadCache(locale) {
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_PREFIX + locale) || '{}');
+  } catch { return {}; }
+}
+
+function saveCache(locale, cache) {
+  try {
+    localStorage.setItem(CACHE_PREFIX + locale, JSON.stringify(cache));
+  } catch {}
+}
+
+export function I18nProvider({ children }) {
+  const [locale, setLocale]     = useState('en');
+  const [mounted, setMounted]   = useState(false);
+  // runtime translation cache: { es: { 'Before your coffee': 'Antes de tu café', ... }, pt: {...} }
+  const [rtCache, setRtCache]   = useState({});
+  const [translating, setTranslating] = useState(false);
+
+  // Queue of strings waiting to be translated for the current locale
+  const queue   = useRef(new Set());
+  const timer   = useRef(null);
+
+  // ── Boot: restore locale + caches ──────────────────────────────────────────
   useEffect(() => {
     setMounted(true);
     try {
-      const savedLocale = localStorage.getItem('locale');
-      if (savedLocale) {
-        setLocale(savedLocale);
-        return;
+      // Restore saved locale
+      const saved = localStorage.getItem('locale');
+      if (saved && ['en','es','pt'].includes(saved)) {
+        setLocale(saved);
+      } else {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const LATAM_TZ = ['America/Bogota','America/Lima','America/Santiago','America/Buenos_Aires',
+          'America/Caracas','America/La_Paz','America/Guayaquil','America/Montevideo',
+          'America/Asuncion','America/Mexico_City','America/Managua','America/Costa_Rica',
+          'America/Panama','America/Tegucigalpa','America/El_Salvador','America/Guatemala',
+          'America/Havana','America/Santo_Domingo','America/Port-au-Prince',
+          'America/Puerto_Rico','America/Sao_Paulo','America/Manaus','America/Fortaleza'];
+        if (LATAM_TZ.some(z => tz.startsWith(z) || tz === z)) {
+          setLocale('es');
+        } else {
+          const lang = navigator.language?.split('-')[0];
+          if (lang === 'es') setLocale('es');
+          else if (lang === 'pt') setLocale('pt');
+        }
       }
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (timezone.startsWith('America/') && !timezone.includes('New_York') && !timezone.includes('Los_Angeles') && !timezone.includes('Chicago')) {
-        setLocale('es');
-        return;
-      }
-      const browserLang = navigator.language?.split('-')[0];
-      if (browserLang === 'es') setLocale('es');
-      else if (browserLang === 'pt') setLocale('pt');
-    } catch (e) {
-      // localStorage not available (SSR or privacy mode)
-      console.warn('localStorage not available:', e);
+
+      // Pre-load runtime caches from localStorage
+      setRtCache({
+        es: loadCache('es'),
+        pt: loadCache('pt'),
+      });
+    } catch {}
+  }, []);
+
+  // ── Flush the translation queue via /api/translate ─────────────────────────
+  const flushQueue = useCallback(async (lang) => {
+    if (!queue.current.size || lang === 'en') return;
+
+    const texts = [...queue.current];
+    queue.current = new Set();
+    setTranslating(true);
+
+    try {
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts, targetLang: lang }),
+      });
+
+      if (!res.ok) return;
+      const { translations } = await res.json();
+
+      setRtCache(prev => {
+        const updated = { ...prev };
+        if (!updated[lang]) updated[lang] = {};
+        texts.forEach((text, i) => { updated[lang][text] = translations[i]; });
+        saveCache(lang, updated[lang]);
+        return updated;
+      });
+    } catch (err) {
+      console.warn('Translation fetch failed:', err);
+    } finally {
+      setTranslating(false);
     }
   }, []);
 
+  // ── Debounce queue flushes so we batch strings from a whole render cycle ───
+  const scheduleFlush = useCallback((lang) => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => flushQueue(lang), 80);
+  }, [flushQueue]);
+
+  // ── Change locale ──────────────────────────────────────────────────────────
   const changeLocale = useCallback((newLocale) => {
     setLocale(newLocale);
-    try {
-      localStorage.setItem('locale', newLocale);
-    } catch (e) {
-      console.warn('localStorage not available:', e);
-    }
+    try { localStorage.setItem('locale', newLocale); } catch {}
+    // Clear queue so the new locale starts fresh
+    queue.current = new Set();
+    clearTimeout(timer.current);
   }, []);
 
-  const t = useCallback((key) => {
-    const translations = locale === 'es' ? es : locale === 'pt' ? pt : en;
-    const keys = key.split('.');
-    let value = translations;
-    for (const k of keys) value = value?.[k];
-    return value || key;
-  }, [locale]);
+  // ── t() — the main translation function ───────────────────────────────────
+  // Accepts EITHER a dot-notation key OR a plain English string
+  const t = useCallback((input) => {
+    if (!input) return input;
+
+    // 1. Static key lookup (instant, no API)
+    if (STATIC_KEY.test(input)) {
+      const dict = locale === 'es' ? es : locale === 'pt' ? pt : en;
+      const parts = input.split('.');
+      let val = dict;
+      for (const k of parts) val = val?.[k];
+      if (val && typeof val === 'string') return val;
+      // key not found → fall through to runtime path
+    }
+
+    // 2. English locale → return as-is
+    if (locale === 'en') return input;
+
+    // 3. Runtime cache hit → return instantly
+    if (rtCache[locale]?.[input]) return rtCache[locale][input];
+
+    // 4. Not cached → queue for translation, return English for now
+    queue.current.add(input);
+    scheduleFlush(locale);
+    return input;
+  }, [locale, rtCache, scheduleFlush]);
 
   const contextValue = useMemo(() => ({
     locale,
     setLocale: changeLocale,
-    t
-  }), [locale, changeLocale, t]);
+    t,
+    translating,
+  }), [locale, changeLocale, t, translating]);
 
-  if (!mounted) return <div className="min-h-screen bg-background" />;
+  if (!mounted) return <div className="min-h-screen bg-[#F9F6F6]" />;
 
   return (
     <I18nContext.Provider value={contextValue}>

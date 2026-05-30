@@ -141,7 +141,7 @@ export default function WritersPage() {
               <h1 className="text-3xl md:text-4xl font-bold">{t('nav.writers')}</h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Meet our verified journalists covering Latin America. Each writer has a Trust Score based on accuracy, sourcing, and community feedback.
+              {t('Meet our verified journalists covering Latin America. Each writer has a Trust Score based on accuracy, sourcing, and community feedback.')}
             </p>
           </div>
         </section>
@@ -153,7 +153,7 @@ export default function WritersPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search writers..."
+                  placeholder={t('Search writers...')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10"
@@ -166,7 +166,7 @@ export default function WritersPage() {
                 <SelectContent>
                   {regions.map(reg => (
                     <SelectItem key={reg} value={reg}>
-                      {reg === 'all' ? 'All Regions' : t(`regions.${reg}`) || reg}
+                      {reg === 'all' ? t('All Regions') : t(`regions.${reg}`) || reg}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -200,7 +200,7 @@ export default function WritersPage() {
                       <div className="flex flex-wrap justify-center gap-2 mb-4">
                         <Badge variant="outline" className="text-xs">
                           <FileText className="h-3 w-3 mr-1" />
-                          {writer.articleCount} articles
+                          {writer.articleCount} {t('articles')}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           <MapPin className="h-3 w-3 mr-1" />
@@ -209,7 +209,7 @@ export default function WritersPage() {
                         {writer.verified && (
                           <Badge className="bg-green-100 text-green-800 text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
-                            Verified
+                            {t('Verified')}
                           </Badge>
                         )}
                       </div>
@@ -220,7 +220,7 @@ export default function WritersPage() {
 
                       <Button variant="outline" className="w-full" size="sm" asChild>
                         <Link href={usingCMS ? `/writers/${writer.slug || writer.id}` : `/writers/${writer.id}`}>
-                          View Profile
+                          {t('View Profile')}
                         </Link>
                       </Button>
                     </div>
@@ -232,8 +232,8 @@ export default function WritersPage() {
             {filteredWriters.length === 0 && (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No writers found</h3>
-                <p className="text-muted-foreground">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('No writers found')}</h3>
+                <p className="text-muted-foreground">{t('Try adjusting your search or filters.')}</p>
               </div>
             )}
           </div>

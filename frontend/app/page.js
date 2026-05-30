@@ -120,6 +120,7 @@ function Byline({ article, className = '' }) {
 
 // ---------- Hero (Editor's Pick) — cinematic full-bleed ----------
 function HeroEditor({ article }) {
+  const { t } = useTranslation();
   if (!article) return null;
   const meta = getMeta(article.contentType);
   const HeroIcon = meta.icon;
@@ -209,7 +210,7 @@ function HeroEditor({ article }) {
                 className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none text-sm gap-2 transition-colors"
                 data-testid="hero-read-now"
               >
-                Read now <ArrowRight className="h-4 w-4" />
+                {t("Read now")} <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -380,6 +381,7 @@ function EmptyStateMini({ icon: Icon, text }) {
 }
 
 function NewsletterCta() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle');
 
@@ -405,8 +407,8 @@ function NewsletterCta() {
       <div className="flex items-center gap-3" data-testid="newsletter-success">
         <CheckCircle className="h-5 w-5 text-[#6111ff] flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-white">You&apos;re in. Check your inbox.</p>
-          <p className="text-xs text-white/50 mt-0.5">First brief arrives tomorrow morning.</p>
+          <p className="text-sm font-medium text-white">{t("You're in. Check your inbox.")}</p>
+          <p className="text-xs text-white/50 mt-0.5">{t("First brief arrives tomorrow morning.")}</p>
         </div>
       </div>
     );
@@ -432,7 +434,7 @@ function NewsletterCta() {
         {status === 'loading' ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <>Get it free <ArrowRight className="h-3.5 w-3.5" /></>
+          <>{t("Get it free")} <ArrowRight className="h-3.5 w-3.5" /></>
         )}
       </button>
     </form>
@@ -441,7 +443,7 @@ function NewsletterCta() {
 
 // ---------- Page ----------
 export default function HomePage() {
-  const { locale } = useTranslation();
+  const { locale, t } = useTranslation();
   const { isSubscribed } = useUserRole();
   const [data, setData] = useState({
     hero: null,
@@ -548,7 +550,7 @@ export default function HomePage() {
             </div>
             <div className="lg:col-span-3 lg:pb-2">
               <p className="text-sm text-[#666666] leading-relaxed border-l-2 border-[#1a1a1a]/15 pl-4">
-                Explanatory journalism. Free every weekday. No paywall, no agenda.
+                {t("Explanatory journalism. Free every weekday. No paywall, no agenda.")}
               </p>
             </div>
           </div>
@@ -570,8 +572,8 @@ export default function HomePage() {
           <div>
             <SectionHeader
               icon={Coffee}
-              title="Morning Brief"
-              subtitle="Latin America, distilled before coffee"
+              title={t("Morning Brief")}
+              subtitle={t("Latin America, distilled before coffee")}
               href="/investigations?type=morning-brief"
             />
             {morningBriefs.length > 0 ? (
@@ -583,7 +585,7 @@ export default function HomePage() {
             ) : (
               <EmptyStateMini
                 icon={Coffee}
-                text="Tomorrow's brief is coming. Subscribe to get it by email."
+                text={t("Tomorrow's brief is coming. Subscribe to get it by email.")}
               />
             )}
           </div>
@@ -591,8 +593,8 @@ export default function HomePage() {
           <div>
             <SectionHeader
               icon={Newspaper}
-              title="Press Review"
-              subtitle="What we're reading across the region"
+              title={t("Press Review")}
+              subtitle={t("What we're reading across the region")}
               href="/investigations?type=press-review"
             />
             {pressReviews.length > 0 ? (
@@ -604,7 +606,7 @@ export default function HomePage() {
             ) : (
               <EmptyStateMini
                 icon={Link2}
-                text="Fresh press reviews land every weekday afternoon."
+                text={t("Fresh press reviews land every weekday afternoon.")}
               />
             )}
           </div>
@@ -614,8 +616,8 @@ export default function HomePage() {
         <section className="mb-14" data-testid="section-deep-dives">
           <SectionHeader
             icon={Layers}
-            title="Deep Dives"
-            subtitle="Original investigations & long-form analysis"
+            title={t("Deep Dives")}
+            subtitle={t("Original investigations & long-form analysis")}
             href="/investigations"
             accent="#1a1a1a"
           />
@@ -629,10 +631,10 @@ export default function HomePage() {
             <div className="bg-white border border-dashed border-[#1a1a1a]/20 p-8 text-center">
               <Layers className="h-8 w-8 text-[#6111ff] mx-auto mb-3" />
               <p className="text-[#1a1a1a] font-serif text-lg mb-2">
-                Original reporting is in the works.
+                {t("Original reporting is in the works.")}
               </p>
               <p className="text-sm text-[#666666] mb-4">
-                Want to contribute? We&apos;re opening up to guest reporters across LATAM.
+                {t("Want to contribute? We're opening up to guest reporters across LATAM.")}
               </p>
               <Link href="/submit">
                 <Button
@@ -640,7 +642,7 @@ export default function HomePage() {
                   className="rounded-none border-[#1a1a1a]/20 text-sm"
                   data-testid="pitch-cta"
                 >
-                  Pitch a story
+                  {t("Pitch a story")}
                 </Button>
               </Link>
             </div>
@@ -653,17 +655,16 @@ export default function HomePage() {
           <div className="bg-[#0d0d0d] text-white p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" data-testid="newsletter-cta">
             <div>
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#6111ff] block mb-4">
-                Free daily brief
+                {t("Free daily brief")}
               </span>
               <h3
                 className="font-display font-extrabold text-white leading-[0.95] mb-4 tracking-tight"
                 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
               >
-                Latin America,<br />
-                before your coffee.
+                {t("Latin America, before your coffee.")}
               </h3>
               <p className="text-sm text-white/55 leading-relaxed">
-                Weekday Morning Briefs and the weekly Press Review. No paywall. No account needed.
+                {t("Weekday Morning Briefs and the weekly Press Review. No paywall. No account needed.")}
               </p>
             </div>
             <div>
@@ -675,14 +676,14 @@ export default function HomePage() {
           <div className="border-t border-[#1a1a1a]/10 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" data-testid="community-cta">
             <div className="flex items-center gap-4">
               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white bg-[#1a1a1a]/30 px-2 py-0.5 text-[#666666] border border-[#1a1a1a]/15">
-                Coming soon
+                {t("Coming soon")}
               </span>
               <div>
                 <p className="text-sm font-medium text-[#1a1a1a]">
-                  Community membership
+                  {t("Community membership")}
                 </p>
                 <p className="text-xs text-[#666666] mt-0.5">
-                  Signal groups, reporter access, member calls. Launching when it&apos;s ready.
+                  {t("Signal groups, reporter access, member calls. Launching when it's ready.")}
                 </p>
               </div>
             </div>
@@ -692,7 +693,7 @@ export default function HomePage() {
                 className="rounded-none border-[#1a1a1a]/20 text-xs gap-1.5 text-[#666666] whitespace-nowrap"
                 data-testid="community-join-btn"
               >
-                Get notified <ArrowRight className="h-3 w-3" />
+                {t("Get notified")} <ArrowRight className="h-3 w-3" />
               </Button>
             </Link>
           </div>
@@ -703,8 +704,8 @@ export default function HomePage() {
           <section className="mb-8" data-testid="section-wire">
             <SectionHeader
               icon={Sparkles}
-              title="Also on the Wire"
-              subtitle="Aggregated headlines. AI-tagged, not our voice"
+              title={t("Also on the Wire")}
+              subtitle={t("Aggregated headlines. AI-tagged, not our voice")}
               accent="#666666"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
@@ -713,9 +714,7 @@ export default function HomePage() {
               ))}
             </div>
             <p className="text-[11px] text-[#666666] mt-4 italic">
-              Wire items are pulled from public RSS sources and shown for context.
-              Our editorial voice lives in Morning Briefs, Press Reviews and Deep
-              Dives above.
+              {t("Wire items are pulled from public RSS sources and shown for context. Our editorial voice lives in Morning Briefs, Press Reviews and Deep Dives above.")}
             </p>
           </section>
         )}
