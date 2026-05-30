@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslation, useUserRole } from '@/lib/providers';
 import SanityPortableText from '@/components/SanityPortableText';
 import ArticlePodcastPlayer from '@/components/ArticlePodcastPlayer';
+import ArticleVoiceBot from '@/components/ArticleVoiceBot';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -403,6 +404,7 @@ export default function ArticlePage() {
         </div>
       </main>
 
+      <ArticleVoiceBot article={article} />
       <Footer />
     </div>
   );

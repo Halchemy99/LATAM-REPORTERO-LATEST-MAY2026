@@ -74,8 +74,9 @@ from rss_config import RSS_FEEDS
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# LLM API key
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+# LLM API key — supports both legacy EMERGENT_LLM_KEY (OpenAI) and new ANTHROPIC_API_KEY
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY') or os.environ.get('OPENAI_API_KEY')
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 
 # JWT Secret
 JWT_SECRET = os.environ.get('JWT_SECRET', 'latam-reportero-jwt-secret-2026')
@@ -350,68 +351,54 @@ async def get_status_checks():
 async def voicebot_chat(request: VoiceBotChatRequest):
     """Chat endpoint for ArticleVoiceBot using OpenAI via Emergent LLM key"""
     try:
-        if not EMERGENT_LLM_KEY:
-            raise HTTPException(status_code=500, detail="LLM API key not configured")
-        
-        # Build article context for the system message
+        if not ANTHROPIC_API_KEY:
+            raise HTTPException(status_code=500, detail="Anthropic API key not configured")
+
+        import anthropic as _anthropic
+
+        # Build article context
         article_context = ""
         if request.article:
             article_context = f"""
-You are an AI assistant helping users understand a news article about Latin America.
-
 ARTICLE DETAILS:
 Title: {request.article.title or 'N/A'}
 Summary: {request.article.excerpt or 'N/A'}
 Category: {request.article.category or 'N/A'}
 Region: {request.article.region or 'N/A'}
-
-PROBLEM DISCUSSED:
-{request.article.problem or 'Not specified'}
-
-SOLUTIONS PRESENTED:
-{request.article.solutions or 'Not specified'}
-
-IMPACT:
-{request.article.impact or 'Not specified'}
+Problem discussed: {request.article.problem or 'Not specified'}
+Solutions presented: {request.article.solutions or 'Not specified'}
+Impact: {request.article.impact or 'Not specified'}
 """
-        
-        system_message = f"""You are a helpful Article Assistant for LATAM Reportero, a solutions-oriented journalism platform focused on Latin America.
-{article_context}
 
+        system_message = f"""You are a helpful Article Assistant for LATAM Reportero, a solutions-oriented journalism platform covering Latin America.
+{article_context}
 Your role:
 1. Answer questions about this specific article's content
 2. Explain complex topics in simple terms
 3. Provide context about the region or issue being discussed
-4. Be conversational and helpful
+4. Be conversational and helpful — friendly, journalistic tone
 5. If asked about something not in the article, politely say you can only discuss the article's content
+Keep responses concise (2-3 paragraphs max)."""
 
-Keep responses concise (2-3 paragraphs max) and engaging. Use a friendly, journalistic tone."""
-
-        # Generate unique session ID for this conversation
         session_id = f"article-chat-{uuid.uuid4()}"
-        
-        # Initialize the chat
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=session_id,
-            system_message=system_message
-        )
-        
-        # Use GPT-4o for good performance and cost balance
-        chat.with_model("openai", "gpt-4o")
-        
-        # Build conversation with history
+
+        # Build messages list including history
+        messages = []
         if request.history:
             for msg in request.history:
-                if msg.get('role') == 'user':
-                    user_msg = UserMessage(text=msg.get('content', ''))
-                    await chat.send_message(user_msg)
-                # Note: Assistant messages are handled by the library's history
-        
-        # Send the current message
-        user_message = UserMessage(text=request.message)
-        response = await chat.send_message(user_message)
-        
+                if msg.get('role') in ('user', 'assistant'):
+                    messages.append({"role": msg['role'], "content": msg.get('content', '')})
+        messages.append({"role": "user", "content": request.message})
+
+        client_anthropic = _anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        completion = await client_anthropic.messages.create(
+            model="claude-sonnet-4-5",
+            max_tokens=1024,
+            system=system_message,
+            messages=messages,
+        )
+        response = completion.content[0].text
+
         return {"response": response, "session_id": session_id}
         
     except Exception as e:
