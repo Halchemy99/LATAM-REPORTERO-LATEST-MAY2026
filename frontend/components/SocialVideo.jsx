@@ -277,7 +277,6 @@ export function VideoHighlightsSection() {
   }, []);
 
   return (
-    <>
     <section className="bg-[#0d0d0d] py-10 lg:py-14" data-testid="watch-section">
       <div className="container">
         {/* Header row */}
@@ -337,16 +336,14 @@ export function VideoHighlightsSection() {
           </div>
         </div>
       </div>
+      {activeModal && (
+        <VideoModal
+          platform={activeModal.platform}
+          videoId={activeModal.videoId}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
     </section>
-
-    {activeModal && (
-      <VideoModal
-        platform={activeModal.platform}
-        videoId={activeModal.videoId}
-        onClose={() => setActiveModal(null)}
-      />
-    )}
-    </>
   );
 }
 
