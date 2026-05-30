@@ -637,26 +637,24 @@ Keep responses concise but helpful. You can suggest related topics they might be
         # Generate or use existing session ID
         session_id = request.session_id or f"search-{uuid.uuid4()}"
         
-        # Initialize the chat
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=session_id,
-            system_message=system_message
-        )
-        
-        # Use GPT-5.2 for best understanding
-        chat.with_model("openai", "gpt-5.2")
-        
-        # Build conversation history if provided
+        # Use Anthropic Claude for AI search
+        import anthropic as _anthropic
+        session_id = request.session_id or f"search-{uuid.uuid4()}"
+        messages = []
         if request.history:
             for msg in request.history:
-                if msg.get('role') == 'user':
-                    user_msg = UserMessage(text=msg.get('content', ''))
-                    await chat.send_message(user_msg)
-        
-        # Send the search query
-        user_message = UserMessage(text=request.query)
-        response = await chat.send_message(user_message)
+                if msg.get('role') in ('user', 'assistant'):
+                    messages.append({"role": msg['role'], "content": msg.get('content', '')})
+        messages.append({"role": "user", "content": request.query})
+
+        client_anthropic = _anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        completion = await client_anthropic.messages.create(
+            model="claude-sonnet-4-5",
+            max_tokens=1024,
+            system=system_message,
+            messages=messages,
+        )
+        response = completion.content[0].text
         
         # Parse matched articles from response
         matched_slugs = []
@@ -811,7 +809,7 @@ async def transcribe_audio(audio: UploadFile = File(...)):
                 with open(tmp_path, "rb") as f:
                     response = await client.post(
                         "https://api.openai.com/v1/audio/transcriptions",
-                        headers={"Authorization": f"Bearer {EMERGENT_LLM_KEY}"},
+                        headers={"Authorization": f"Bearer {os.environ.get('OPENAI_API_KEY') or EMERGENT_LLM_KEY}"},
                         files={"file": ("audio.webm", f, "audio/webm")},
                         data={"model": "whisper-1"},
                         timeout=30.0
@@ -1588,11 +1586,12 @@ async def text_to_speech(request: Request):
     if not text.strip():
         raise HTTPException(status_code=400, detail="Text is required")
     
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail="TTS API key not configured")
-    
+    openai_key = os.environ.get('OPENAI_API_KEY') or EMERGENT_LLM_KEY
+    if not openai_key:
+        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+
     try:
-        tts = OpenAITextToSpeech(api_key=EMERGENT_LLM_KEY)
+        tts = OpenAITextToSpeech(api_key=openai_key)
         
         # TTS has a 4096 char limit — chunk and concatenate
         chunks = []
