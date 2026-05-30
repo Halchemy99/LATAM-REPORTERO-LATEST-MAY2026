@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Play, ExternalLink } from 'lucide-react';
@@ -244,6 +245,7 @@ function WatchCard({ platform, title, thumbnail, videoUrl, reporter, verified })
 
 // Video Highlights Section - For homepage
 export function VideoHighlightsSection() {
+  const { t } = useTranslation();
   const videos = [
     {
       platform: 'tiktok',
@@ -318,11 +320,11 @@ export function VideoHighlightsSection() {
         <div className="flex items-end justify-between mb-7 pb-4 border-b border-white/10">
           <div>
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6111ff] mb-1.5">
-              Story-driven · 60 seconds
+              {t('Story-driven · 60 seconds')}
             </p>
             <h2 className="text-2xl lg:text-3xl font-semibold text-white leading-none"
               >
-              Watch
+              {t('Watch')}
             </h2>
           </div>
           <div className="flex items-center gap-3">
@@ -339,7 +341,7 @@ export function VideoHighlightsSection() {
             ))}
             <Link href="/watch"
               className="hidden md:flex items-center gap-1 text-[11px] font-mono uppercase tracking-wider text-[#6111ff] hover:text-white transition-colors ml-2">
-              All videos <ExternalLink className="h-3 w-3" />
+              {t('All videos')} <ExternalLink className="h-3 w-3" />
             </Link>
           </div>
         </div>
@@ -354,7 +356,7 @@ export function VideoHighlightsSection() {
         {/* Footer follow CTA */}
         <div className="mt-7 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/35 font-mono uppercase tracking-wider">
-            Follow @latamreportero for daily video journalism
+            {t('Follow @latamreportero for daily video journalism')}
           </p>
           <div className="flex items-center gap-3">
             {[

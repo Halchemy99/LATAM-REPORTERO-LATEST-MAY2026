@@ -543,9 +543,9 @@ export default function HomePage() {
                 className="font-display font-extrabold text-[#1a1a1a] leading-[0.93] tracking-tight"
                 style={{ fontSize: 'clamp(3rem, 8.5vw, 7.5rem)' }}
               >
-                Latin America<br />
-                <em className="not-italic" style={{ color: '#6111ff' }}>explained.</em>{' '}
-                Fully.
+                {t('Latin America')}<br />
+                <em className="not-italic" style={{ color: '#6111ff' }}>{t('explained.')}</em>{' '}
+                {t('Fully.')}
               </h2>
             </div>
             <div className="lg:col-span-3 lg:pb-2">

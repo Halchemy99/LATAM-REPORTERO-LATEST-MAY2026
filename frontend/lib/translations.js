@@ -359,6 +359,51 @@ export const en = {
     rights: 'All rights reserved',
     independent: 'Independent journalism',
   },
+  ui: {
+    // Header
+    logIn: 'Log In',
+    freeNewsletter: 'Free Newsletter',
+    savedStories: 'Saved Stories',
+    signOut: 'Sign Out',
+    regions: 'Regions',
+    southAmerica: 'South America',
+    centralAmerica: 'Central America',
+    mexicoCaribbean: 'Mexico & Caribbean',
+    // Nav labels
+    briefs: 'Briefs',
+    deepDives: 'Deep Dives',
+    community: 'Community',
+    about: 'About',
+    // Login page
+    welcomeBack: 'Welcome Back',
+    signInToAccess: 'Sign in to access your account',
+    email: 'Email',
+    password: 'Password',
+    enterPassword: 'Enter password',
+    signingIn: 'Signing in...',
+    signIn: 'Sign In',
+    dontHaveAccount: "Don't have an account?",
+    createOne: 'Create one',
+    invalidEmailOrPassword: 'Invalid email or password',
+    welcomeBackToast: 'Welcome back!',
+    // Masthead
+    latinAmerica: 'Latin America',
+    explained: 'explained.',
+    fully: 'Fully.',
+    explanatoryJournalism: 'Explanatory journalism. Free every weekday. No paywall, no agenda.',
+    // Watch section
+    storyDriven: 'Story-driven · 60 seconds',
+    watch: 'Watch',
+    allVideos: 'All videos',
+    followLatamReportero: 'Follow @latamreportero for daily video journalism',
+    // Section labels
+    morningBrief: 'Morning Brief',
+    pressReview: 'Press Review',
+    readNow: 'Read now',
+    // Common
+    loading: 'Loading...',
+    noResultsFound: 'No results found',
+  },
 };
 
 // Spanish translations
@@ -722,6 +767,51 @@ export const es = {
     rights: 'Todos los derechos reservados',
     independent: 'Periodismo independiente',
   },
+  ui: {
+    // Header
+    logIn: 'Iniciar Sesión',
+    freeNewsletter: 'Boletín Gratuito',
+    savedStories: 'Artículos Guardados',
+    signOut: 'Cerrar Sesión',
+    regions: 'Regiones',
+    southAmerica: 'América del Sur',
+    centralAmerica: 'América Central',
+    mexicoCaribbean: 'México y el Caribe',
+    // Nav labels
+    briefs: 'Resúmenes',
+    deepDives: 'Análisis Profundos',
+    community: 'Comunidad',
+    about: 'Acerca de',
+    // Login page
+    welcomeBack: 'Bienvenido de Vuelta',
+    signInToAccess: 'Inicia sesión para acceder a tu cuenta',
+    email: 'Correo Electrónico',
+    password: 'Contraseña',
+    enterPassword: 'Ingresa tu contraseña',
+    signingIn: 'Iniciando sesión...',
+    signIn: 'Iniciar Sesión',
+    dontHaveAccount: '¿No tienes una cuenta?',
+    createOne: 'Crear una',
+    invalidEmailOrPassword: 'Correo o contraseña inválidos',
+    welcomeBackToast: '¡Bienvenido de vuelta!',
+    // Masthead
+    latinAmerica: 'América Latina',
+    explained: 'explicada.',
+    fully: 'Completamente.',
+    explanatoryJournalism: 'Periodismo explicativo. Gratis cada día de semana. Sin muro de pago, sin agenda.',
+    // Watch section
+    storyDriven: 'Basado en historias · 60 segundos',
+    watch: 'Ver',
+    allVideos: 'Todos los videos',
+    followLatamReportero: 'Sigue @latamreportero para periodismo en video diario',
+    // Section labels
+    morningBrief: 'Resumen Matutino',
+    pressReview: 'Revisión de Prensa',
+    readNow: 'Leer ahora',
+    // Common
+    loading: 'Cargando...',
+    noResultsFound: 'No se encontraron resultados',
+  },
 };
 
 // Portuguese translations
@@ -1084,5 +1174,50 @@ export const pt = {
     newsroom: 'Redação',
     rights: 'Todos os direitos reservados',
     independent: 'Jornalismo independente',
+  },
+  ui: {
+    // Header
+    logIn: 'Entrar',
+    freeNewsletter: 'Boletim Gratuito',
+    savedStories: 'Histórias Salvas',
+    signOut: 'Sair',
+    regions: 'Regiões',
+    southAmerica: 'América do Sul',
+    centralAmerica: 'América Central',
+    mexicoCaribbean: 'México e Caribe',
+    // Nav labels
+    briefs: 'Resumos',
+    deepDives: 'Análises Profundas',
+    community: 'Comunidade',
+    about: 'Sobre',
+    // Login page
+    welcomeBack: 'Bem-vindo de Volta',
+    signInToAccess: 'Entre para acessar sua conta',
+    email: 'E-mail',
+    password: 'Senha',
+    enterPassword: 'Digite sua senha',
+    signingIn: 'Entrando...',
+    signIn: 'Entrar',
+    dontHaveAccount: 'Não tem uma conta?',
+    createOne: 'Criar uma',
+    invalidEmailOrPassword: 'E-mail ou senha inválidos',
+    welcomeBackToast: 'Bem-vindo de volta!',
+    // Masthead
+    latinAmerica: 'América Latina',
+    explained: 'explicada.',
+    fully: 'Completamente.',
+    explanatoryJournalism: 'Jornalismo explicativo. Gratuito todos os dias úteis. Sem paywall, sem agenda.',
+    // Watch section
+    storyDriven: 'Baseado em histórias · 60 segundos',
+    watch: 'Assistir',
+    allVideos: 'Todos os vídeos',
+    followLatamReportero: 'Siga @latamreportero para jornalismo em vídeo diário',
+    // Section labels
+    morningBrief: 'Resumo Matinal',
+    pressReview: 'Revisão da Imprensa',
+    readNow: 'Ler agora',
+    // Common
+    loading: 'Carregando...',
+    noResultsFound: 'Nenhum resultado encontrado',
   },
 };
