@@ -48,6 +48,24 @@ export const article = defineType({
       initialValue: 'en',
     }),
     defineField({
+      name: 'contentType',
+      title: 'Content Type',
+      type: 'string',
+      options: {
+        list: [
+          { title: '☀️  Morning Brief', value: 'morning-brief' },
+          { title: '📰  Press Review', value: 'press-review' },
+          { title: '🔍  Investigation / Deep Dive', value: 'investigation' },
+          { title: '📝  Feature', value: 'feature' },
+          { title: '⚡  Breaking', value: 'breaking' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'feature',
+      description: 'Determines which section this article appears in on the homepage.',
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'standfirst',
       title: 'Standfirst (summary)',
       type: 'text',
