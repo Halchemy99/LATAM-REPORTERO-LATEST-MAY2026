@@ -55,8 +55,8 @@ export const article = defineType({
         list: [
           { title: '☀️  Morning Brief', value: 'morning-brief' },
           { title: '📰  Press Review', value: 'press-review' },
-          { title: '🔍  Investigation / Deep Dive', value: 'investigation' },
-          { title: '📝  Feature', value: 'feature' },
+          { title: '🔍  Deep Dive / Investigation', value: 'deep-dive' },
+          { title: '🎬  Video Post', value: 'video-post' },
           { title: '⚡  Breaking', value: 'breaking' },
         ],
         layout: 'radio',
