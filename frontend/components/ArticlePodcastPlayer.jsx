@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import { Headphones, Play, Pause, Loader2, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
@@ -13,6 +14,7 @@ function extractPlainText(body) {
 }
 
 export default function ArticlePodcastPlayer({ article }) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState('idle'); // idle | loading | playing | paused | error
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -112,7 +114,7 @@ export default function ArticlePodcastPlayer({ article }) {
     <div className="bg-[#1a1a1a] p-4 mb-6" data-testid="podcast-player">
       <div className="flex items-center gap-3">
         <Headphones className="h-4 w-4 text-[#6111ff] flex-shrink-0" />
-        <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">Listen to this article</span>
+        <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">{t('Listen to this article')}</span>
       </div>
 
       <div className="flex items-center gap-3 mt-3">
@@ -166,10 +168,10 @@ export default function ArticlePodcastPlayer({ article }) {
       </div>
 
       {status === 'loading' && (
-        <p className="text-[10px] text-white/30 mt-2 font-mono">Generating audio with AI... this may take a moment</p>
+        <p className="text-[10px] text-white/30 mt-2 font-mono">{t('Generating audio with AI... this may take a moment')}</p>
       )}
       {status === 'error' && (
-        <p className="text-[10px] text-[#6111ff] mt-2 font-mono">Audio generation failed. Try again later.</p>
+        <p className="text-[10px] text-[#6111ff] mt-2 font-mono">{t('Audio generation failed. Try again later.')}</p>
       )}
     </div>
   );

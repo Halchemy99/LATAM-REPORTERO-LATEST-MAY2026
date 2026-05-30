@@ -38,19 +38,19 @@ export default function SignupPage() {
     setError('');
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('Password must be at least 6 characters'));
       setLoading(false);
       return;
     }
 
     const result = await signup(email, password, name);
-    
+
     if (result.success) {
       localStorage.setItem('userPreferences', JSON.stringify(preferences));
-      toast.success('Account created! Welcome to LATAM Reportero.');
+      toast.success(t('Account created! Welcome to LATAM Reportero.'));
       router.push('/');
     } else {
-      setError(result.error || 'Failed to create account');
+      setError(result.error || t('Failed to create account'));
     }
     setLoading(false);
   };
@@ -60,7 +60,7 @@ export default function SignupPage() {
       <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse text-[#666666]">Loading...</div>
+          <div className="animate-pulse text-[#666666]">{t('Loading...')}</div>
         </main>
         <Footer />
       </div>
@@ -70,14 +70,14 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
-      
+
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" >
-              Join LATAM Reportero
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2">
+              {t('Join LATAM Reportero')}
             </h1>
-            <p className="text-sm text-[#666666]">Create your account to join the LATAM Reportero community</p>
+            <p className="text-sm text-[#666666]">{t('Create your account to join the LATAM Reportero community')}</p>
           </div>
 
           <div className="bg-white border border-[#1a1a1a]/10 p-6">
@@ -90,13 +90,13 @@ export default function SignupPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
               <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Full Name</Label>
+                <Label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Full Name')}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Your full name"
+                    placeholder={t('Your full name')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="pl-10 rounded-none border-[#1a1a1a]/15 h-10"
@@ -107,7 +107,7 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Email</Label>
+                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
@@ -124,13 +124,13 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Password</Label>
+                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Min. 6 characters"
+                    placeholder={t('Min. 6 characters')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 rounded-none border-[#1a1a1a]/15 h-10"
@@ -149,7 +149,7 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-mono uppercase tracking-wider text-[#666666]">Interests (optional)</Label>
+                <Label className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Interests (optional)')}</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {PREFERENCE_OPTIONS.map((key) => (
                     <div key={key} className="flex items-center space-x-2">
@@ -160,7 +160,7 @@ export default function SignupPage() {
                         className="rounded-none"
                       />
                       <label htmlFor={key} className="text-sm capitalize cursor-pointer text-[#1a1a1a]">
-                        {key}
+                        {t(key)}
                       </label>
                     </div>
                   ))}
@@ -168,13 +168,13 @@ export default function SignupPage() {
               </div>
 
               <Button type="submit" className="w-full rounded-none bg-[#6111ff] hover:bg-[#4a0dd6] h-10 text-white" disabled={loading} data-testid="signup-submit">
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loading ? t('Creating account...') : t('Create Account')}
               </Button>
 
               <p className="text-center text-sm text-[#666666]">
-                Already have an account?{' '}
+                {t('Already have an account?')}{' '}
                 <Link href="/auth/login" className="text-[#6111ff] hover:underline font-medium">
-                  Sign in
+                  {t('Sign in')}
                 </Link>
               </p>
             </form>

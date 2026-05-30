@@ -198,9 +198,9 @@ export default function ArticlePage() {
         <Header />
         <main className="flex-1 container py-8">
           <div className="text-center py-20">
-            <h1 className="text-2xl font-serif font-bold mb-4 text-[#1a1a1a]">Article Not Found</h1>
+            <h1 className="text-2xl font-serif font-bold mb-4 text-[#1a1a1a]">{t('Article Not Found')}</h1>
             <Link href="/">
-              <Button className="rounded-none bg-[#1a1a1a]">Return Home</Button>
+              <Button className="rounded-none bg-[#1a1a1a]">{t('Return Home')}</Button>
             </Link>
           </div>
         </main>
@@ -219,7 +219,7 @@ export default function ArticlePage() {
           <div className="container py-10">
             <Link href="/" className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6 transition-colors">
               <ArrowLeft className="h-4 w-4" />
-              Back to Stories
+              {t('Back to Stories')}
             </Link>
             
             <div className="flex flex-wrap gap-2 mb-4">
@@ -261,7 +261,7 @@ export default function ArticlePage() {
               <span className="text-white/30">&bull;</span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {readTime} min read
+                {readTime} {t('min read')}
               </span>
               {article.publishedAt && (
                 <>
@@ -300,12 +300,12 @@ export default function ArticlePage() {
                 <Card className="border-[#6111ff]/30 bg-white">
                   <CardContent className="p-8 text-center">
                     <Lock className="h-12 w-12 mx-auto mb-4 text-[#6111ff]" />
-                    <h3 className="text-xl font-serif font-bold mb-2 text-[#1a1a1a]">Premium Content</h3>
+                    <h3 className="text-xl font-serif font-bold mb-2 text-[#1a1a1a]">{t('Premium Content')}</h3>
                     <p className="text-[#666666] mb-6">
-                      This human-written article requires a paid subscription to read.
+                      {t('This human-written article requires a paid subscription to read.')}
                     </p>
                     <Link href="/pricing">
-                      <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none">Upgrade to Read</Button>
+                      <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none">{t('Upgrade to Read')}</Button>
                     </Link>
                   </CardContent>
                 </Card>
@@ -319,13 +319,13 @@ export default function ArticlePage() {
               <section className="mt-8 bg-white border border-[#1a1a1a]/10 p-6" data-testid="comments-section">
                 <h3 className="text-lg font-serif font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
                   <MessageCircle className="h-5 w-5 text-[#6111ff]" />
-                  Comments ({comments.length})
+                  {t('Comments')} ({comments.length})
                 </h3>
                 
                 {canComment ? (
                   <form onSubmit={handleComment} className="flex gap-2 mb-6" data-testid="comment-form">
                     <Input
-                      placeholder="Add a comment..."
+                      placeholder={t('Add a comment...')}
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                       className="rounded-none border-[#1a1a1a]/20"
@@ -341,11 +341,11 @@ export default function ArticlePage() {
                       <Lock className="h-4 w-4 text-[#6111ff]" />
                       {!user ? (
                         <span>
-                          <Link href="/auth/login" className="text-[#6111ff] hover:underline">Log in</Link> and subscribe to leave comments.
+                          <Link href="/auth/login" className="text-[#6111ff] hover:underline">{t('Log in')}</Link> {t('and subscribe to leave comments.')}
                         </span>
                       ) : (
                         <span>
-                          Only subscribers can comment. <Link href="/pricing" className="text-[#6111ff] hover:underline">Subscribe now</Link>.
+                          {t('Only subscribers can comment.')} <Link href="/pricing" className="text-[#6111ff] hover:underline">{t('Subscribe now')}</Link>.
                         </span>
                       )}
                     </div>
@@ -354,9 +354,9 @@ export default function ArticlePage() {
 
                 <div className="space-y-4">
                   {commentsLoading ? (
-                    <div className="text-sm text-[#666666]">Loading comments...</div>
+                    <div className="text-sm text-[#666666]">{t('Loading comments...')}</div>
                   ) : comments.length === 0 ? (
-                    <div className="text-sm text-[#666666]">No comments yet. Be the first to share your thoughts.</div>
+                    <div className="text-sm text-[#666666]">{t('No comments yet. Be the first to share your thoughts.')}</div>
                   ) : (
                     comments.map((c) => (
                       <div key={c.id} className="border-b border-[#1a1a1a]/5 pb-3 last:border-0" data-testid={`comment-${c.id}`}>
@@ -377,7 +377,7 @@ export default function ArticlePage() {
               {/* Related Articles */}
               <div className="bg-white border border-[#1a1a1a]/10 p-5">
                 <h3 className="text-sm font-mono uppercase tracking-wider text-[#1a1a1a] font-semibold mb-4 pb-2 border-b border-[#1a1a1a]/10">
-                  Related Stories
+                  {t('Related Stories')}
                 </h3>
                 {relatedArticles.length > 0 ? (
                   <div className="space-y-4">

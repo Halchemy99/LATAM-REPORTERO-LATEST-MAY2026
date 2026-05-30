@@ -146,7 +146,7 @@ export default function WatchPage() {
             </div>
             
             <div className="text-sm text-gray-500">
-              {filteredVideos.length} videos
+              {filteredVideos.length} {t('videos')}
             </div>
           </div>
 
@@ -159,19 +159,19 @@ export default function WatchPage() {
 
           {/* Load More */}
           <div className="text-center mt-12">
-            <p className="text-gray-500 mb-4">Want to see more?</p>
+            <p className="text-gray-500 mb-4">{t('Want to see more?')}</p>
             <div className="flex justify-center gap-3">
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="gap-2">
                   <YouTubeIcon className="h-4 w-4 text-red-600" />
-                  Subscribe on YouTube
+                  {t('Subscribe on YouTube')}
                   <ExternalLink className="h-3 w-3" />
                 </Button>
               </a>
               <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="gap-2">
                   <TikTokIcon className="h-4 w-4" />
-                  Follow on TikTok
+                  {t('Follow on TikTok')}
                   <ExternalLink className="h-3 w-3" />
                 </Button>
               </a>
@@ -183,39 +183,39 @@ export default function WatchPage() {
         <div className="bg-black text-white py-16">
           <div className="container">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4" >
-                Never Miss an Update
+              <h2 className="text-3xl font-bold mb-4">
+                {t('Never Miss an Update')}
               </h2>
               <p className="text-white/70 mb-8">
-                Turn on notifications to get breaking news alerts and daily summaries delivered straight to your feed.
+                {t('Turn on notifications to get breaking news alerts and daily summaries delivered straight to your feed.')}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a 
+                <a
                   href={SOCIAL_LINKS.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   <YouTubeIcon className="h-5 w-5" />
-                  Subscribe & Ring the Bell
+                  {t('Subscribe & Ring the Bell')}
                 </a>
-                <a 
+                <a
                   href={SOCIAL_LINKS.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   <TikTokIcon className="h-5 w-5" />
-                  Follow + Turn On Alerts
+                  {t('Follow + Turn On Alerts')}
                 </a>
-                <a 
+                <a
                   href={SOCIAL_LINKS.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   <InstagramIcon className="h-5 w-5" />
-                  Follow + Add to Favorites
+                  {t('Follow + Add to Favorites')}
                 </a>
               </div>
             </div>

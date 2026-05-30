@@ -98,7 +98,7 @@ export default function Footer() {
           <div className="lg:col-span-7">
             <div className="flex items-center gap-2 mb-2">
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6111ff]">
-                The Wire for Latin America
+                {t('The Wire for Latin America')}
               </p>
               <span className="px-1.5 py-0.5 bg-[#6111ff] text-white text-[9px] font-mono uppercase tracking-wider">
                 {t('pricing.free')}
@@ -164,14 +164,14 @@ export default function Footer() {
               {t('footer.privacy')}
             </Link>
             <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
-              AI Policy
+              {t('AI Policy')}
             </Link>
             <a
               href="mailto:tips@latamreportero.com"
               className="flex items-center gap-1 hover:text-[#1a1a1a] transition-colors"
             >
               <MessageCircle className="h-3 w-3" />
-              Tips
+              {t('Tips')}
             </a>
           </div>
         </div>

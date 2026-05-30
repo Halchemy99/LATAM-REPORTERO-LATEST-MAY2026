@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
  * Newsletter signup component with multiple variants
  */
 export default function Newsletter({ variant = 'default', className = '' }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -19,15 +21,14 @@ export default function Newsletter({ variant = 'default', className = '' }) {
     if (!email) return;
 
     setIsLoading(true);
-    
-    // Simulate API call - replace with actual newsletter service integration
+
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsSubscribed(true);
-      toast.success('Successfully subscribed to the newsletter!');
+      toast.success(t('Successfully subscribed to the newsletter!'));
       setEmail('');
     } catch (error) {
-      toast.error('Failed to subscribe. Please try again.');
+      toast.error(t('Failed to subscribe. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -40,13 +41,13 @@ export default function Newsletter({ variant = 'default', className = '' }) {
         {isSubscribed ? (
           <div className="flex items-center gap-3 text-green-600 dark:text-green-400">
             <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">Thanks for subscribing!</span>
+            <span className="font-medium">{t('Thanks for subscribing!')}</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="flex items-center gap-2 mb-2">
               <Mail className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Get stories like this in your inbox</span>
+              <span className="font-semibold">{t('Get stories like this in your inbox')}</span>
             </div>
             <div className="flex gap-2">
               <Input
@@ -59,11 +60,11 @@ export default function Newsletter({ variant = 'default', className = '' }) {
                 data-testid="newsletter-email-inline"
               />
               <Button type="submit" disabled={isLoading} data-testid="newsletter-submit-inline">
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Subscribe'}
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('Subscribe')}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Weekly journalism. No spam. Unsubscribe anytime.
+              {t('Weekly journalism. No spam. Unsubscribe anytime.')}
             </p>
           </form>
         )}
@@ -78,13 +79,13 @@ export default function Newsletter({ variant = 'default', className = '' }) {
         {isSubscribed ? (
           <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
             <CheckCircle className="h-4 w-4" />
-            <span className="text-sm">Subscribed!</span>
+            <span className="text-sm">{t('Subscribed!')}</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Input
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('Enter your email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -107,20 +108,19 @@ export default function Newsletter({ variant = 'default', className = '' }) {
         <div className="max-w-2xl mx-auto px-6 py-14 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#6111ff] text-white text-[10px] font-mono uppercase tracking-[0.15em] mb-6">
             <Mail className="h-3 w-3" />
-            Always Free · No Paywall
+            {t('Always Free · No Paywall')}
           </div>
-          <h2 className="text-3xl md:text-4xl font-semibold mb-3 leading-tight" >
-            Latin America in your inbox,<br />every morning.
+          <h2 className="text-3xl md:text-4xl font-semibold mb-3 leading-tight">
+            {t('Latin America in your inbox,')}<br />{t('every morning.')}
           </h2>
           <p className="text-base mb-8 text-white/65 leading-relaxed" style={{ fontFamily: 'Source Serif 4, serif' }}>
-            The Morning Brief + weekly Press Review. Weekday mornings.
-            No account required. Cancel anytime.
+            {t('The Morning Brief + weekly Press Review. Weekday mornings. No account required. Cancel anytime.')}
           </p>
 
           {isSubscribed ? (
             <div className="flex items-center justify-center gap-3 text-base">
               <CheckCircle className="h-5 w-5 text-[#6111ff]" />
-              <span>You&apos;re in. First brief arrives tomorrow morning.</span>
+              <span>{t("You're in. First brief arrives tomorrow morning.")}</span>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
@@ -142,14 +142,14 @@ export default function Newsletter({ variant = 'default', className = '' }) {
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <>Get it free <ArrowRight className="ml-1.5 h-4 w-4" /></>
+                  <>{t('Get it free')} <ArrowRight className="ml-1.5 h-4 w-4" /></>
                 )}
               </Button>
             </form>
           )}
 
           <p className="text-[11px] mt-4 text-white/35 font-mono uppercase tracking-wider">
-            Read by editors, founders & analysts across LATAM
+            {t('Read by editors, founders & analysts across LATAM')}
           </p>
         </div>
       </div>
@@ -162,16 +162,16 @@ export default function Newsletter({ variant = 'default', className = '' }) {
       <div className="max-w-xl mx-auto text-center">
         <Mail className="h-10 w-10 mx-auto mb-4 text-[#8c52ff]" />
         <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Raleway, sans-serif' }}>
-          Subscribe to our newsletter
+          {t('Subscribe to our newsletter')}
         </h3>
         <p className="text-muted-foreground mb-6" style={{ fontFamily: 'Source Serif 4, serif' }}>
-          Latin America, explained. Free in your inbox every weekday morning.
+          {t('Latin America, explained. Free in your inbox every weekday morning.')}
         </p>
-        
+
         {isSubscribed ? (
           <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
             <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">Successfully subscribed!</span>
+            <span className="font-medium">{t('Successfully subscribed!')}</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
@@ -184,8 +184,8 @@ export default function Newsletter({ variant = 'default', className = '' }) {
               className="flex-1 h-12 border-[#8c52ff]/30 focus:border-[#8c52ff]"
               data-testid="newsletter-email-default"
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               size="lg"
               disabled={isLoading}
               className="h-12 bg-gradient-to-r from-[#8c52ff] to-[#6111ff] text-white hover:shadow-lg hover:shadow-[#8c52ff]/30 transition-all"
@@ -194,7 +194,7 @@ export default function Newsletter({ variant = 'default', className = '' }) {
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                'Subscribe'
+                t('Subscribe')
               )}
             </Button>
           </form>

@@ -49,9 +49,9 @@ export default function FeaturedStory({ article }) {
             </Badge>
             <Badge variant={article.isAiGenerated ? 'secondary' : 'default'} className="flex items-center gap-1">
               {article.isAiGenerated ? (
-                <><Bot className="h-3 w-3" /> AI Verified</>
+                <><Bot className="h-3 w-3" /> {t('AI Verified')}</>
               ) : (
-                <><User className="h-3 w-3" /> Human Written</>
+                <><User className="h-3 w-3" /> {t('Human Written')}</>
               )}
             </Badge>
           </div>
