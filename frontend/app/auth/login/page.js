@@ -35,10 +35,10 @@ export default function LoginPage() {
     const result = await login({ email, password });
     
     if (result.success) {
-      toast.success('Welcome back!');
+      toast.success(t('Welcome back!'));
       router.push('/');
     } else {
-      setError(result.error || 'Invalid email or password');
+      setError(result.error || t('Invalid email or password'));
     }
     setLoading(false);
   };
@@ -62,10 +62,10 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2" >
-              Welcome Back
+            <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2">
+              {t('Welcome Back')}
             </h1>
-            <p className="text-sm text-[#666666]">Sign in to access your account</p>
+            <p className="text-sm text-[#666666]">{t('Sign in to access your account')}</p>
           </div>
 
           <div className="bg-white border border-[#1a1a1a]/10 p-6">
@@ -78,7 +78,7 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Email</Label>
+                <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
@@ -95,13 +95,13 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#666666]">Password</Label>
+                <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-[#666666]">{t('Password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-[#666666]" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter password"
+                    placeholder={t('Enter password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 rounded-none border-[#1a1a1a]/15 h-10"
@@ -119,13 +119,13 @@ export default function LoginPage() {
               </div>
 
               <Button type="submit" className="w-full rounded-none bg-[#1a1a1a] hover:bg-[#160A26] h-10" disabled={loading} data-testid="login-submit">
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? t('Signing in...') : t('Sign In')}
               </Button>
 
               <p className="text-center text-sm text-[#666666]">
-                Don&apos;t have an account?{' '}
+                {t("Don't have an account?")}{' '}
                 <Link href="/auth/signup" className="text-[#6111ff] hover:underline font-medium">
-                  Create one
+                  {t('Create one')}
                 </Link>
               </p>
             </form>

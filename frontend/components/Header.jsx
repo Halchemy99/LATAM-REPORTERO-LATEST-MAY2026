@@ -63,7 +63,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Header({ showSearch = true }) {
-  const { locale } = useTranslation();
+  const { locale, t } = useTranslation();
   const { user, role, logout } = useUserRole();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { token } = useUserRole();
@@ -101,7 +101,7 @@ export default function Header({ showSearch = true }) {
                   data-testid="nav-regions"
                 >
                   <MapPin className="h-3 w-3" />
-                  Regions
+                  {t('Regions')}
                   <ChevronDown className="h-2.5 w-2.5 opacity-50" />
                 </button>
               </DropdownMenuTrigger>
@@ -113,7 +113,7 @@ export default function Header({ showSearch = true }) {
                   {Object.entries(REGIONS).map(([region, countries]) => (
                     <div key={region}>
                       <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-1.5 px-0">
-                        {region}
+                        {t(region)}
                       </DropdownMenuLabel>
                       {countries.map((country) => (
                         <DropdownMenuItem key={country.slug} asChild>
@@ -138,7 +138,7 @@ export default function Header({ showSearch = true }) {
                 className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6111ff] transition-colors px-3 py-2"
                 data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
               >
-                {item.label}
+                {t(item.label)}
               </Link>
             ))}
           </nav>
@@ -177,7 +177,7 @@ export default function Header({ showSearch = true }) {
                   <DropdownMenuItem asChild>
                     <Link href="/bookmarks" className="cursor-pointer text-xs">
                       <Bookmark className="mr-2 h-3.5 w-3.5" />
-                      Saved Stories
+                      {t('Saved Stories')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -186,7 +186,7 @@ export default function Header({ showSearch = true }) {
                     className="cursor-pointer text-[#6111ff] text-xs"
                   >
                     <LogOut className="mr-2 h-3.5 w-3.5" />
-                    Sign Out
+                    {t('Sign Out')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -197,7 +197,7 @@ export default function Header({ showSearch = true }) {
                     className="text-xs font-medium uppercase tracking-[0.1em] text-[#1a1a1a] hover:text-[#6111ff] transition-colors px-3 py-2"
                     data-testid="login-btn"
                   >
-                    Log In
+                    {t('Log In')}
                   </button>
                 </Link>
                 <Link href="/newsletter">
@@ -206,7 +206,7 @@ export default function Header({ showSearch = true }) {
                     className="bg-[#1a1a1a] hover:bg-[#6111ff] text-white rounded-none h-8 px-4 text-[11px] font-medium uppercase tracking-[0.1em] transition-colors"
                     data-testid="newsletter-btn"
                   >
-                    Free Newsletter →
+                    {t('Free Newsletter')} →
                   </Button>
                 </Link>
               </div>
@@ -236,7 +236,7 @@ export default function Header({ showSearch = true }) {
                 </div>
                 <nav className="p-4 space-y-1">
                   <p className="text-[10px] font-mono uppercase tracking-wider text-[#666666] mb-2 px-2">
-                    Sections
+                    {t('Sections')}
                   </p>
                   {NAV_ITEMS.map((item) => (
                     <Link
@@ -245,7 +245,7 @@ export default function Header({ showSearch = true }) {
                       onClick={() => setMobileOpen(false)}
                       className="block px-2 py-2 text-sm text-[#1a1a1a] hover:bg-[#6111ff]/5 hover:text-[#6111ff]"
                     >
-                      {item.label}
+                      {t(item.label)}
                     </Link>
                   ))}
                 </nav>
@@ -259,7 +259,7 @@ export default function Header({ showSearch = true }) {
                         variant="outline"
                         className="w-full rounded-none border-[#1a1a1a]/20 text-sm"
                       >
-                        Log In
+                        {t('Log In')}
                       </Button>
                     </Link>
                     <Link
@@ -267,7 +267,7 @@ export default function Header({ showSearch = true }) {
                       onClick={() => setMobileOpen(false)}
                     >
                       <Button className="w-full rounded-none bg-[#1a1a1a] hover:bg-[#6111ff] text-sm transition-colors">
-                        Free Newsletter →
+                        {t('Free Newsletter')} →
                       </Button>
                     </Link>
                   </div>

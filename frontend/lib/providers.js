@@ -7,57 +7,86 @@ import React, {
 import { en, es, pt } from './translations';
 
 // ============ I18n Provider ============
-// t() handles TWO kinds of input:
-//   1. Dot-notation keys  →  t('nav.login')         static lookup from translations.js
-//   2. Plain English text →  t('Before your coffee') auto-translated via DeepL, cached
+// ONE rule: t('Any English string') → translated string.
 //
-// Runtime cache lives in localStorage so subsequent page loads are instant.
-// On locale switch we drain the queue and re-render once all strings are ready.
+// How it works:
+//   1. At startup, walk translations.js and build a pre-warm map:
+//      EN leaf value → ES/PT leaf value  (e.g. 'Log In' → 'Iniciar Sesión')
+//      Pre-warmed strings translate INSTANTLY — no API call, no flash.
+//   2. Dot-notation keys (e.g. t('nav.login')) are also supported as a
+//      fast static lookup for legacy callsites.
+//   3. Anything not pre-warmed goes to DeepL via /api/translate, cached
+//      in localStorage (ltm_rt_es / ltm_rt_pt) so subsequent loads are instant.
+//
+// Result: switch language → everything changes immediately.
 
 const I18nContext = createContext();
 
 const STATIC_KEY = /^[a-zA-Z_][\w]*(\.[a-zA-Z_][\w-]*)+$/;
-const CACHE_PREFIX = 'ltm_rt_';   // ltm_rt_es, ltm_rt_pt
+const CACHE_PREFIX = 'ltm_rt_';
 
 function loadCache(locale) {
-  try {
-    return JSON.parse(localStorage.getItem(CACHE_PREFIX + locale) || '{}');
-  } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(CACHE_PREFIX + locale) || '{}'); }
+  catch { return {}; }
 }
 
 function saveCache(locale, cache) {
-  try {
-    localStorage.setItem(CACHE_PREFIX + locale, JSON.stringify(cache));
-  } catch {}
+  try { localStorage.setItem(CACHE_PREFIX + locale, JSON.stringify(cache)); }
+  catch {}
 }
+
+// Walk EN and target trees in parallel; build { 'English value': 'Translated value' }
+function buildPrewarm(enObj, targetObj) {
+  const map = {};
+  function walk(e, tgt) {
+    if (typeof e === 'string' && typeof tgt === 'string' && e && tgt && e !== tgt) {
+      map[e] = tgt;
+    } else if (e && tgt && typeof e === 'object' && typeof tgt === 'object') {
+      for (const k of Object.keys(e)) {
+        if (k in tgt) walk(e[k], tgt[k]);
+      }
+    }
+  }
+  walk(enObj, targetObj);
+  return map;
+}
+
+// Computed once at module load — zero cost at runtime
+const PREWARM_ES = buildPrewarm(en, es);
+const PREWARM_PT = buildPrewarm(en, pt);
 
 export function I18nProvider({ children }) {
   const [locale, setLocale]     = useState('en');
   const [mounted, setMounted]   = useState(false);
-  // runtime translation cache: { es: { 'Before your coffee': 'Antes de tu café', ... }, pt: {...} }
-  const [rtCache, setRtCache]   = useState({});
+  const [rtCache, setRtCache]   = useState({ es: {}, pt: {} });
   const [translating, setTranslating] = useState(false);
 
-  // Queue of strings waiting to be translated for the current locale
-  const queue   = useRef(new Set());
-  const timer   = useRef(null);
+  const queue = useRef(new Set());
+  const timer = useRef(null);
 
-  // ── Boot: restore locale + caches ──────────────────────────────────────────
+  // ── Boot ──────────────────────────────────────────────────────────────────
   useEffect(() => {
     setMounted(true);
     try {
-      // Restore saved locale
+      // Merge: pre-warm from translations.js + any DeepL strings saved to localStorage
+      setRtCache({
+        es: { ...PREWARM_ES, ...loadCache('es') },
+        pt: { ...PREWARM_PT, ...loadCache('pt') },
+      });
+
       const saved = localStorage.getItem('locale');
-      if (saved && ['en','es','pt'].includes(saved)) {
+      if (saved && ['en', 'es', 'pt'].includes(saved)) {
         setLocale(saved);
       } else {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const LATAM_TZ = ['America/Bogota','America/Lima','America/Santiago','America/Buenos_Aires',
+        const LATAM_TZ = [
+          'America/Bogota','America/Lima','America/Santiago','America/Buenos_Aires',
           'America/Caracas','America/La_Paz','America/Guayaquil','America/Montevideo',
           'America/Asuncion','America/Mexico_City','America/Managua','America/Costa_Rica',
           'America/Panama','America/Tegucigalpa','America/El_Salvador','America/Guatemala',
           'America/Havana','America/Santo_Domingo','America/Port-au-Prince',
-          'America/Puerto_Rico','America/Sao_Paulo','America/Manaus','America/Fortaleza'];
+          'America/Puerto_Rico','America/Sao_Paulo','America/Manaus','America/Fortaleza',
+        ];
         if (LATAM_TZ.some(z => tz.startsWith(z) || tz === z)) {
           setLocale('es');
         } else {
@@ -66,38 +95,33 @@ export function I18nProvider({ children }) {
           else if (lang === 'pt') setLocale('pt');
         }
       }
-
-      // Pre-load runtime caches from localStorage
-      setRtCache({
-        es: loadCache('es'),
-        pt: loadCache('pt'),
-      });
     } catch {}
   }, []);
 
-  // ── Flush the translation queue via /api/translate ─────────────────────────
+  // ── DeepL flush ───────────────────────────────────────────────────────────
   const flushQueue = useCallback(async (lang) => {
     if (!queue.current.size || lang === 'en') return;
-
     const texts = [...queue.current];
     queue.current = new Set();
     setTranslating(true);
-
     try {
       const res = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ texts, targetLang: lang }),
       });
-
       if (!res.ok) return;
       const { translations } = await res.json();
-
       setRtCache(prev => {
-        const updated = { ...prev };
-        if (!updated[lang]) updated[lang] = {};
+        const updated = { ...prev, [lang]: { ...prev[lang] } };
         texts.forEach((text, i) => { updated[lang][text] = translations[i]; });
-        saveCache(lang, updated[lang]);
+        // Only persist runtime-translated strings, not the prewarm
+        const prewarm = lang === 'es' ? PREWARM_ES : PREWARM_PT;
+        const runtimeOnly = {};
+        for (const [k, v] of Object.entries(updated[lang])) {
+          if (prewarm[k] !== v) runtimeOnly[k] = v;
+        }
+        saveCache(lang, runtimeOnly);
         return updated;
       });
     } catch (err) {
@@ -107,7 +131,6 @@ export function I18nProvider({ children }) {
     }
   }, []);
 
-  // ── Debounce queue flushes so we batch strings from a whole render cycle ───
   const scheduleFlush = useCallback((lang) => {
     clearTimeout(timer.current);
     timer.current = setTimeout(() => flushQueue(lang), 80);
@@ -117,43 +140,38 @@ export function I18nProvider({ children }) {
   const changeLocale = useCallback((newLocale) => {
     setLocale(newLocale);
     try { localStorage.setItem('locale', newLocale); } catch {}
-    // Clear queue so the new locale starts fresh
     queue.current = new Set();
     clearTimeout(timer.current);
   }, []);
 
-  // ── t() — the main translation function ───────────────────────────────────
-  // Accepts EITHER a dot-notation key OR a plain English string
+  // ── t() — ONE rule ────────────────────────────────────────────────────────
   const t = useCallback((input) => {
     if (!input) return input;
 
-    // 1. Static key lookup (instant, no API)
+    // Fast path: dot-notation key (backward compat with any t('nav.login') calls)
     if (STATIC_KEY.test(input)) {
       const dict = locale === 'es' ? es : locale === 'pt' ? pt : en;
       const parts = input.split('.');
       let val = dict;
       for (const k of parts) val = val?.[k];
       if (val && typeof val === 'string') return val;
-      // key not found → fall through to runtime path
+      // key not found → fall through
     }
 
-    // 2. English locale → return as-is
+    // English — return as-is
     if (locale === 'en') return input;
 
-    // 3. Runtime cache hit → return instantly
+    // Cache hit (pre-warm or previously DeepL-translated) → instant
     if (rtCache[locale]?.[input]) return rtCache[locale][input];
 
-    // 4. Not cached → queue for translation, return English for now
+    // Queue for DeepL, show English in the meantime
     queue.current.add(input);
     scheduleFlush(locale);
     return input;
   }, [locale, rtCache, scheduleFlush]);
 
   const contextValue = useMemo(() => ({
-    locale,
-    setLocale: changeLocale,
-    t,
-    translating,
+    locale, setLocale: changeLocale, t, translating,
   }), [locale, changeLocale, t, translating]);
 
   if (!mounted) return <div className="min-h-screen bg-[#F9F6F6]" />;
