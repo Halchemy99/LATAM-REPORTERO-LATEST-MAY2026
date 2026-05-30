@@ -24,10 +24,6 @@ export async function POST(request) {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     
-    console.log('Password change request for userId:', userId);
-    console.log('Supabase URL configured:', !!supabaseUrl);
-    console.log('Service Role Key configured:', !!serviceRoleKey);
-    
     if (!serviceRoleKey || !supabaseUrl) {
       console.error('Missing env vars - URL:', supabaseUrl, 'Key exists:', !!serviceRoleKey);
       return NextResponse.json(
@@ -58,7 +54,6 @@ export async function POST(request) {
       );
     }
     
-    console.log('Password changed successfully for user:', userId);
     return NextResponse.json({ 
       success: true, 
       message: 'Password changed successfully' 

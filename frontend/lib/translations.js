@@ -82,16 +82,6 @@ export const en = {
       earlyAccess: 'Early access to stories'
     }
   },
-  footer: {
-    about: 'About',
-    categories: 'Categories',
-    community: 'Community',
-    legal: 'Legal',
-    privacy: 'Privacy Policy',
-    terms: 'Terms of Service',
-    copyright: '© 2025 LATAM Reportero. All rights reserved.',
-    description: 'Solutions-oriented journalism covering Latin America'
-  },
   common: {
     loading: 'Loading...',
     error: 'An error occurred',
@@ -574,16 +564,6 @@ export const es = {
       earlyAccess: 'Acceso anticipado a historias'
     }
   },
-  footer: {
-    about: 'Acerca de',
-    categories: 'Categorías',
-    community: 'Comunidad',
-    legal: 'Legal',
-    privacy: 'Política de Privacidad',
-    terms: 'Términos de Servicio',
-    copyright: '© 2025 LATAM Reportero. Todos los derechos reservados.',
-    description: 'Periodismo orientado a soluciones cubriendo América Latina'
-  },
   common: {
     loading: 'Cargando...',
     error: 'Ocurrió un error',
@@ -1065,16 +1045,6 @@ export const pt = {
       micropayments: 'Apoiar escritores diretamente',
       earlyAccess: 'Acesso antecipado a histórias'
     }
-  },
-  footer: {
-    about: 'Sobre',
-    categories: 'Categorias',
-    community: 'Comunidade',
-    legal: 'Legal',
-    privacy: 'Política de Privacidade',
-    terms: 'Termos de Serviço',
-    copyright: '© 2025 LATAM Reportero. Todos os direitos reservados.',
-    description: 'Jornalismo orientado a soluções cobrindo América Latina'
   },
   common: {
     loading: 'Carregando...',

@@ -5,8 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { SocialBar, VideoCard, SOCIAL_LINKS, InstagramIcon, TikTokIcon, YouTubeIcon } from '@/components/SocialVideo';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, ExternalLink, Users, Eye, Video } from 'lucide-react';
+import { Play, ExternalLink, Video } from 'lucide-react';
 import { useTranslation } from '@/lib/providers';
 
 export default function WatchPage() {

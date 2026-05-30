@@ -220,8 +220,8 @@ export default function EditArticlePage() {
       // Save version before updating
       try {
         await saveArticleVersion(params.id, article, contentBlocks, user?.id, 'Auto-save');
-      } catch (versionError) {
-        console.log('Version save skipped:', versionError.message);
+      } catch {
+        // version save is non-critical; continue
       }
       
       await updateArticle(params.id, articleData);

@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, CheckCircle, FileText, MapPin, Users, Loader2 } from 'lucide-react';
+import { Search, CheckCircle, FileText, MapPin, Users } from 'lucide-react';
 
 export default function WritersPage() {
   const { t, locale } = useTranslation();
@@ -65,8 +65,7 @@ export default function WritersPage() {
           setWriters(mockWriters);
           setUsingCMS(false);
         }
-      } catch (error) {
-        console.log('CMS authors fetch failed, using mock data:', error.message);
+      } catch {
         setWriters(mockWriters);
         setUsingCMS(false);
       } finally {

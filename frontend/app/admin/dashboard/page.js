@@ -89,7 +89,6 @@ export default function AdminDashboardPage() {
           subscription: u.subscription_status || 'none'
         }));
         setUsers(transformedUsers);
-        console.log('Fetched users:', transformedUsers.length);
       }
 
       // Fetch articles count
