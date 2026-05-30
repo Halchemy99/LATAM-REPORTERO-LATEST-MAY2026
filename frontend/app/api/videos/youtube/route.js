@@ -52,7 +52,7 @@ export async function GET(request) {
     );
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch videos from YouTube' },
+      { error: 'Failed to fetch YouTube videos' },
       { status: 500 }
     );
   }
