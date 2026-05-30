@@ -7,8 +7,10 @@ import { SocialBar, VideoCard, SOCIAL_LINKS, InstagramIcon, TikTokIcon, YouTubeI
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, ExternalLink, Users, Eye, Video } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 export default function WatchPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
 
   // Sample video data - in production, fetch from APIs
@@ -52,13 +54,13 @@ export default function WatchPage() {
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-sm mb-6">
                 <Play className="h-4 w-4" />
-                Video Hub
+                {t('watch.title')}
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" >
-                Watch LATAM Reportero
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                {t('watch.title')} LATAM Reportero
               </h1>
               <p className="text-lg text-white/80 mb-8">
-                Get the news in 60 seconds. Follow us on your favorite platform for daily updates on Latin America.
+                {t('watch.subtitle')}
               </p>
               
               {/* Platform buttons */}
@@ -115,7 +117,7 @@ export default function WatchPage() {
                 className={activeTab === 'all' ? 'bg-[#6111ff] hover:bg-[#4a0dd6]' : ''}
               >
                 <Video className="h-4 w-4 mr-2" />
-                All Videos
+                {t('watch.allVideos')}
               </Button>
               <Button
                 variant={activeTab === 'youtube' ? 'default' : 'outline'}
@@ -123,7 +125,7 @@ export default function WatchPage() {
                 className={activeTab === 'youtube' ? 'bg-red-600 hover:bg-red-700' : ''}
               >
                 <YouTubeIcon className="h-4 w-4 mr-2" />
-                Shorts
+                {t('watch.shorts')}
               </Button>
               <Button
                 variant={activeTab === 'tiktok' ? 'default' : 'outline'}
@@ -139,7 +141,7 @@ export default function WatchPage() {
                 className={activeTab === 'instagram' ? 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600' : ''}
               >
                 <InstagramIcon className="h-4 w-4 mr-2" />
-                Reels
+                {t('watch.interviews')}
               </Button>
             </div>
             

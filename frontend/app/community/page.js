@@ -2,83 +2,27 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useUserRole } from '@/lib/providers';
+import { useUserRole, useTranslation } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { 
-  Lock, Users, MessageCircle, Shield, Crown, ExternalLink,
+import {
+  Lock, Users, MessageCircle, Shield, Crown,
   MapPin, ArrowRight, CheckCircle
 } from 'lucide-react';
 
 // Regional community groups
 const COMMUNITY_GROUPS = [
-  {
-    region: 'Mexico',
-    slug: 'mexico',
-    members: 847,
-    whatsapp: 'https://chat.whatsapp.com/example-mexico',
-    signal: 'https://signal.group/example-mexico',
-    description: 'News, analysis, and discussions about Mexico'
-  },
-  {
-    region: 'Brazil',
-    slug: 'brazil',
-    members: 1203,
-    whatsapp: 'https://chat.whatsapp.com/example-brazil',
-    signal: 'https://signal.group/example-brazil',
-    description: 'Brazilian news and Portuguese discussions'
-  },
-  {
-    region: 'Argentina',
-    slug: 'argentina',
-    members: 634,
-    whatsapp: 'https://chat.whatsapp.com/example-argentina',
-    signal: 'https://signal.group/example-argentina',
-    description: 'Argentine politics, economy, and culture'
-  },
-  {
-    region: 'Colombia',
-    slug: 'colombia',
-    members: 521,
-    whatsapp: 'https://chat.whatsapp.com/example-colombia',
-    signal: 'https://signal.group/example-colombia',
-    description: 'Colombian news and regional updates'
-  },
-  {
-    region: 'Chile',
-    slug: 'chile',
-    members: 389,
-    whatsapp: 'https://chat.whatsapp.com/example-chile',
-    signal: 'https://signal.group/example-chile',
-    description: 'Chilean society, politics, and environment'
-  },
-  {
-    region: 'Peru',
-    slug: 'peru',
-    members: 298,
-    whatsapp: 'https://chat.whatsapp.com/example-peru',
-    signal: 'https://signal.group/example-peru',
-    description: 'Peruvian news and Andean region coverage'
-  },
-  {
-    region: 'Central America',
-    slug: 'central-america',
-    members: 456,
-    whatsapp: 'https://chat.whatsapp.com/example-central',
-    signal: 'https://signal.group/example-central',
-    description: 'Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panama'
-  },
-  {
-    region: 'Caribbean',
-    slug: 'caribbean',
-    members: 312,
-    whatsapp: 'https://chat.whatsapp.com/example-caribbean',
-    signal: 'https://signal.group/example-caribbean',
-    description: 'Cuba, Dominican Republic, Haiti, Puerto Rico, Jamaica'
-  },
+  { region: 'Mexico', slug: 'mexico', members: 847, description: 'News, analysis, and discussions about Mexico' },
+  { region: 'Brazil', slug: 'brazil', members: 1203, description: 'Brazilian news and Portuguese discussions' },
+  { region: 'Argentina', slug: 'argentina', members: 634, description: 'Argentine politics, economy, and culture' },
+  { region: 'Colombia', slug: 'colombia', members: 521, description: 'Colombian news and regional updates' },
+  { region: 'Chile', slug: 'chile', members: 389, description: 'Chilean society, politics, and environment' },
+  { region: 'Peru', slug: 'peru', members: 298, description: 'Peruvian news and Andean region coverage' },
+  { region: 'Central America', slug: 'central-america', members: 456, description: 'Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panama' },
+  { region: 'Caribbean', slug: 'caribbean', members: 312, description: 'Cuba, Dominican Republic, Haiti, Puerto Rico, Jamaica' },
 ];
 
 // WhatsApp icon component
@@ -96,10 +40,10 @@ const SignalIcon = ({ className }) => (
 );
 
 export default function CommunityPage() {
+  const { t } = useTranslation();
   const { user, isSubscribed, role } = useUserRole();
   const [selectedPlatform, setSelectedPlatform] = useState('whatsapp');
-  
-  // Check if user has access
+
   const hasAccess = isSubscribed || ['contributor', 'editor', 'admin'].includes(role);
 
   return (
@@ -114,11 +58,10 @@ export default function CommunityPage() {
             Subscriber Community
           </Badge>
           <h1 className="text-4xl md:text-5xl font-serif font-semibold text-[#1a1a1a] mb-6 leading-tight">
-            Join the Conversation
+            {t('community.title')}
           </h1>
           <p className="text-xl text-[#666666] leading-relaxed">
-            Connect with fellow readers, journalists, and experts in our regional community groups. 
-            Discuss stories, share insights, and stay informed.
+            {t('community.subtitle')}
           </p>
         </div>
 
@@ -131,11 +74,10 @@ export default function CommunityPage() {
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-semibold text-[#1a1a1a] mb-2">
-                  Community Access for Subscribers
+                  {t('community.subscriberTitle')}
                 </h2>
                 <p className="text-[#666666] mb-4">
-                  Our regional WhatsApp and Signal groups are exclusive to subscribers. 
-                  Join to connect with journalists, experts, and engaged readers across Latin America.
+                  {t('community.subscriberDesc')}
                 </p>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex items-center gap-2 text-sm text-[#666666]">
@@ -144,7 +86,7 @@ export default function CommunityPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-[#666666]">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
-                    <span>4,600+ active members</span>
+                    <span>4,600+ {t('community.members')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-[#666666]">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
@@ -154,7 +96,7 @@ export default function CommunityPage() {
                 <Link href="/pricing">
                   <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
                     <Crown className="h-4 w-4" />
-                    Subscribe to Access Community
+                    {t('community.subscribeBtn')}
                   </Button>
                 </Link>
               </div>
@@ -164,7 +106,7 @@ export default function CommunityPage() {
 
         {/* Platform Toggle */}
         <div className="flex items-center gap-2 mb-8">
-          <span className="text-sm text-[#666666]">Choose platform:</span>
+          <span className="text-sm text-[#666666]">{t('community.choosePlatform')}</span>
           <div className="flex gap-1 bg-[#1a1a1a]/5 p-1">
             <button
               onClick={() => setSelectedPlatform('whatsapp')}
@@ -194,8 +136,8 @@ export default function CommunityPage() {
         {/* Regional Groups Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           {COMMUNITY_GROUPS.map((group) => (
-            <Card 
-              key={group.slug} 
+            <Card
+              key={group.slug}
               className={`rounded-none border-[#1a1a1a]/10 ${!hasAccess ? 'opacity-75' : ''}`}
             >
               <CardContent className="p-4">
@@ -208,20 +150,20 @@ export default function CommunityPage() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[#666666] font-mono">
-                    {group.members.toLocaleString()} members
+                    {group.members.toLocaleString()} {t('community.members')}
                   </span>
                   {hasAccess ? (
                     <Link
                       href="/newsletter"
                       className="flex items-center gap-1 text-sm font-medium text-[#6111ff] hover:text-[#4a0dd6]"
                     >
-                      Notify me
+                      {t('community.notifyMe')}
                       <ArrowRight className="h-3 w-3" />
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-sm text-[#666666]">
                       <Lock className="h-3 w-3" />
-                      Locked
+                      {t('community.locked')}
                     </span>
                   )}
                 </div>
@@ -233,34 +175,28 @@ export default function CommunityPage() {
         {/* Community Guidelines */}
         <section className="bg-white border border-[#1a1a1a]/10 p-8 mb-12">
           <h2 className="text-2xl font-serif font-semibold text-[#1a1a1a] mb-6">
-            Community Guidelines
+            {t('community.guidelinesTitle')}
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex gap-3">
               <Shield className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#1a1a1a] mb-1">Respect & Civility</h3>
-                <p className="text-sm text-[#666666]">
-                  Engage respectfully. No personal attacks, harassment, or hate speech.
-                </p>
+                <h3 className="font-medium text-[#1a1a1a] mb-1">{t('community.respectTitle')}</h3>
+                <p className="text-sm text-[#666666]">{t('community.respectDesc')}</p>
               </div>
             </div>
             <div className="flex gap-3">
               <MessageCircle className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#1a1a1a] mb-1">Stay On Topic</h3>
-                <p className="text-sm text-[#666666]">
-                  Keep discussions relevant to LATAM news and the group's region.
-                </p>
+                <h3 className="font-medium text-[#1a1a1a] mb-1">{t('community.onTopicTitle')}</h3>
+                <p className="text-sm text-[#666666]">{t('community.onTopicDesc')}</p>
               </div>
             </div>
             <div className="flex gap-3">
               <Users className="h-5 w-5 text-[#6111ff] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-medium text-[#1a1a1a] mb-1">No Spam</h3>
-                <p className="text-sm text-[#666666]">
-                  No promotional content, chain messages, or repetitive posts.
-                </p>
+                <h3 className="font-medium text-[#1a1a1a] mb-1">{t('community.noSpamTitle')}</h3>
+                <p className="text-sm text-[#666666]">{t('community.noSpamDesc')}</p>
               </div>
             </div>
           </div>
@@ -270,15 +206,14 @@ export default function CommunityPage() {
         {!hasAccess && (
           <section className="bg-[#1a1a1a] text-white p-8 text-center">
             <h2 className="text-2xl font-serif font-semibold mb-4">
-              Ready to Join the Conversation?
+              {t('community.readyTitle')}
             </h2>
             <p className="text-white/80 mb-6 max-w-xl mx-auto">
-              Subscribe to access all regional community groups, plus exclusive human-written 
-              journalism and early access to investigations.
+              {t('community.readyDesc')}
             </p>
             <Link href="/pricing">
               <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
-                View Subscription Plans
+                {t('community.viewPlans')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

@@ -15,8 +15,10 @@ import {
   User,
   Edit3,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 export default function TransparencyPage() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-[#F9F6F6]">
       <Header />
@@ -25,13 +27,10 @@ export default function TransparencyPage() {
         {/* Hero */}
         <div className="max-w-3xl mb-14">
           <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#6111ff] mb-3">
-            Transparency Report
+            {t('transparency.title')}
           </p>
-          <h1
-            className="font-serif text-4xl md:text-5xl font-semibold text-[#1a1a1a] mb-5 leading-tight"
-            
-          >
-            How we operate, and who we answer to.
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold text-[#1a1a1a] mb-5 leading-tight">
+            {t('transparency.subtitle')}
           </h1>
           <p className="text-lg text-[#666666] leading-relaxed">
             LATAM Reportero is independently owned. We answer to our readers. Not advertisers. Not governments. Not investors. This page explains exactly how we fund our work, how we make editorial decisions, and what we do when we get things wrong.

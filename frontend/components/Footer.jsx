@@ -3,28 +3,30 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, MessageCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 const SECTIONS = [
-  { label: 'Morning Brief', href: '/?type=morning-brief' },
-  { label: 'Press Review', href: '/?type=press-review' },
-  { label: 'Deep Dives', href: '/investigations' },
-  { label: 'Regions', href: '/' },
+  { labelKey: 'investigations.morningBrief', href: '/?type=morning-brief' },
+  { labelKey: 'investigations.pressReview', href: '/?type=press-review' },
+  { labelKey: 'investigations.label', href: '/investigations' },
+  { labelKey: 'regions.all', href: '/' },
 ];
 
 const NEWSROOM = [
-  { label: 'About', href: '/about' },
-  { label: 'Editorial Standards', href: '/transparency' },
-  { label: 'Funding & Independence', href: '/transparency' },
-  { label: 'AI Disclosure', href: '/transparency' },
+  { labelKey: 'footer.about', href: '/about' },
+  { labelKey: 'transparency.editorialTitle', href: '/transparency' },
+  { labelKey: 'transparency.fundingTitle', href: '/transparency/funding' },
+  { labelKey: 'transparency.title', href: '/transparency' },
 ];
 
-const COMMUNITY = [
-  { label: 'Newsletter', href: '/newsletter' },
-  { label: 'Pitch a story', href: '/submit' },
-  { label: 'Community', href: '/community' },
+const COMMUNITY_LINKS = [
+  { labelKey: 'newsletter.badge', href: '/newsletter' },
+  { labelKey: 'about.pitchStory', href: '/submit' },
+  { labelKey: 'footer.community', href: '/community' },
 ];
 
 function FooterNewsletter() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle');
 
@@ -49,7 +51,7 @@ function FooterNewsletter() {
     return (
       <div className="flex items-center gap-3 py-4" data-testid="footer-newsletter-success">
         <CheckCircle className="h-5 w-5 text-[#6111ff] flex-shrink-0" />
-        <p className="text-sm text-[#1a1a1a] font-medium">You&apos;re subscribed. Check your inbox tomorrow morning.</p>
+        <p className="text-sm text-[#1a1a1a] font-medium">{t('newsletter.successTitle')}</p>
       </div>
     );
   }
@@ -74,7 +76,7 @@ function FooterNewsletter() {
         {status === 'loading' ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <>Get it free <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" /></>
+          <>{t('newsletter.subscribe')} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" /></>
         )}
       </button>
     </form>
@@ -82,6 +84,7 @@ function FooterNewsletter() {
 }
 
 export default function Footer() {
+  const { t } = useTranslation();
   const year = new Date().getFullYear();
 
   return (
@@ -98,23 +101,20 @@ export default function Footer() {
                 The Wire for Latin America
               </p>
               <span className="px-1.5 py-0.5 bg-[#6111ff] text-white text-[9px] font-mono uppercase tracking-wider">
-                Free
+                {t('pricing.free')}
               </span>
             </div>
-            <h2
-              className="font-serif text-2xl lg:text-3xl font-semibold text-[#1a1a1a] leading-tight"
-              
-            >
-              Get the Morning Brief in your inbox.
+            <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-[#1a1a1a] leading-tight">
+              {t('newsletter.headline')}
               <span className="block text-[#666666] font-normal text-lg lg:text-xl mt-1">
-                Latin America, before your coffee. Weekday mornings. Always free.
+                {t('newsletter.headlineAccent')} {t('newsletter.everyWeekday')}. {t('newsletter.fiveMin')}. {t('newsletter.noCard')}.
               </span>
             </h2>
           </div>
           <div className="lg:col-span-5">
             <FooterNewsletter />
             <p className="text-[11px] text-[#666666] mt-2">
-              No spam. No paywall. Cancel anytime.
+              {t('newsletter.privacy')}
             </p>
           </div>
         </div>
@@ -125,10 +125,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="col-span-2 md:col-span-4">
           <Link href="/" className="inline-block">
-            <span
-              className="text-2xl font-bold tracking-tight text-[#1a1a1a]"
-              
-            >
+            <span className="text-2xl font-bold tracking-tight text-[#1a1a1a]">
               LATAM<span className="text-[#6111ff]">.</span>
             </span>
             <span className="ml-2 text-[10px] font-mono uppercase tracking-[0.2em] text-[#666666]">
@@ -136,9 +133,7 @@ export default function Footer() {
             </span>
           </Link>
           <p className="text-sm text-[#666666] leading-relaxed max-w-xs mt-4">
-            A wire service for the next generation. Curated briefs, press reviews
-            and original reporting on Latin America. Built for how people
-            actually read.
+            {t('footer.description')}
           </p>
           <a
             href="mailto:contacto@latamreportero.com"
@@ -150,23 +145,23 @@ export default function Footer() {
           </a>
         </div>
 
-        <FooterColumn title="Sections" items={SECTIONS} testid="footer-sections" />
-        <FooterColumn title="Newsroom" items={NEWSROOM} testid="footer-newsroom" />
-        <FooterColumn title="Community" items={COMMUNITY} testid="footer-community" />
+        <FooterColumn title={t('footer.sections')} items={SECTIONS} testid="footer-sections" />
+        <FooterColumn title={t('footer.newsroom')} items={NEWSROOM} testid="footer-newsroom" />
+        <FooterColumn title={t('footer.community')} items={COMMUNITY_LINKS} testid="footer-community" />
       </div>
 
       {/* Bottom bar */}
       <div className="border-t border-[#1a1a1a]/10">
         <div className="container py-5 flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-[11px] font-mono text-[#666666]">
-            &copy; {year} LATAM Reportero · Independent newswire, Latin America
+            &copy; {year} LATAM Reportero · {t('footer.independent')}
           </p>
           <div className="flex items-center gap-5 text-[11px] font-mono text-[#666666]">
             <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
-              Terms
+              {t('footer.terms')}
             </Link>
             <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
-              Privacy
+              {t('footer.privacy')}
             </Link>
             <Link href="/transparency" className="hover:text-[#1a1a1a] transition-colors">
               AI Policy
@@ -186,6 +181,7 @@ export default function Footer() {
 }
 
 function FooterColumn({ title, items, testid }) {
+  const { t } = useTranslation();
   return (
     <div className="md:col-span-2 lg:col-span-2 xl:col-span-2" data-testid={testid}>
       <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#6111ff] mb-4">
@@ -193,12 +189,12 @@ function FooterColumn({ title, items, testid }) {
       </h3>
       <ul className="space-y-2.5">
         {items.map((item) => (
-          <li key={item.label}>
+          <li key={item.labelKey}>
             <Link
               href={item.href}
               className="text-sm text-[#1a1a1a]/80 hover:text-[#6111ff] transition-colors"
             >
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           </li>
         ))}

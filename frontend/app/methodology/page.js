@@ -13,8 +13,10 @@ import {
   Star,
   ArrowRight,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 export default function MethodologyPage() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
       <Header />
@@ -24,13 +26,10 @@ export default function MethodologyPage() {
         <div className="bg-[#1a1a1a] text-white">
           <div className="container py-12 md:py-16">
             <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">
-              Methodology
+              {t('methodology.title')}
             </p>
-            <h1
-              className="font-serif text-4xl md:text-5xl font-semibold text-white leading-[1.05] mb-5 max-w-3xl"
-              
-            >
-              How we report on Latin America.
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white leading-[1.05] mb-5 max-w-3xl">
+              {t('methodology.subtitle')}
             </h1>
             <p className="text-white/65 text-lg max-w-2xl leading-relaxed">
               We are not a breaking-news operation. We are not investigative reporters. We explain what is happening in the region, and why it matters. That is a specific editorial discipline, and these are the standards we hold ourselves to.

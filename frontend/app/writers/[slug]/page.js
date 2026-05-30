@@ -12,6 +12,7 @@ import {
   MapPin, Mail, Globe, ArrowLeft, Clock,
   Twitter, Instagram, Linkedin, Youtube, ExternalLink
 } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 // TikTok icon (not in lucide)
 const TikTokIcon = ({ className }) => (
@@ -20,12 +21,12 @@ const TikTokIcon = ({ className }) => (
   </svg>
 );
 
-const VERIFICATION_LABELS = {
-  'staff': { label: 'Staff Reporter', color: 'bg-[#6111ff] text-white' },
-  'id-verified': { label: 'ID Verified', color: 'bg-emerald-600 text-white' },
-  'expert': { label: 'Expert Contributor', color: 'bg-blue-600 text-white' },
-  'contributor': { label: 'Contributor', color: 'bg-[#1a1a1a] text-white' },
-  'stringer': { label: 'Stringer', color: 'bg-orange-500 text-white' },
+const VERIFICATION_COLORS = {
+  'staff': 'bg-[#6111ff] text-white',
+  'id-verified': 'bg-emerald-600 text-white',
+  'expert': 'bg-blue-600 text-white',
+  'contributor': 'bg-[#1a1a1a] text-white',
+  'stringer': 'bg-orange-500 text-white',
 };
 
 function ArticleCard({ article }) {
@@ -54,6 +55,7 @@ function ArticleCard({ article }) {
 }
 
 export default function WriterProfilePage() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const [author, setAuthor] = useState(null);
   const [articles, setArticles] = useState([]);
@@ -85,8 +87,8 @@ export default function WriterProfilePage() {
     if (slug) load();
   }, [slug]);
 
-  const verification = author?.verificationLevel
-    ? VERIFICATION_LABELS[author.verificationLevel]
+  const verificationColor = author?.verificationLevel
+    ? VERIFICATION_COLORS[author.verificationLevel]
     : null;
 
   return (
@@ -102,7 +104,7 @@ export default function WriterProfilePage() {
             <div className="bg-[#1a1a1a] text-white">
               <div className="container py-12">
                 <Link href="/writers" className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-white/40 hover:text-white/70 transition-colors mb-8">
-                  <ArrowLeft className="h-3 w-3" /> All journalists
+                  <ArrowLeft className="h-3 w-3" /> {t('writers.backToAll')}
                 </Link>
 
                 <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -134,9 +136,9 @@ export default function WriterProfilePage() {
 
                     {/* Trust tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {verification && (
-                        <span className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 ${verification.color}`}>
-                          {verification.label}
+                      {author.verificationLevel && verificationColor && (
+                        <span className={`text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 ${verificationColor}`}>
+                          {t(`writers.verificationLevels.${author.verificationLevel}`)}
                         </span>
                       )}
                       {author.pressCredentials?.map(cred => (
@@ -225,7 +227,7 @@ export default function WriterProfilePage() {
             {/* Articles */}
             <div className="container py-12">
               <h2 className="text-xl font-serif font-semibold text-[#1a1a1a] mb-6">
-                Stories by {author.name}
+                {t('writers.storiesBy')} {author.name}
                 {articles.length > 0 && (
                   <span className="ml-2 text-sm font-sans font-normal text-[#666666]">
                     ({articles.length})
@@ -241,9 +243,9 @@ export default function WriterProfilePage() {
                 </div>
               ) : (
                 <div className="max-w-2xl py-12 text-center border border-[#1a1a1a]/10 bg-white">
-                  <p className="text-[#666666] mb-4">No published stories yet.</p>
+                  <p className="text-[#666666] mb-4">{t('writers.noStories')}</p>
                   <Link href="/investigations">
-                    <Button variant="outline" className="rounded-none">Browse all stories</Button>
+                    <Button variant="outline" className="rounded-none">{t('writers.browseAll')}</Button>
                   </Link>
                 </div>
               )}
@@ -251,9 +253,9 @@ export default function WriterProfilePage() {
           </>
         ) : (
           <div className="container py-24 text-center">
-            <h1 className="text-2xl font-serif font-semibold mb-4">Journalist not found</h1>
+            <h1 className="text-2xl font-serif font-semibold mb-4">{t('writers.label')} not found</h1>
             <Link href="/writers">
-              <Button className="bg-[#6111ff] text-white rounded-none">Back to all journalists</Button>
+              <Button className="bg-[#6111ff] text-white rounded-none">{t('writers.backToAll')}</Button>
             </Link>
           </div>
         )}

@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { MapPin, Clock, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useTranslation } from '@/lib/providers';
 
 const COUNTRY_NAMES = {
   'argentina': 'Argentina',
@@ -79,6 +80,7 @@ function ArticleCard({ article }) {
 }
 
 export default function RegionPage() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const countryName = COUNTRY_NAMES[slug] || slug?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
@@ -117,19 +119,19 @@ export default function RegionPage() {
               className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-white/40 hover:text-white/70 transition-colors mb-6"
             >
               <ArrowLeft className="h-3 w-3" />
-              All regions
+              {t('region.backToAll')}
             </Link>
             <div className="flex items-center gap-3 mb-3">
               <MapPin className="h-5 w-5 text-[#6111ff]" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50">
-                Region
+                {t('region.label')}
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-serif font-semibold leading-tight mb-3">
               {countryName}
             </h1>
             <p className="text-white/50 text-sm">
-              Latest reporting and investigations from {countryName}
+              {t('region.latestFrom')} {countryName}
             </p>
           </div>
         </div>
@@ -152,21 +154,21 @@ export default function RegionPage() {
             <div className="text-center py-20">
               <MapPin className="h-10 w-10 text-[#6111ff]/30 mx-auto mb-4" />
               <h2 className="font-serif text-2xl font-semibold text-[#1a1a1a] mb-3">
-                No stories yet for {countryName}
+                {t('region.noStoriesTitle')} {countryName}
               </h2>
               <p className="text-[#666666] mb-8 max-w-md mx-auto">
-                We&apos;re building our coverage of {countryName}. Subscribe to be notified when we publish.
+                {t('region.noStoriesDesc')}
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Link href="/newsletter">
                   <Button className="bg-[#6111ff] hover:bg-[#4a0dd6] text-white rounded-none gap-2">
-                    Get notified
+                    {t('region.getNotified')}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/investigations">
                   <Button variant="outline" className="rounded-none">
-                    Browse all stories
+                    {t('region.browseAll')}
                   </Button>
                 </Link>
               </div>

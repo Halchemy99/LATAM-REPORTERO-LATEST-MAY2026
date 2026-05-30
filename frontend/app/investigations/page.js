@@ -8,44 +8,28 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import VerifiedBadge from '@/components/VerifiedBadge';
+import { useTranslation } from '@/lib/providers';
 import {
-  Layers,
-  Coffee,
-  Newspaper,
-  Filter,
-  X,
-  ArrowRight,
-  Clock,
-  Search,
+  Layers, Filter, X, ArrowRight, Clock, Search,
 } from 'lucide-react';
 
-const CONTENT_TYPES = [
-  { value: 'all', label: 'All' },
-  { value: 'deep-dive', label: 'Deep Dives' },
-  { value: 'morning-brief', label: 'Morning Brief' },
-  { value: 'press-review', label: 'Press Review' },
-];
-
 const REGIONS = [
-  'all',
-  'Argentina',
-  'Bolivia',
-  'Brazil',
-  'Chile',
-  'Colombia',
-  'Ecuador',
-  'Mexico',
-  'Paraguay',
-  'Peru',
-  'Uruguay',
-  'Venezuela',
+  'all', 'Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia',
+  'Ecuador', 'Mexico', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela',
 ];
 
 function ArticleCard({ article }) {
+  const { t } = useTranslation();
   const slug = typeof article.slug === 'object' ? article.slug.current : article.slug;
   const image = article.featuredImage;
   const verificationLevel = article.authorVerificationLevel ||
     (article.authorVerified ? 'id-verified' : null);
+
+  const contentTypeLabel =
+    article.contentType === 'deep-dive' ? t('investigations.label') :
+    article.contentType === 'morning-brief' ? t('investigations.morningBrief') :
+    article.contentType === 'press-review' ? t('investigations.pressReview') :
+    article.category || t('investigations.label');
 
   return (
     <article className="group bg-white border border-[#1a1a1a]/10 hover:border-[#6111ff] transition-colors flex flex-col">
@@ -62,13 +46,7 @@ function ArticleCard({ article }) {
         <div className="p-5">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[9px] font-mono uppercase tracking-[0.15em] text-[#6111ff] bg-[#6111ff]/8 px-2 py-0.5">
-              {article.contentType === 'deep-dive'
-                ? 'Deep Dive'
-                : article.contentType === 'morning-brief'
-                ? 'Morning Brief'
-                : article.contentType === 'press-review'
-                ? 'Press Review'
-                : article.category || 'Investigation'}
+              {contentTypeLabel}
             </span>
             {article.region && (
               <span className="text-[9px] font-mono uppercase tracking-wider text-[#666666]">
@@ -95,8 +73,7 @@ function ArticleCard({ article }) {
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {new Date(article.publishedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
+                    month: 'short', day: 'numeric',
                   })}
                 </span>
               </>
@@ -109,6 +86,7 @@ function ArticleCard({ article }) {
 }
 
 export default function InvestigationsPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,6 +95,13 @@ export default function InvestigationsPage() {
   const [region, setRegion] = useState('all');
 
   const API_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+  const CONTENT_TYPES = [
+    { value: 'all', label: t('investigations.allStories') },
+    { value: 'deep-dive', label: t('investigations.label') },
+    { value: 'morning-brief', label: t('investigations.morningBrief') },
+    { value: 'press-review', label: t('investigations.pressReview') },
+  ];
 
   useEffect(() => {
     const load = async () => {
@@ -151,12 +136,7 @@ export default function InvestigationsPage() {
   });
 
   const hasFilters = search || contentType !== 'all' || region !== 'all';
-
-  const clearFilters = () => {
-    setSearch('');
-    setContentType('all');
-    setRegion('all');
-  };
+  const clearFilters = () => { setSearch(''); setContentType('all'); setRegion('all'); };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F9F6F6]">
@@ -169,17 +149,14 @@ export default function InvestigationsPage() {
             <div className="flex items-center gap-3 mb-3">
               <Layers className="h-5 w-5 text-[#6111ff]" />
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50">
-                Reporting
+                {t('investigations.label')}
               </span>
             </div>
-            <h1
-              className="font-serif text-4xl md:text-5xl font-semibold text-white mb-3 leading-tight"
-              
-            >
-              Deep Dives & Investigations
+            <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-3 leading-tight">
+              {t('investigations.title')}
             </h1>
             <p className="text-white/70 text-base max-w-xl leading-relaxed">
-              Original investigations, long-form analysis, and contextual explainers. Every piece assumes you&apos;re smart and new to the region. No assumed knowledge, no jargon.
+              {t('investigations.subtitle')}
             </p>
           </div>
         </div>
@@ -195,24 +172,24 @@ export default function InvestigationsPage() {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search stories..."
+                  placeholder={`${t('common.search')}...`}
                   className="w-full pl-8 pr-3 py-2 border border-[#1a1a1a]/15 bg-transparent text-sm focus:outline-none focus:border-[#6111ff] text-[#1a1a1a] placeholder:text-[#666666]/60"
                 />
               </div>
 
               {/* Content type tabs */}
               <div className="flex gap-1">
-                {CONTENT_TYPES.map((t) => (
+                {CONTENT_TYPES.map((ct) => (
                   <button
-                    key={t.value}
-                    onClick={() => setContentType(t.value)}
+                    key={ct.value}
+                    onClick={() => setContentType(ct.value)}
                     className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider transition-colors ${
-                      contentType === t.value
+                      contentType === ct.value
                         ? 'bg-[#1a1a1a] text-white'
                         : 'border border-[#1a1a1a]/15 text-[#666666] hover:border-[#1a1a1a]/40'
                     }`}
                   >
-                    {t.label}
+                    {ct.label}
                   </button>
                 ))}
               </div>
@@ -225,7 +202,7 @@ export default function InvestigationsPage() {
               >
                 {REGIONS.map((r) => (
                   <option key={r} value={r}>
-                    {r === 'all' ? 'All regions' : r}
+                    {r === 'all' ? t('investigations.allRegions') : r}
                   </option>
                 ))}
               </select>
@@ -236,7 +213,7 @@ export default function InvestigationsPage() {
                   className="flex items-center gap-1.5 text-xs text-[#666666] hover:text-[#1a1a1a] transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Clear
+                  {t('common.close')}
                 </button>
               )}
             </div>
@@ -266,7 +243,7 @@ export default function InvestigationsPage() {
             <div className="text-center py-20">
               <Filter className="h-8 w-8 text-[#6111ff] mx-auto mb-4" />
               <h3 className="font-serif text-xl font-semibold text-[#1a1a1a] mb-2">
-                No stories match those filters
+                {t('investigations.noResults')}
               </h3>
               <p className="text-[#666666] mb-6 text-sm">
                 Try removing some filters or searching with different terms.
@@ -275,7 +252,7 @@ export default function InvestigationsPage() {
                 onClick={clearFilters}
                 className="rounded-none bg-[#1a1a1a] hover:bg-[#6111ff] text-white"
               >
-                Clear all filters
+                {t('investigations.allStories')}
               </Button>
             </div>
           )}
