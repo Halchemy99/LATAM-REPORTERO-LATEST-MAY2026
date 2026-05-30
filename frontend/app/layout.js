@@ -7,6 +7,34 @@ export const metadata = {
   title: 'LATAM Reportero. Latin America, Explained.',
   description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
   keywords: 'Latin America, journalism, news, explanatory journalism, Mexico, Brazil, Argentina, Chile, Colombia',
+  icons: {
+    icon: '/brand/logo-square.png',
+    shortcut: '/brand/logo-square.png',
+    apple: '/brand/logo-square.png',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'LATAM Reportero',
+    title: 'LATAM Reportero. Latin America, Explained.',
+    description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
+    url: 'https://www.latamreportero.com',
+    images: [
+      {
+        url: '/brand/logo-square.png',
+        width: 500,
+        height: 500,
+        alt: 'LATAM Reportero',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    site: '@latamreportero',
+    creator: '@latamreportero',
+    title: 'LATAM Reportero. Latin America, Explained.',
+    description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
+    images: ['/brand/logo-square.png'],
+  },
 };
 
 // Static error handler script - suppresses known DataCloneError from PerformanceServerTiming
