@@ -143,6 +143,7 @@ Twitter card = `summary` (square image, no large image card).
 ## Pending / To-Do
 
 - [ ] **Verify Netlify redeploy worked** — after 2026-05-30 push, test `curl https://latamreportero.mx/api/revalidate?secret=latamreportero-revalidate-2026&path=/` — should return `{"revalidated":true}` not 404
+- [x] **Fix JSX syntax error in SocialVideo.jsx** — `<>` fragment with conditional sibling after `</section>` crashed SWC; moved `VideoModal` inside `<section>` (fixed positioning means DOM location doesn't matter)
 - [ ] **Set Netlify env vars** — `REVALIDATE_SECRET`, `YOUTUBE_API_KEY`, `YOUTUBE_CHANNEL_ID` (Sanity + Supabase vars may already be set)
 - [ ] **Update Sanity webhook URL** — change from Railway URL to `https://latamreportero.mx/api/revalidate?secret=latamreportero-revalidate-2026`
 - [ ] **Set contentType on Sanity articles** — open each draft in Studio, set Content Type field, publish
