@@ -17,10 +17,10 @@ export const metadata = {
     siteName: 'LATAM Reportero',
     title: 'LATAM Reportero. Latin America, Explained.',
     description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
-    url: 'https://www.latamreportero.com',
+    url: 'https://latamreportero.mx',
     images: [
       {
-        url: '/brand/logo-square.png',
+        url: 'https://latamreportero.mx/brand/logo-square.png',
         width: 500,
         height: 500,
         alt: 'LATAM Reportero',
@@ -33,7 +33,7 @@ export const metadata = {
     creator: '@latamreportero',
     title: 'LATAM Reportero. Latin America, Explained.',
     description: 'Explanatory, contextual journalism covering Latin America. Morning briefs, press reviews and original investigations. Free every weekday.',
-    images: ['/brand/logo-square.png'],
+    images: ['https://latamreportero.mx/brand/logo-square.png'],
   },
 };
 
